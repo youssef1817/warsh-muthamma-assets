@@ -1,0 +1,8 @@
+input=page003.png
+original_size=1265x2004
+crop_box=(43, 50, 1222, 1964)
+cropped_size=1179x1914
+canvas_size=1265x2004
+canvas_paste=43,45
+cropped_file=page003-crop-l43-t50-r43-b40.png
+canvas_file=page003-crop-canvas-l43-t50-r43-b40.png

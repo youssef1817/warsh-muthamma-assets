@@ -1,0 +1,8 @@
+input=page250.png
+original_size=1278x2042
+crop_box=(43, 50, 1235, 2002)
+cropped_size=1192x1952
+canvas_size=1278x2042
+canvas_paste=43,45
+cropped_file=page250-crop-l43-t50-r43-b40.png
+canvas_file=page250-crop-canvas-l43-t50-r43-b40.png

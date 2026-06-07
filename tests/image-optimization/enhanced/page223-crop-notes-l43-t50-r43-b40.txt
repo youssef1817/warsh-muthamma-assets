@@ -1,0 +1,8 @@
+input=page223.png
+original_size=1272x2012
+crop_box=(43, 50, 1229, 1972)
+cropped_size=1186x1922
+canvas_size=1272x2012
+canvas_paste=43,45
+cropped_file=page223-crop-l43-t50-r43-b40.png
+canvas_file=page223-crop-canvas-l43-t50-r43-b40.png
