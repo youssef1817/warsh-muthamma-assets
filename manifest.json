@@ -15,12 +15,12 @@
     "dpi": 300,
     "directory": "pages/warsh_muthamma_png/",
     "filePattern": "page%03d.png",
+    "deliveryMode": "individual_raw_pages",
     "firstPage": 1,
     "lastPage": 485,
     "count": 485,
     "totalBytes": 112545451,
-    "index": "pages/warsh_muthamma_png_index.json",
-    "zip": "zips/warsh_muthamma_pages_png.zip"
+    "index": "pages/warsh_muthamma_png_index.json"
   },
   "thumnMapping": {
     "file": "data/thumn/warsh_muthamma_thumn_pages.json",
@@ -30,14 +30,17 @@
     "zipSha256": "2C7560D555DDBE4D802B96542FF628A643E126ED2428E66ECD9B6D1F193B785A"
   },
   "ayahInfo": {
-    "status": "missing",
-    "directory": "databases/ayahinfo/",
-    "note": "بيانات تحديد الآيات غير متوفرة بعد. يمكن إضافة ayahinfo.db أو ayahinfo-width.zip لاحقا حسب منطق التطبيق."
+    "status": "initial_sqlite_ready",
+    "directory": "databases/ayahinfo/warsh_muthamma/",
+    "database": "databases/ayahinfo/warsh_muthamma/quran.ar.warsh_muthamma.db",
+    "zip": "databases/ayahinfo/warsh_muthamma/ayahinfo_muthamma.zip",
+    "note": "بيانات تحديد الآيات أولية وقابلة للتحسين لاحقا، لكنها صالحة للتكامل الأولي داخل التطبيق."
   },
   "integration": {
     "storageDirectoryName": "warsh_muthamma",
-    "recommendedImagesBaseUrl": "https://raw.githubusercontent.com/youssef1817/warsh-muthamma-assets/main/pages/",
-    "recommendedImagesZipBaseUrl": "https://github.com/youssef1817/warsh-muthamma-assets/releases/download/v1/",
-    "recommendedAyahInfoBaseUrl": "https://raw.githubusercontent.com/OWNER/REPO/main/databases/ayahinfo/"
+    "recommendedImagesBaseUrl": "https://raw.githubusercontent.com/youssef1817/warsh-muthamma-assets/main/pages/warsh_muthamma_png/",
+    "recommendedPageDownloadMode": "individual_pages",
+    "recommendedPageDownloadConcurrency": 8,
+    "recommendedAyahInfoBaseUrl": "https://raw.githubusercontent.com/youssef1817/warsh-muthamma-assets/main/databases/ayahinfo/warsh_muthamma/"
   }
 }
