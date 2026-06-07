@@ -1,0 +1,248 @@
+{
+  "page": 5,
+  "ayah_highlights": [
+    {
+      "page": 5,
+      "line": 1,
+      "sura": 2,
+      "ayah": 25,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 2,
+      "sura": 2,
+      "ayah": 25,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 3,
+      "sura": 2,
+      "ayah": 25,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 4,
+      "sura": 2,
+      "ayah": 25,
+      "left": 0.6057,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 4,
+      "sura": 2,
+      "ayah": 26,
+      "left": 0.08,
+      "right": 0.6057
+    },
+    {
+      "page": 5,
+      "line": 5,
+      "sura": 2,
+      "ayah": 26,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 6,
+      "sura": 2,
+      "ayah": 26,
+      "left": 0.8025,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 6,
+      "sura": 2,
+      "ayah": 27,
+      "left": 0.08,
+      "right": 0.8025
+    },
+    {
+      "page": 5,
+      "line": 7,
+      "sura": 2,
+      "ayah": 27,
+      "left": 0.5852,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 7,
+      "sura": 2,
+      "ayah": 28,
+      "left": 0.08,
+      "right": 0.5852
+    },
+    {
+      "page": 5,
+      "line": 8,
+      "sura": 2,
+      "ayah": 28,
+      "left": 0.1329,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 8,
+      "sura": 2,
+      "ayah": 29,
+      "left": 0.08,
+      "right": 0.1329
+    },
+    {
+      "page": 5,
+      "line": 9,
+      "sura": 2,
+      "ayah": 29,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 10,
+      "sura": 2,
+      "ayah": 29,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 11,
+      "sura": 2,
+      "ayah": 29,
+      "left": 0.6263,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 11,
+      "sura": 2,
+      "ayah": 30,
+      "left": 0.08,
+      "right": 0.6263
+    },
+    {
+      "page": 5,
+      "line": 12,
+      "sura": 2,
+      "ayah": 30,
+      "left": 0.2327,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 12,
+      "sura": 2,
+      "ayah": 31,
+      "left": 0.08,
+      "right": 0.2327
+    },
+    {
+      "page": 5,
+      "line": 13,
+      "sura": 2,
+      "ayah": 31,
+      "left": 0.2063,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 13,
+      "sura": 2,
+      "ayah": 32,
+      "left": 0.08,
+      "right": 0.2063
+    },
+    {
+      "page": 5,
+      "line": 14,
+      "sura": 2,
+      "ayah": 32,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 5,
+      "line": 15,
+      "sura": 2,
+      "ayah": 32,
+      "left": 0.08,
+      "right": 0.92
+    }
+  ],
+  "ayah_markers": [
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 25,
+      "line": 4,
+      "center_x": 0.6057,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 26,
+      "line": 6,
+      "center_x": 0.8025,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 27,
+      "line": 7,
+      "center_x": 0.5852,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 28,
+      "line": 8,
+      "center_x": 0.1329,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 29,
+      "line": 11,
+      "center_x": 0.6263,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 30,
+      "line": 12,
+      "center_x": 0.2327,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 31,
+      "line": 13,
+      "center_x": 0.2063,
+      "center_y": 0.5
+    },
+    {
+      "page": 5,
+      "sura": 2,
+      "ayah": 32,
+      "line": 15,
+      "center_x": 0.08,
+      "center_y": 0.5
+    }
+  ],
+  "sura_headers": []
+}
