@@ -1,0 +1,7 @@
+# Temporary conversion outputs
+tmp/
+raw/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

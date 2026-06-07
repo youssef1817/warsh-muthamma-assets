@@ -1,0 +1,39 @@
+{
+  "id": "warsh_muthamma",
+  "title": "مصحف ورش المثمن",
+  "riwaya": "warsh",
+  "contentType": "image",
+  "pageCount": 485,
+  "source": {
+    "file": "source/warsh-muthamma-source.pdf",
+    "bytes": 46474247,
+    "sha256": "1F9DAD7377AFE1395F0DBC3CEBFD50DFD9A600989067E6BE0F689EDE9F1B204A"
+  },
+  "pages": {
+    "status": "pending",
+    "primaryFormat": "png",
+    "directory": "pages/png/",
+    "filePattern": "page%03d.png",
+    "firstPage": 1,
+    "lastPage": 485,
+    "zip": "zips/warsh_muthamma_pages_png.zip"
+  },
+  "thumnMapping": {
+    "file": "data/thumn/warsh_muthamma_thumn_pages.json",
+    "zip": "data/thumn/warsh_muthamma_thumn_pages.zip",
+    "entries": 480,
+    "sha256": "7CD2E60710E8791E22A3C9C47772898DA8BF4E4C0C478EB0E14A715EE6A64A78",
+    "zipSha256": "2C7560D555DDBE4D802B96542FF628A643E126ED2428E66ECD9B6D1F193B785A"
+  },
+  "ayahInfo": {
+    "status": "missing",
+    "directory": "databases/ayahinfo/",
+    "note": "بيانات تحديد الآيات غير متوفرة بعد. يمكن إضافة ayahinfo.db أو ayahinfo-width.zip لاحقا حسب منطق التطبيق."
+  },
+  "integration": {
+    "storageDirectoryName": "warsh_muthamma",
+    "recommendedImagesBaseUrl": "https://raw.githubusercontent.com/OWNER/REPO/main/pages/png/",
+    "recommendedImagesZipBaseUrl": "https://github.com/OWNER/REPO/releases/download/v1/",
+    "recommendedAyahInfoBaseUrl": "https://raw.githubusercontent.com/OWNER/REPO/main/databases/ayahinfo/"
+  }
+}
