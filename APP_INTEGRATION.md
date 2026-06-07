@@ -1,6 +1,6 @@
 # ملاحظات التكامل مع تطبيق `al-quran`
 
-هذه الطبعة ينبغي أن تعامل كطبعة مصورة، لا كعارض نصي مولد.
+هذه الطبعة ينبغي أن تعامل كطبعة مصورة مستقلة، لا كبديل لطبعة ورش الحالية.
 
 ## مواصفة الطبعة المقترحة
 
@@ -15,8 +15,8 @@ PageTypeSpec(
   isDefault: false,
   riwaya: Riwaya.warsh,
   imageVersion: 1,
-  imagesBaseUrl: 'https://raw.githubusercontent.com/OWNER/REPO/main/pages/png/',
-  imagesZipBaseUrl: 'https://github.com/OWNER/REPO/releases/download/v1/',
+  imagesBaseUrl: 'https://raw.githubusercontent.com/youssef1817/warsh-muthamma-assets/main/pages/',
+  imagesZipBaseUrl: 'https://github.com/youssef1817/warsh-muthamma-assets/releases/download/v1/',
   patchBaseUrl: '',
   ayahInfoBaseUrl: 'https://raw.githubusercontent.com/OWNER/REPO/main/databases/ayahinfo/',
   databasesBaseUrl: 'https://android.quran.com/data/databases/',
@@ -28,19 +28,15 @@ PageTypeSpec(
 )
 ```
 
-## نقطة يجب تعديلها في التطبيق
-
-التطبيق الحالي يتعامل مع الطبعات المصورة غالبا على أساس 604 صفحة. هذه الطبعة عدد صفحاتها 485، لذلك يلزم دعم `pageCount` خاص بكل طبعة، أو معالجة خاصة لـ `warsh_muthamma` في مستودع الصفحات والانتقال.
-
 ## أسماء الملفات
 
-لأقل تعديل ممكن في التطبيق، ينبغي أن تكون الصور النهائية:
+الصور النهائية داخل المستودع:
 
 ```text
-page001.png
-page002.png
+pages/width_1188/page001.png
+pages/width_1188/page002.png
 ...
-page485.png
+pages/width_1188/page485.png
 ```
 
 وحزمة الصور:
@@ -49,7 +45,9 @@ page485.png
 warsh_muthamma_pages_png.zip
 ```
 
-إذا قررنا استعمال WebP بدل PNG فسيكون ذلك أفضل للحجم غالبا، لكنه يتطلب تعديل كود عرض الصفحات والتنزيل لأن النمط الحالي يبحث عن ملفات `.png`.
+## ملاحظة دمج مهمة
+
+التطبيق الحالي يفترض 604 صفحة في مواضع عديدة، بينما هذه الطبعة 485 صفحة فقط. لذلك سنحتاج لاحقا إلى دعم `pageCount` خاص بهذه الطبعة عند إضافتها.
 
 ## بيانات الآيات
 

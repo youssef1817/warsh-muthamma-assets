@@ -6,16 +6,12 @@
 
 ## المحتويات الحالية
 
-- `source/warsh-muthamma-source.pdf`: ملف PDF الأصلي الذي ستستخرج منه الصور.
+- `source/warsh-muthamma-source.pdf`: ملف PDF الأصلي الذي استخرجت منه الصور.
 - `data/thumn/warsh_muthamma_thumn_pages.json`: بيانات توزيع الأثمان على صفحات هذا الملف.
 - `data/thumn/warsh_muthamma_thumn_pages.zip`: نفس بيانات توزيع الأثمان بصيغة مضغوطة.
 - `manifest.json`: وصف أولي للنسخة والملفات المهمة.
-
-## المحتويات التي ستضاف لاحقا
-
-- `pages/png/page001.png` إلى `pages/png/page485.png`: صور الصفحات بعد الاستخراج والتحسين الخفيف.
-- `zips/`: حزم مضغوطة للصور، حتى يستطيع التطبيق تنزيلها دفعة واحدة.
-- `databases/ayahinfo/`: بيانات تحديد الآيات إذا أضيفت لاحقا.
+- `pages/width_1188/page001.png` إلى `pages/width_1188/page485.png`: صور الصفحات الجاهزة بعد القص والضغط اللوني.
+- `zips/warsh_muthamma_pages_png.zip`: الحزمة المضغوطة الجاهزة للرفع.
 
 ## ملاحظات مهمة
 
@@ -25,21 +21,19 @@
 
 ## بنية التحميل المقترحة للتطبيق
 
-عند رفع هذا المستودع إلى GitHub يمكن استعمال روابط raw أو GitHub Releases. الأفضل للصور الكبيرة أن توضع الحزم في Releases أو في تخزين خارجي سريع مثل Cloudflare R2/S3، مع إبقاء `manifest.json` في المستودع.
+عند رفع هذا المستودع إلى GitHub يمكن استعمال روابط raw أو GitHub Releases. الأفضل للصور الكبيرة أن توضع الحزم في Releases أو في تخزين خارجي سريع، مع إبقاء `manifest.json` في المستودع.
 
-النمط المقترح للصور:
+النمط الحالي للصور:
 
 ```text
-pages/png/page001.png
-pages/png/page002.png
+pages/width_1188/page001.png
+pages/width_1188/page002.png
 ...
-pages/png/page485.png
+pages/width_1188/page485.png
 ```
 
-والنمط المقترح للحزم:
+والحزمة الجاهزة:
 
 ```text
 zips/warsh_muthamma_pages_png.zip
 ```
-
-بهذا يصبح دمجها في التطبيق أقرب إلى منطق الطبعات المصورة الحالية.

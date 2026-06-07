@@ -10,15 +10,15 @@
     "sha256": "1F9DAD7377AFE1395F0DBC3CEBFD50DFD9A600989067E6BE0F689EDE9F1B204A"
   },
   "pages": {
-    "status": "extracted_raw",
+    "status": "indexed_128_optimized",
     "primaryFormat": "png",
     "dpi": 300,
-    "directory": "pages/png/",
+    "directory": "pages/width_1188/",
     "filePattern": "page%03d.png",
     "firstPage": 1,
     "lastPage": 485,
     "count": 485,
-    "totalBytes": 193783251,
+    "totalBytes": 112545451,
     "index": "pages/pages_png_index.json",
     "zip": "zips/warsh_muthamma_pages_png.zip"
   },
@@ -36,8 +36,8 @@
   },
   "integration": {
     "storageDirectoryName": "warsh_muthamma",
-    "recommendedImagesBaseUrl": "https://raw.githubusercontent.com/OWNER/REPO/main/pages/png/",
-    "recommendedImagesZipBaseUrl": "https://github.com/OWNER/REPO/releases/download/v1/",
+    "recommendedImagesBaseUrl": "https://raw.githubusercontent.com/youssef1817/warsh-muthamma-assets/main/pages/",
+    "recommendedImagesZipBaseUrl": "https://github.com/youssef1817/warsh-muthamma-assets/releases/download/v1/",
     "recommendedAyahInfoBaseUrl": "https://raw.githubusercontent.com/OWNER/REPO/main/databases/ayahinfo/"
   }
 }
