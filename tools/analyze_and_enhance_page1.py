@@ -51,7 +51,11 @@ def apply_variant(image: Image.Image, spec: VariantSpec) -> Image.Image:
 def describe_palette(image: Image.Image, topn: int = 12) -> list[dict[str, object]]:
     reduced = image.convert("RGB").quantize(colors=topn, method=Image.Quantize.MEDIANCUT)
     palette = reduced.getpalette()
-    counts = Counter(reduced.getdata())
+    counts: Counter[int] = Counter()
+    reduced_pixels = reduced.load()
+    for y in range(reduced.height):
+        for x in range(reduced.width):
+            counts[reduced_pixels[x, y]] += 1
     total = reduced.size[0] * reduced.size[1]
     rows: list[dict[str, object]] = []
     for index, count in counts.most_common(topn):
@@ -70,8 +74,16 @@ def describe_palette(image: Image.Image, topn: int = 12) -> list[dict[str, objec
 
 def hsv_summary(image: Image.Image) -> dict[str, float]:
     small = image.convert("RGB").resize((256, 256))
-    pixels = list(small.getdata())
-    hsv = [rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0) for r, g, b in pixels]
+    rgb_pixels = small.load()
+    hsv = [
+        rgb_to_hsv(
+            rgb_pixels[x, y][0] / 255.0,
+            rgb_pixels[x, y][1] / 255.0,
+            rgb_pixels[x, y][2] / 255.0,
+        )
+        for y in range(small.height)
+        for x in range(small.width)
+    ]
     avg_h = sum(h for h, _, _ in hsv) / len(hsv)
     avg_s = sum(s for _, s, _ in hsv) / len(hsv)
     avg_v = sum(v for _, _, v in hsv) / len(hsv)

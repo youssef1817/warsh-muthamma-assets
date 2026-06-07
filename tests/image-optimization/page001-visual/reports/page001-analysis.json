@@ -1,0 +1,251 @@
+{
+  "source": "C:\\Users\\pc\\dev\\al-quran\\warsh-muthamma-assets\\tests\\image-optimization\\originals\\page001.png",
+  "sourceBytes": 5397688,
+  "size": [
+    1440,
+    2006
+  ],
+  "paletteSummary": [
+    {
+      "rgb": [
+        254,
+        254,
+        254
+      ],
+      "hex": "#FEFEFE",
+      "pixels": 959023,
+      "percent": 33.2
+    },
+    {
+      "rgb": [
+        250,
+        250,
+        245
+      ],
+      "hex": "#FAFAF5",
+      "pixels": 262881,
+      "percent": 9.1
+    },
+    {
+      "rgb": [
+        202,
+        99,
+        50
+      ],
+      "hex": "#CA6332",
+      "pixels": 247333,
+      "percent": 8.56
+    },
+    {
+      "rgb": [
+        238,
+        237,
+        235
+      ],
+      "hex": "#EEEDEB",
+      "pixels": 217216,
+      "percent": 7.52
+    },
+    {
+      "rgb": [
+        23,
+        4,
+        13
+      ],
+      "hex": "#17040D",
+      "pixels": 190600,
+      "percent": 6.6
+    },
+    {
+      "rgb": [
+        98,
+        95,
+        85
+      ],
+      "hex": "#625F55",
+      "pixels": 186672,
+      "percent": 6.46
+    },
+    {
+      "rgb": [
+        83,
+        31,
+        28
+      ],
+      "hex": "#531F1C",
+      "pixels": 180960,
+      "percent": 6.26
+    },
+    {
+      "rgb": [
+        26,
+        26,
+        36
+      ],
+      "hex": "#1A1A24",
+      "pixels": 173487,
+      "percent": 6.01
+    },
+    {
+      "rgb": [
+        186,
+        31,
+        30
+      ],
+      "hex": "#BA1F1E",
+      "pixels": 151726,
+      "percent": 5.25
+    },
+    {
+      "rgb": [
+        87,
+        146,
+        148
+      ],
+      "hex": "#579294",
+      "pixels": 128723,
+      "percent": 4.46
+    },
+    {
+      "rgb": [
+        211,
+        162,
+        141
+      ],
+      "hex": "#D3A28D",
+      "pixels": 126582,
+      "percent": 4.38
+    },
+    {
+      "rgb": [
+        250,
+        239,
+        239
+      ],
+      "hex": "#FAEFEF",
+      "pixels": 63437,
+      "percent": 2.2
+    }
+  ],
+  "hsvSummary": {
+    "avgHue01": 0.2166,
+    "avgSaturation01": 0.2827,
+    "avgValue01": 0.7576
+  },
+  "notes": [
+    "The page is color-dense and ornament-heavy, not text-heavy only.",
+    "White background occupies a large area, but the perceived identity comes from saturated reds, blues, greens, and orange borders.",
+    "Small boosts in contrast and saturation are safer than aggressive sharpening.",
+    "Indexed PNG may reduce weight substantially, but it can introduce banding or dotted edges in ornaments."
+  ],
+  "variants": [
+    {
+      "name": "balanced_rgb",
+      "file": "page001-balanced_rgb.png",
+      "mode": "RGB",
+      "bytes": 4511803,
+      "deltaBytes": -885885,
+      "deltaPercent": -16.41,
+      "settings": {
+        "contrast": 1.05,
+        "color": 1.06,
+        "brightness": 1.005,
+        "unsharpRadius": 1.1,
+        "unsharpPercent": 75,
+        "unsharpThreshold": 2,
+        "quantizeColors": null,
+        "dither": true
+      }
+    },
+    {
+      "name": "crisp_rgb",
+      "file": "page001-crisp_rgb.png",
+      "mode": "RGB",
+      "bytes": 4358002,
+      "deltaBytes": -1039686,
+      "deltaPercent": -19.26,
+      "settings": {
+        "contrast": 1.08,
+        "color": 1.04,
+        "brightness": 1.0,
+        "unsharpRadius": 1.2,
+        "unsharpPercent": 95,
+        "unsharpThreshold": 2,
+        "quantizeColors": null,
+        "dither": true
+      }
+    },
+    {
+      "name": "vivid_rgb",
+      "file": "page001-vivid_rgb.png",
+      "mode": "RGB",
+      "bytes": 4171398,
+      "deltaBytes": -1226290,
+      "deltaPercent": -22.72,
+      "settings": {
+        "contrast": 1.1,
+        "color": 1.12,
+        "brightness": 1.005,
+        "unsharpRadius": 1.15,
+        "unsharpPercent": 85,
+        "unsharpThreshold": 2,
+        "quantizeColors": null,
+        "dither": true
+      }
+    },
+    {
+      "name": "balanced_indexed_256",
+      "file": "page001-balanced_indexed_256.png",
+      "mode": "P",
+      "bytes": 1413152,
+      "deltaBytes": -3984536,
+      "deltaPercent": -73.82,
+      "settings": {
+        "contrast": 1.05,
+        "color": 1.06,
+        "brightness": 1.005,
+        "unsharpRadius": 1.1,
+        "unsharpPercent": 75,
+        "unsharpThreshold": 2,
+        "quantizeColors": 256,
+        "dither": true
+      }
+    },
+    {
+      "name": "balanced_indexed_128",
+      "file": "page001-balanced_indexed_128.png",
+      "mode": "P",
+      "bytes": 1193736,
+      "deltaBytes": -4203952,
+      "deltaPercent": -77.88,
+      "settings": {
+        "contrast": 1.05,
+        "color": 1.06,
+        "brightness": 1.005,
+        "unsharpRadius": 1.1,
+        "unsharpPercent": 75,
+        "unsharpThreshold": 2,
+        "quantizeColors": 128,
+        "dither": true
+      }
+    },
+    {
+      "name": "crisp_indexed_256_nodither",
+      "file": "page001-crisp_indexed_256_nodither.png",
+      "mode": "P",
+      "bytes": 1360595,
+      "deltaBytes": -4037093,
+      "deltaPercent": -74.79,
+      "settings": {
+        "contrast": 1.08,
+        "color": 1.04,
+        "brightness": 1.0,
+        "unsharpRadius": 1.2,
+        "unsharpPercent": 95,
+        "unsharpThreshold": 2,
+        "quantizeColors": 256,
+        "dither": false
+      }
+    }
+  ]
+}
