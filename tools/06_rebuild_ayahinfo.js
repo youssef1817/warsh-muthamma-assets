@@ -25,6 +25,9 @@ function main() {
   const allHighlights = [];
   const allMarkers = [];
   const allHeaders = [];
+  const allPageBands = [];
+
+  const layoutDir = path.join(outputDir, 'page_layout_json');
 
   // 2. Parse each JSON file
   for (const file of files) {
@@ -44,6 +47,28 @@ function main() {
       console.error(`Error reading or parsing ${file}:`, err);
       process.exit(1);
     }
+    
+    const layoutPath = path.join(layoutDir, file);
+    try {
+      if (fs.existsSync(layoutPath)) {
+        const layoutData = JSON.parse(fs.readFileSync(layoutPath, 'utf8'));
+        if (layoutData.lineBands) {
+          const imgHeight = layoutData.imageHeight || 2000;
+          for (const b of layoutData.lineBands) {
+            allPageBands.push({
+              page: parseInt(file.replace('page_', '').replace('.json', '')),
+              line: b.line,
+              top: Number((b.top / imgHeight).toFixed(4)),
+              bottom: Number((b.bottom / imgHeight).toFixed(4)),
+              center: Number((b.center / imgHeight).toFixed(4))
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error(`Error reading or parsing layout for ${file}:`, err);
+      process.exit(1);
+    }
   }
 
   // 3. Re-create SQLite database
@@ -60,6 +85,7 @@ function main() {
       DROP TABLE IF EXISTS ayah_highlights;
       DROP TABLE IF EXISTS ayah_markers;
       DROP TABLE IF EXISTS sura_headers;
+      DROP TABLE IF EXISTS page_line_bands;
     `);
   }
 
@@ -90,6 +116,15 @@ function main() {
       sura INTEGER,
       center_x REAL,
       center_y REAL
+    );
+  `);
+  outDb.exec(`
+    CREATE TABLE IF NOT EXISTS page_line_bands (
+      page INTEGER,
+      line INTEGER,
+      top REAL,
+      bottom REAL,
+      center REAL
     );
   `);
 
@@ -126,6 +161,15 @@ function main() {
   `);
   for (const sh of allHeaders) {
     insertHeader.run(sh.page, sh.sura, sh.center_x, sh.center_y);
+  }
+
+  // Insert line bands
+  const insertBand = outDb.prepare(`
+    INSERT INTO page_line_bands (page, line, top, bottom, center)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  for (const b of allPageBands) {
+    insertBand.run(b.page, b.line, b.top, b.bottom, b.center);
   }
 
   // Commit Transaction

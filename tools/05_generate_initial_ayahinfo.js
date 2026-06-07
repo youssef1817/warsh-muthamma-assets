@@ -197,14 +197,39 @@ function main() {
   const allHighlights = [];
   const allMarkers = [];
   const allHeaders = [];
+  const allPageBands = [];
   const pagesJson = {};
 
   const left_margin = 0.08;
   const right_margin = 0.92;
-  const line_count = 15;
+
+  // Load all layout JSONs
+  const layoutData = {};
+  for (let p = 1; p <= 485; p++) {
+    const layoutPath = path.join(jsonOutputDir.replace('pages_json', 'page_layout_json'), `page_${String(p).padLeft(3, '0')}.json`);
+    try {
+      const layout = JSON.parse(fs.readFileSync(layoutPath, 'utf8'));
+      layoutData[p] = layout;
+      for (const b of layout.lineBands) {
+        allPageBands.push({
+          page: p,
+          line: b.line,
+          top: Number((b.top / layout.imageHeight).toFixed(4)),
+          bottom: Number((b.bottom / layout.imageHeight).toFixed(4)),
+          center: Number((b.center / layout.imageHeight).toFixed(4))
+        });
+      }
+    } catch (e) {
+      console.warn(`Warning: Could not load layout for page ${p}`);
+      layoutData[p] = { detectedLineCount: 15, imageHeight: 2000, lineBands: [] };
+    }
+  }
 
   for (let p = 1; p <= 485; p++) {
     const verses = pageVerses[p];
+    const layout = layoutData[p];
+    const line_count = layout.detectedLineCount;
+
     if (verses.length === 0) {
       console.warn(`Warning: Page ${p} has no verses assigned!`);
       continue;
@@ -217,15 +242,15 @@ function main() {
     if (p === 1) {
       // Manual preset for Page 1 (Fatiha) to look centered and not overlap ornaments
       // Sura 1 Ayah 1-7
-      // We will map each ayah to a single line from line 5 to 11
+      // We map each ayah to the actual detected manual bands 1..7.
       const fatihaLines = [
-        { ayah: 1, line: 5, left: 0.30, right: 0.70 },
-        { ayah: 2, line: 6, left: 0.25, right: 0.75 },
-        { ayah: 3, line: 7, left: 0.28, right: 0.72 },
-        { ayah: 4, line: 8, left: 0.28, right: 0.72 },
-        { ayah: 5, line: 9, left: 0.25, right: 0.75 },
-        { ayah: 6, line: 10, left: 0.25, right: 0.75 },
-        { ayah: 7, line: 11, left: 0.20, right: 0.80 }
+        { ayah: 1, line: 1, left: 0.30, right: 0.70 },
+        { ayah: 2, line: 2, left: 0.25, right: 0.75 },
+        { ayah: 3, line: 3, left: 0.28, right: 0.72 },
+        { ayah: 4, line: 4, left: 0.28, right: 0.72 },
+        { ayah: 5, line: 5, left: 0.25, right: 0.75 },
+        { ayah: 6, line: 6, left: 0.25, right: 0.75 },
+        { ayah: 7, line: 7, left: 0.20, right: 0.80 }
       ];
 
       for (const item of fatihaLines) {
@@ -252,30 +277,36 @@ function main() {
         allMarkers.push(marker);
       }
 
-      // Sura Header for Sura 1 (placed at line 2)
-      const header_y = (2 - 0.5) * (3480.0 / line_count); // 348.0
+      // Sura Header for Sura 1 (normalized coordinates)
+      let header_y = 0.1;
+      if (layout.lineBands.length > 1) {
+        header_y = layout.lineBands[1].center / layout.imageHeight;
+      } else {
+        header_y = (2 - 0.5) * (3480.0 / line_count) / 3480.0;
+      }
+
       const header = {
         page: 1,
         sura: 1,
-        center_x: 720.0,
-        center_y: Number(header_y.toFixed(2))
+        center_x: 0.5,
+        center_y: Number(header_y.toFixed(4))
       };
       pageHeaders.push(header);
       allHeaders.push(header);
 
     } else if (p === 2) {
       // Manual preset for Page 2 (Baqarah 1-9) to look centered and start after sura header and Bismillah
-      // Sura 2 Ayah 1-9 mapped to lines 5 to 13
+      // Sura 2 Ayah 1-9 mapped to the actual detected manual bands 1..9.
       const baqarahLines = [
-        { ayah: 1, line: 5, left: 0.40, right: 0.60 }, // الم
-        { ayah: 2, line: 6, left: 0.25, right: 0.75 },
-        { ayah: 3, line: 7, left: 0.20, right: 0.80 },
-        { ayah: 4, line: 8, left: 0.20, right: 0.80 },
-        { ayah: 5, line: 9, left: 0.25, right: 0.75 },
-        { ayah: 6, line: 10, left: 0.20, right: 0.80 },
-        { ayah: 7, line: 11, left: 0.20, right: 0.80 },
-        { ayah: 8, line: 12, left: 0.20, right: 0.80 },
-        { ayah: 9, line: 13, left: 0.20, right: 0.80 }
+        { ayah: 1, line: 1, left: 0.40, right: 0.60 }, // الم
+        { ayah: 2, line: 2, left: 0.25, right: 0.75 },
+        { ayah: 3, line: 3, left: 0.20, right: 0.80 },
+        { ayah: 4, line: 4, left: 0.20, right: 0.80 },
+        { ayah: 5, line: 5, left: 0.25, right: 0.75 },
+        { ayah: 6, line: 6, left: 0.20, right: 0.80 },
+        { ayah: 7, line: 7, left: 0.20, right: 0.80 },
+        { ayah: 8, line: 8, left: 0.20, right: 0.80 },
+        { ayah: 9, line: 9, left: 0.20, right: 0.80 }
       ];
 
       for (const item of baqarahLines) {
@@ -302,13 +333,19 @@ function main() {
         allMarkers.push(marker);
       }
 
-      // Sura Header for Sura 2 (placed at line 2)
-      const header_y = (2 - 0.5) * (3480.0 / line_count); // 348.0
+      // Sura Header for Sura 2 (normalized coordinates)
+      let header_y = 0.1;
+      if (layout.lineBands.length > 1) {
+        header_y = layout.lineBands[1].center / layout.imageHeight;
+      } else {
+        header_y = (2 - 0.5) * (3480.0 / line_count) / 3480.0;
+      }
+
       const header = {
         page: 2,
         sura: 2,
-        center_x: 720.0,
-        center_y: Number(header_y.toFixed(2))
+        center_x: 0.5,
+        center_y: Number(header_y.toFixed(4))
       };
       pageHeaders.push(header);
       allHeaders.push(header);
@@ -386,15 +423,19 @@ function main() {
 
         // Add Sura Header if ayah is 1
         if (v.ayah === 1) {
-          // Place sura header on the line where ayah 1 starts
           const header_line_idx = Math.min(line_count - 1, Math.floor(line_start_frac));
-          const header_y = (header_line_idx + 0.5) * (3480.0 / line_count);
+          let header_y = 0.1;
+          if (layout.lineBands.length > header_line_idx) {
+            header_y = layout.lineBands[header_line_idx].center / layout.imageHeight;
+          } else {
+            header_y = (header_line_idx + 0.5) * (3480.0 / line_count) / 3480.0;
+          }
 
           const header = {
             page: p,
             sura: v.sura,
-            center_x: 720.0,
-            center_y: Number(header_y.toFixed(2))
+            center_x: 0.5,
+            center_y: Number(header_y.toFixed(4))
           };
 
           pageHeaders.push(header);
@@ -428,6 +469,7 @@ function main() {
       DROP TABLE IF EXISTS ayah_highlights;
       DROP TABLE IF EXISTS ayah_markers;
       DROP TABLE IF EXISTS sura_headers;
+      DROP TABLE IF EXISTS page_line_bands;
     `);
   }
 
@@ -458,6 +500,15 @@ function main() {
       sura INTEGER,
       center_x REAL,
       center_y REAL
+    );
+  `);
+  outDb.exec(`
+    CREATE TABLE IF NOT EXISTS page_line_bands (
+      page INTEGER,
+      line INTEGER,
+      top REAL,
+      bottom REAL,
+      center REAL
     );
   `);
 
@@ -494,6 +545,15 @@ function main() {
   `);
   for (const sh of allHeaders) {
     insertHeader.run(sh.page, sh.sura, sh.center_x, sh.center_y);
+  }
+
+  // Insert line bands
+  const insertBand = outDb.prepare(`
+    INSERT INTO page_line_bands (page, line, top, bottom, center)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  for (const b of allPageBands) {
+    insertBand.run(b.page, b.line, b.top, b.bottom, b.center);
   }
 
   // Commit Transaction

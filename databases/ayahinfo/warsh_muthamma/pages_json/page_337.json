@@ -14,7 +14,7 @@
       "line": 2,
       "sura": 33,
       "ayah": 18,
-      "left": 0.41,
+      "left": 0.32,
       "right": 0.92
     },
     {
@@ -23,7 +23,7 @@
       "sura": 33,
       "ayah": 19,
       "left": 0.08,
-      "right": 0.41
+      "right": 0.32
     },
     {
       "page": 337,
@@ -54,7 +54,7 @@
       "line": 6,
       "sura": 33,
       "ayah": 19,
-      "left": 0.62,
+      "left": 0.32,
       "right": 0.92
     },
     {
@@ -63,7 +63,7 @@
       "sura": 33,
       "ayah": 20,
       "left": 0.08,
-      "right": 0.62
+      "right": 0.32
     },
     {
       "page": 337,
@@ -78,16 +78,16 @@
       "line": 8,
       "sura": 33,
       "ayah": 20,
-      "left": 0.2333,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 337,
-      "line": 8,
+      "line": 9,
       "sura": 33,
-      "ayah": 21,
-      "left": 0.08,
-      "right": 0.2333
+      "ayah": 20,
+      "left": 0.6356,
+      "right": 0.92
     },
     {
       "page": 337,
@@ -95,23 +95,23 @@
       "sura": 33,
       "ayah": 21,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.6356
     },
     {
       "page": 337,
       "line": 10,
       "sura": 33,
       "ayah": 21,
-      "left": 0.5633,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 337,
-      "line": 10,
+      "line": 11,
       "sura": 33,
-      "ayah": 22,
-      "left": 0.08,
-      "right": 0.5633
+      "ayah": 21,
+      "left": 0.8756,
+      "right": 0.92
     },
     {
       "page": 337,
@@ -119,23 +119,23 @@
       "sura": 33,
       "ayah": 22,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.8756
     },
     {
       "page": 337,
       "line": 12,
       "sura": 33,
       "ayah": 22,
-      "left": 0.5433,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 337,
-      "line": 12,
+      "line": 13,
       "sura": 33,
-      "ayah": 23,
-      "left": 0.08,
-      "right": 0.5433
+      "ayah": 22,
+      "left": 0.7422,
+      "right": 0.92
     },
     {
       "page": 337,
@@ -143,27 +143,35 @@
       "sura": 33,
       "ayah": 23,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.7422
     },
     {
       "page": 337,
       "line": 14,
       "sura": 33,
       "ayah": 23,
-      "left": 0.69,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 337,
-      "line": 14,
+      "line": 15,
       "sura": 33,
-      "ayah": 24,
-      "left": 0.08,
-      "right": 0.69
+      "ayah": 23,
+      "left": 0.7867,
+      "right": 0.92
     },
     {
       "page": 337,
       "line": 15,
+      "sura": 33,
+      "ayah": 24,
+      "left": 0.08,
+      "right": 0.7867
+    },
+    {
+      "page": 337,
+      "line": 16,
       "sura": 33,
       "ayah": 24,
       "left": 0.08,
@@ -176,7 +184,7 @@
       "sura": 33,
       "ayah": 18,
       "line": 2,
-      "center_x": 0.41,
+      "center_x": 0.32,
       "center_y": 0.5
     },
     {
@@ -184,46 +192,46 @@
       "sura": 33,
       "ayah": 19,
       "line": 6,
-      "center_x": 0.62,
+      "center_x": 0.32,
       "center_y": 0.5
     },
     {
       "page": 337,
       "sura": 33,
       "ayah": 20,
-      "line": 8,
-      "center_x": 0.2333,
+      "line": 9,
+      "center_x": 0.6356,
       "center_y": 0.5
     },
     {
       "page": 337,
       "sura": 33,
       "ayah": 21,
-      "line": 10,
-      "center_x": 0.5633,
+      "line": 11,
+      "center_x": 0.8756,
       "center_y": 0.5
     },
     {
       "page": 337,
       "sura": 33,
       "ayah": 22,
-      "line": 12,
-      "center_x": 0.5433,
+      "line": 13,
+      "center_x": 0.7422,
       "center_y": 0.5
     },
     {
       "page": 337,
       "sura": 33,
       "ayah": 23,
-      "line": 14,
-      "center_x": 0.69,
+      "line": 15,
+      "center_x": 0.7867,
       "center_y": 0.5
     },
     {
       "page": 337,
       "sura": 33,
       "ayah": 24,
-      "line": 15,
+      "line": 16,
       "center_x": 0.08,
       "center_y": 0.5
     }

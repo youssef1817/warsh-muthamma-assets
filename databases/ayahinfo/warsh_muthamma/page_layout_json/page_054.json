@@ -1,0 +1,120 @@
+{
+  "page": 54,
+  "imageWidth": 1272,
+  "imageHeight": 2033,
+  "textRegion": {
+    "top": 101,
+    "bottom": 1951,
+    "left": 152,
+    "right": 1119
+  },
+  "detectedLineCount": 16,
+  "lineBands": [
+    {
+      "line": 1,
+      "top": 101,
+      "bottom": 157,
+      "center": 129
+    },
+    {
+      "line": 2,
+      "top": 157,
+      "bottom": 273,
+      "center": 215
+    },
+    {
+      "line": 3,
+      "top": 273,
+      "bottom": 394,
+      "center": 334
+    },
+    {
+      "line": 4,
+      "top": 394,
+      "bottom": 510,
+      "center": 452
+    },
+    {
+      "line": 5,
+      "top": 510,
+      "bottom": 638,
+      "center": 574
+    },
+    {
+      "line": 6,
+      "top": 638,
+      "bottom": 760,
+      "center": 699
+    },
+    {
+      "line": 7,
+      "top": 760,
+      "bottom": 875,
+      "center": 818
+    },
+    {
+      "line": 8,
+      "top": 875,
+      "bottom": 998,
+      "center": 937
+    },
+    {
+      "line": 9,
+      "top": 998,
+      "bottom": 1119,
+      "center": 1059
+    },
+    {
+      "line": 10,
+      "top": 1119,
+      "bottom": 1243,
+      "center": 1181
+    },
+    {
+      "line": 11,
+      "top": 1243,
+      "bottom": 1368,
+      "center": 1306
+    },
+    {
+      "line": 12,
+      "top": 1368,
+      "bottom": 1481,
+      "center": 1425
+    },
+    {
+      "line": 13,
+      "top": 1481,
+      "bottom": 1603,
+      "center": 1542
+    },
+    {
+      "line": 14,
+      "top": 1603,
+      "bottom": 1716,
+      "center": 1660
+    },
+    {
+      "line": 15,
+      "top": 1716,
+      "bottom": 1847,
+      "center": 1782
+    },
+    {
+      "line": 16,
+      "top": 1847,
+      "bottom": 1951,
+      "center": 1899
+    }
+  ],
+  "confidence": 0.85,
+  "manualOverride": false,
+  "method": "peak_valley_v2",
+  "debug": {
+    "rawBandCount": 16,
+    "splitBands": 16,
+    "medianHeight": 121,
+    "merged": 0,
+    "tallerThan1_6": 0
+  }
+}

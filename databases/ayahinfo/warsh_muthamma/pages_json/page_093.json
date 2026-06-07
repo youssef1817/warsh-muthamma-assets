@@ -54,7 +54,7 @@
       "line": 7,
       "sura": 5,
       "ayah": 43,
-      "left": 0.5063,
+      "left": 0.1427,
       "right": 0.92
     },
     {
@@ -63,7 +63,7 @@
       "sura": 5,
       "ayah": 44,
       "left": 0.08,
-      "right": 0.5063
+      "right": 0.1427
     },
     {
       "page": 93,
@@ -86,7 +86,7 @@
       "line": 10,
       "sura": 5,
       "ayah": 44,
-      "left": 0.8636,
+      "left": 0.3558,
       "right": 0.92
     },
     {
@@ -95,23 +95,23 @@
       "sura": 5,
       "ayah": 45,
       "left": 0.08,
-      "right": 0.8636
+      "right": 0.3558
     },
     {
       "page": 93,
       "line": 11,
       "sura": 5,
       "ayah": 45,
-      "left": 0.4185,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 93,
-      "line": 11,
+      "line": 12,
       "sura": 5,
-      "ayah": 46,
-      "left": 0.08,
-      "right": 0.4185
+      "ayah": 45,
+      "left": 0.6651,
+      "right": 0.92
     },
     {
       "page": 93,
@@ -119,7 +119,7 @@
       "sura": 5,
       "ayah": 46,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.6651
     },
     {
       "page": 93,
@@ -144,6 +144,14 @@
       "ayah": 46,
       "left": 0.08,
       "right": 0.92
+    },
+    {
+      "page": 93,
+      "line": 16,
+      "sura": 5,
+      "ayah": 46,
+      "left": 0.08,
+      "right": 0.92
     }
   ],
   "ayah_markers": [
@@ -152,7 +160,7 @@
       "sura": 5,
       "ayah": 43,
       "line": 7,
-      "center_x": 0.5063,
+      "center_x": 0.1427,
       "center_y": 0.5
     },
     {
@@ -160,22 +168,22 @@
       "sura": 5,
       "ayah": 44,
       "line": 10,
-      "center_x": 0.8636,
+      "center_x": 0.3558,
       "center_y": 0.5
     },
     {
       "page": 93,
       "sura": 5,
       "ayah": 45,
-      "line": 11,
-      "center_x": 0.4185,
+      "line": 12,
+      "center_x": 0.6651,
       "center_y": 0.5
     },
     {
       "page": 93,
       "sura": 5,
       "ayah": 46,
-      "line": 15,
+      "line": 16,
       "center_x": 0.08,
       "center_y": 0.5
     }

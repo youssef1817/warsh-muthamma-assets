@@ -1,0 +1,78 @@
+{
+  "page": 2,
+  "imageWidth": 1440,
+  "imageHeight": 2006,
+  "textRegion": {
+    "top": 100,
+    "bottom": 1925,
+    "left": 172,
+    "right": 1267
+  },
+  "detectedLineCount": 9,
+  "lineBands": [
+    {
+      "line": 1,
+      "top": 401,
+      "bottom": 535,
+      "center": 468
+    },
+    {
+      "line": 2,
+      "top": 535,
+      "bottom": 668,
+      "center": 602
+    },
+    {
+      "line": 3,
+      "top": 668,
+      "bottom": 802,
+      "center": 735
+    },
+    {
+      "line": 4,
+      "top": 802,
+      "bottom": 936,
+      "center": 869
+    },
+    {
+      "line": 5,
+      "top": 936,
+      "bottom": 1069,
+      "center": 1003
+    },
+    {
+      "line": 6,
+      "top": 1069,
+      "bottom": 1203,
+      "center": 1136
+    },
+    {
+      "line": 7,
+      "top": 1203,
+      "bottom": 1337,
+      "center": 1270
+    },
+    {
+      "line": 8,
+      "top": 1337,
+      "bottom": 1470,
+      "center": 1404
+    },
+    {
+      "line": 9,
+      "top": 1470,
+      "bottom": 1604,
+      "center": 1537
+    }
+  ],
+  "confidence": 1,
+  "manualOverride": true,
+  "method": "peak_valley_v2",
+  "debug": {
+    "rawBandCount": 9,
+    "splitBands": 9,
+    "medianHeight": 133.66666666666666,
+    "merged": 0,
+    "tallerThan1_6": 0
+  }
+}

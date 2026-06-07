@@ -14,7 +14,7 @@
       "line": 2,
       "sura": 5,
       "ayah": 107,
-      "left": 0.5107,
+      "left": 0.2608,
       "right": 0.92
     },
     {
@@ -23,7 +23,7 @@
       "sura": 5,
       "ayah": 108,
       "left": 0.08,
-      "right": 0.5107
+      "right": 0.2608
     },
     {
       "page": 102,
@@ -54,16 +54,16 @@
       "line": 6,
       "sura": 5,
       "ayah": 108,
-      "left": 0.7296,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 102,
-      "line": 6,
+      "line": 7,
       "sura": 5,
-      "ayah": 109,
-      "left": 0.08,
-      "right": 0.7296
+      "ayah": 108,
+      "left": 0.6916,
+      "right": 0.92
     },
     {
       "page": 102,
@@ -71,23 +71,23 @@
       "sura": 5,
       "ayah": 109,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.6916
     },
     {
       "page": 102,
       "line": 8,
       "sura": 5,
       "ayah": 109,
-      "left": 0.5892,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 102,
-      "line": 8,
+      "line": 9,
       "sura": 5,
-      "ayah": 110,
-      "left": 0.08,
-      "right": 0.5892
+      "ayah": 109,
+      "left": 0.1871,
+      "right": 0.92
     },
     {
       "page": 102,
@@ -95,46 +95,46 @@
       "sura": 5,
       "ayah": 110,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.1871
     },
     {
       "page": 102,
       "line": 10,
       "sura": 5,
       "ayah": 110,
-      "left": 0.8415,
-      "right": 0.92
-    },
-    {
-      "page": 102,
-      "line": 10,
-      "sura": 5,
-      "ayah": 111,
       "left": 0.08,
-      "right": 0.8415
-    },
-    {
-      "page": 102,
-      "line": 11,
-      "sura": 5,
-      "ayah": 111,
-      "left": 0.8129,
       "right": 0.92
     },
     {
       "page": 102,
       "line": 11,
       "sura": 5,
-      "ayah": 112,
+      "ayah": 110,
+      "left": 0.1538,
+      "right": 0.92
+    },
+    {
+      "page": 102,
+      "line": 11,
+      "sura": 5,
+      "ayah": 111,
       "left": 0.08,
-      "right": 0.8129
+      "right": 0.1538
     },
     {
       "page": 102,
       "line": 12,
       "sura": 5,
-      "ayah": 112,
+      "ayah": 111,
       "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 102,
+      "line": 13,
+      "sura": 5,
+      "ayah": 111,
+      "left": 0.7915,
       "right": 0.92
     },
     {
@@ -143,7 +143,7 @@
       "sura": 5,
       "ayah": 112,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.7915
     },
     {
       "page": 102,
@@ -160,6 +160,30 @@
       "ayah": 112,
       "left": 0.08,
       "right": 0.92
+    },
+    {
+      "page": 102,
+      "line": 16,
+      "sura": 5,
+      "ayah": 112,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 102,
+      "line": 17,
+      "sura": 5,
+      "ayah": 112,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 102,
+      "line": 18,
+      "sura": 5,
+      "ayah": 112,
+      "left": 0.08,
+      "right": 0.92
     }
   ],
   "ayah_markers": [
@@ -168,46 +192,46 @@
       "sura": 5,
       "ayah": 107,
       "line": 2,
-      "center_x": 0.5107,
+      "center_x": 0.2608,
       "center_y": 0.5
     },
     {
       "page": 102,
       "sura": 5,
       "ayah": 108,
-      "line": 6,
-      "center_x": 0.7296,
+      "line": 7,
+      "center_x": 0.6916,
       "center_y": 0.5
     },
     {
       "page": 102,
       "sura": 5,
       "ayah": 109,
-      "line": 8,
-      "center_x": 0.5892,
+      "line": 9,
+      "center_x": 0.1871,
       "center_y": 0.5
     },
     {
       "page": 102,
       "sura": 5,
       "ayah": 110,
-      "line": 10,
-      "center_x": 0.8415,
+      "line": 11,
+      "center_x": 0.1538,
       "center_y": 0.5
     },
     {
       "page": 102,
       "sura": 5,
       "ayah": 111,
-      "line": 11,
-      "center_x": 0.8129,
+      "line": 13,
+      "center_x": 0.7915,
       "center_y": 0.5
     },
     {
       "page": 102,
       "sura": 5,
       "ayah": 112,
-      "line": 15,
+      "line": 18,
       "center_x": 0.08,
       "center_y": 0.5
     }

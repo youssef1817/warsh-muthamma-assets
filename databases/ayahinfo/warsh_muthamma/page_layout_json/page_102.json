@@ -1,0 +1,132 @@
+{
+  "page": 102,
+  "imageWidth": 1278,
+  "imageHeight": 2043,
+  "textRegion": {
+    "top": 102,
+    "bottom": 1961,
+    "left": 153,
+    "right": 1124
+  },
+  "detectedLineCount": 18,
+  "lineBands": [
+    {
+      "line": 1,
+      "top": 102,
+      "bottom": 157,
+      "center": 130
+    },
+    {
+      "line": 2,
+      "top": 157,
+      "bottom": 266,
+      "center": 212
+    },
+    {
+      "line": 3,
+      "top": 266,
+      "bottom": 385,
+      "center": 326
+    },
+    {
+      "line": 4,
+      "top": 385,
+      "bottom": 479,
+      "center": 432
+    },
+    {
+      "line": 5,
+      "top": 479,
+      "bottom": 584,
+      "center": 532
+    },
+    {
+      "line": 6,
+      "top": 584,
+      "bottom": 689,
+      "center": 637
+    },
+    {
+      "line": 7,
+      "top": 689,
+      "bottom": 797,
+      "center": 743
+    },
+    {
+      "line": 8,
+      "top": 797,
+      "bottom": 906,
+      "center": 852
+    },
+    {
+      "line": 9,
+      "top": 906,
+      "bottom": 1019,
+      "center": 963
+    },
+    {
+      "line": 10,
+      "top": 1019,
+      "bottom": 1120,
+      "center": 1070
+    },
+    {
+      "line": 11,
+      "top": 1120,
+      "bottom": 1229,
+      "center": 1175
+    },
+    {
+      "line": 12,
+      "top": 1229,
+      "bottom": 1348,
+      "center": 1289
+    },
+    {
+      "line": 13,
+      "top": 1348,
+      "bottom": 1450,
+      "center": 1399
+    },
+    {
+      "line": 14,
+      "top": 1450,
+      "bottom": 1545,
+      "center": 1498
+    },
+    {
+      "line": 15,
+      "top": 1545,
+      "bottom": 1663,
+      "center": 1604
+    },
+    {
+      "line": 16,
+      "top": 1663,
+      "bottom": 1776,
+      "center": 1720
+    },
+    {
+      "line": 17,
+      "top": 1776,
+      "bottom": 1882,
+      "center": 1829
+    },
+    {
+      "line": 18,
+      "top": 1882,
+      "bottom": 1961,
+      "center": 1922
+    }
+  ],
+  "confidence": 0.85,
+  "manualOverride": false,
+  "method": "peak_valley_v2",
+  "debug": {
+    "rawBandCount": 18,
+    "splitBands": 18,
+    "medianHeight": 108,
+    "merged": 0,
+    "tallerThan1_6": 0
+  }
+}

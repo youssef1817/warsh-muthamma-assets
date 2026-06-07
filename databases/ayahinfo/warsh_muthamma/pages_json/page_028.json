@@ -30,16 +30,16 @@
       "line": 4,
       "sura": 2,
       "ayah": 211,
-      "left": 0.287,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 28,
-      "line": 4,
+      "line": 5,
       "sura": 2,
-      "ayah": 212,
-      "left": 0.08,
-      "right": 0.287
+      "ayah": 211,
+      "left": 0.4964,
+      "right": 0.92
     },
     {
       "page": 28,
@@ -47,29 +47,21 @@
       "sura": 2,
       "ayah": 212,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.4964
     },
     {
       "page": 28,
       "line": 6,
       "sura": 2,
       "ayah": 212,
-      "left": 0.0968,
-      "right": 0.92
-    },
-    {
-      "page": 28,
-      "line": 6,
-      "sura": 2,
-      "ayah": 213,
       "left": 0.08,
-      "right": 0.0968
+      "right": 0.92
     },
     {
       "page": 28,
       "line": 7,
       "sura": 2,
-      "ayah": 213,
+      "ayah": 212,
       "left": 0.08,
       "right": 0.92
     },
@@ -77,23 +69,23 @@
       "page": 28,
       "line": 8,
       "sura": 2,
-      "ayah": 213,
-      "left": 0.2782,
+      "ayah": 212,
+      "left": 0.7721,
       "right": 0.92
     },
     {
       "page": 28,
       "line": 8,
       "sura": 2,
-      "ayah": 214,
+      "ayah": 213,
       "left": 0.08,
-      "right": 0.2782
+      "right": 0.7721
     },
     {
       "page": 28,
       "line": 9,
       "sura": 2,
-      "ayah": 214,
+      "ayah": 213,
       "left": 0.08,
       "right": 0.92
     },
@@ -101,24 +93,32 @@
       "page": 28,
       "line": 10,
       "sura": 2,
-      "ayah": 214,
-      "left": 0.5555,
+      "ayah": 213,
+      "left": 0.6539,
       "right": 0.92
     },
     {
       "page": 28,
       "line": 10,
       "sura": 2,
-      "ayah": 215,
+      "ayah": 214,
       "left": 0.08,
-      "right": 0.5555
+      "right": 0.6539
     },
     {
       "page": 28,
       "line": 11,
       "sura": 2,
-      "ayah": 215,
+      "ayah": 214,
       "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 28,
+      "line": 12,
+      "sura": 2,
+      "ayah": 214,
+      "left": 0.6507,
       "right": 0.92
     },
     {
@@ -127,7 +127,7 @@
       "sura": 2,
       "ayah": 215,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.6507
     },
     {
       "page": 28,
@@ -142,20 +142,44 @@
       "line": 14,
       "sura": 2,
       "ayah": 215,
-      "left": 0.283,
+      "left": 0.08,
       "right": 0.92
     },
     {
       "page": 28,
-      "line": 14,
+      "line": 15,
       "sura": 2,
-      "ayah": 216,
+      "ayah": 215,
       "left": 0.08,
-      "right": 0.283
+      "right": 0.92
     },
     {
       "page": 28,
-      "line": 15,
+      "line": 16,
+      "sura": 2,
+      "ayah": 215,
+      "left": 0.08,
+      "right": 0.92
+    },
+    {
+      "page": 28,
+      "line": 17,
+      "sura": 2,
+      "ayah": 215,
+      "left": 0.4916,
+      "right": 0.92
+    },
+    {
+      "page": 28,
+      "line": 17,
+      "sura": 2,
+      "ayah": 216,
+      "left": 0.08,
+      "right": 0.4916
+    },
+    {
+      "page": 28,
+      "line": 18,
       "sura": 2,
       "ayah": 216,
       "left": 0.08,
@@ -167,47 +191,47 @@
       "page": 28,
       "sura": 2,
       "ayah": 211,
-      "line": 4,
-      "center_x": 0.287,
+      "line": 5,
+      "center_x": 0.4964,
       "center_y": 0.5
     },
     {
       "page": 28,
       "sura": 2,
       "ayah": 212,
-      "line": 6,
-      "center_x": 0.0968,
+      "line": 8,
+      "center_x": 0.7721,
       "center_y": 0.5
     },
     {
       "page": 28,
       "sura": 2,
       "ayah": 213,
-      "line": 8,
-      "center_x": 0.2782,
+      "line": 10,
+      "center_x": 0.6539,
       "center_y": 0.5
     },
     {
       "page": 28,
       "sura": 2,
       "ayah": 214,
-      "line": 10,
-      "center_x": 0.5555,
+      "line": 12,
+      "center_x": 0.6507,
       "center_y": 0.5
     },
     {
       "page": 28,
       "sura": 2,
       "ayah": 215,
-      "line": 14,
-      "center_x": 0.283,
+      "line": 17,
+      "center_x": 0.4916,
       "center_y": 0.5
     },
     {
       "page": 28,
       "sura": 2,
       "ayah": 216,
-      "line": 15,
+      "line": 18,
       "center_x": 0.08,
       "center_y": 0.5
     }

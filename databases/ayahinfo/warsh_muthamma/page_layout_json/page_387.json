@@ -1,0 +1,126 @@
+{
+  "page": 387,
+  "imageWidth": 1259,
+  "imageHeight": 2037,
+  "textRegion": {
+    "top": 101,
+    "bottom": 1955,
+    "left": 151,
+    "right": 1107
+  },
+  "detectedLineCount": 17,
+  "lineBands": [
+    {
+      "line": 1,
+      "top": 101,
+      "bottom": 157,
+      "center": 129
+    },
+    {
+      "line": 2,
+      "top": 157,
+      "bottom": 269,
+      "center": 213
+    },
+    {
+      "line": 3,
+      "top": 269,
+      "bottom": 386,
+      "center": 328
+    },
+    {
+      "line": 4,
+      "top": 386,
+      "bottom": 498,
+      "center": 442
+    },
+    {
+      "line": 5,
+      "top": 498,
+      "bottom": 609,
+      "center": 554
+    },
+    {
+      "line": 6,
+      "top": 609,
+      "bottom": 722,
+      "center": 666
+    },
+    {
+      "line": 7,
+      "top": 722,
+      "bottom": 838,
+      "center": 780
+    },
+    {
+      "line": 8,
+      "top": 838,
+      "bottom": 951,
+      "center": 895
+    },
+    {
+      "line": 9,
+      "top": 951,
+      "bottom": 1067,
+      "center": 1009
+    },
+    {
+      "line": 10,
+      "top": 1067,
+      "bottom": 1181,
+      "center": 1124
+    },
+    {
+      "line": 11,
+      "top": 1181,
+      "bottom": 1287,
+      "center": 1234
+    },
+    {
+      "line": 12,
+      "top": 1287,
+      "bottom": 1407,
+      "center": 1347
+    },
+    {
+      "line": 13,
+      "top": 1407,
+      "bottom": 1509,
+      "center": 1458
+    },
+    {
+      "line": 14,
+      "top": 1509,
+      "bottom": 1685,
+      "center": 1597
+    },
+    {
+      "line": 15,
+      "top": 1685,
+      "bottom": 1757,
+      "center": 1721
+    },
+    {
+      "line": 16,
+      "top": 1757,
+      "bottom": 1863,
+      "center": 1810
+    },
+    {
+      "line": 17,
+      "top": 1863,
+      "bottom": 1955,
+      "center": 1909
+    }
+  ],
+  "confidence": 0.85,
+  "manualOverride": false,
+  "method": "peak_valley_v2",
+  "debug": {
+    "rawBandCount": 17,
+    "splitBands": 17,
+    "medianHeight": 112,
+    "merged": 0,
+    "tallerThan1_6": 0
+  }
+}
