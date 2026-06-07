@@ -1,1 +1,2 @@
+zips/*.zip filter=lfs diff=lfs merge=lfs -text
 zips/warsh_muthamma_pages_png.zip filter=lfs diff=lfs merge=lfs -text

@@ -10,7 +10,7 @@
 - `data/thumn/warsh_muthamma_thumn_pages.json`: بيانات توزيع الأثمان على صفحات هذا الملف.
 - `data/thumn/warsh_muthamma_thumn_pages.zip`: نفس بيانات توزيع الأثمان بصيغة مضغوطة.
 - `manifest.json`: وصف أولي للنسخة والملفات المهمة.
-- `pages/width_1188/page001.png` إلى `pages/width_1188/page485.png`: صور الصفحات الجاهزة بعد القص والضغط اللوني.
+- `pages/warsh_muthamma_png/page001.png` إلى `pages/warsh_muthamma_png/page485.png`: صور الصفحات الجاهزة بعد القص والضغط اللوني.
 - `zips/warsh_muthamma_pages_png.zip`: الحزمة المضغوطة الجاهزة للرفع.
 
 ## ملاحظات مهمة
@@ -26,10 +26,10 @@
 النمط الحالي للصور:
 
 ```text
-pages/width_1188/page001.png
-pages/width_1188/page002.png
+pages/warsh_muthamma_png/page001.png
+pages/warsh_muthamma_png/page002.png
 ...
-pages/width_1188/page485.png
+pages/warsh_muthamma_png/page485.png
 ```
 
 والحزمة الجاهزة:

@@ -33,10 +33,10 @@ PageTypeSpec(
 الصور النهائية داخل المستودع:
 
 ```text
-pages/width_1188/page001.png
-pages/width_1188/page002.png
+pages/warsh_muthamma_png/page001.png
+pages/warsh_muthamma_png/page002.png
 ...
-pages/width_1188/page485.png
+pages/warsh_muthamma_png/page485.png
 ```
 
 وحزمة الصور:

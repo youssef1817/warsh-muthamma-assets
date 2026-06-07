@@ -13,10 +13,10 @@ warsh_muthamma_pages_png.zip
 البنية الحالية داخل الأرشيف:
 
 ```text
-width_1188/page001.png
-width_1188/page002.png
+warsh_muthamma_png/page001.png
+warsh_muthamma_png/page002.png
 ...
-width_1188/page485.png
+warsh_muthamma_png/page485.png
 ```
 
 هذه البنية متوافقة مع منطق فك الضغط الحالي، وسنربطها لاحقا داخل التطبيق كطبعة مستقلة جديدة.
