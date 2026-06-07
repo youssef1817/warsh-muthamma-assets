@@ -10,12 +10,16 @@
     "sha256": "1F9DAD7377AFE1395F0DBC3CEBFD50DFD9A600989067E6BE0F689EDE9F1B204A"
   },
   "pages": {
-    "status": "pending",
+    "status": "extracted_raw",
     "primaryFormat": "png",
+    "dpi": 300,
     "directory": "pages/png/",
     "filePattern": "page%03d.png",
     "firstPage": 1,
     "lastPage": 485,
+    "count": 485,
+    "totalBytes": 193783251,
+    "index": "pages/pages_png_index.json",
     "zip": "zips/warsh_muthamma_pages_png.zip"
   },
   "thumnMapping": {
