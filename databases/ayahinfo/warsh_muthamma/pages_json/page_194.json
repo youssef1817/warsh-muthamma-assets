@@ -7,15 +7,19 @@
       "sura": 12,
       "ayah": 42,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
       "line": 2,
       "sura": 12,
       "ayah": 42,
-      "left": 0.4327,
-      "right": 0.92
+      "left": 0.4692,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -23,7 +27,9 @@
       "sura": 12,
       "ayah": 43,
       "left": 0.08,
-      "right": 0.4327
+      "right": 0.4692,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -31,15 +37,19 @@
       "sura": 12,
       "ayah": 43,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
       "line": 4,
       "sura": 12,
       "ayah": 43,
-      "left": 0.1446,
-      "right": 0.92
+      "left": 0.1871,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -47,15 +57,19 @@
       "sura": 12,
       "ayah": 44,
       "left": 0.08,
-      "right": 0.1446
+      "right": 0.1871,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
       "line": 5,
       "sura": 12,
       "ayah": 44,
-      "left": 0.2523,
-      "right": 0.92
+      "left": 0.1925,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -63,15 +77,19 @@
       "sura": 12,
       "ayah": 45,
       "left": 0.08,
-      "right": 0.2523
+      "right": 0.1925,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
       "line": 6,
       "sura": 12,
       "ayah": 45,
-      "left": 0.1769,
-      "right": 0.92
+      "left": 0.2533,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -79,7 +97,9 @@
       "sura": 12,
       "ayah": 46,
       "left": 0.08,
-      "right": 0.1769
+      "right": 0.2533,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -87,7 +107,9 @@
       "sura": 12,
       "ayah": 46,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
@@ -95,15 +117,19 @@
       "sura": 12,
       "ayah": 46,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
       "line": 9,
       "sura": 12,
       "ayah": 46,
-      "left": 0.9119,
-      "right": 0.92
+      "left": 0.8379,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -111,15 +137,19 @@
       "sura": 12,
       "ayah": 47,
       "left": 0.08,
-      "right": 0.9119
+      "right": 0.8379,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
       "line": 10,
       "sura": 12,
       "ayah": 47,
-      "left": 0.684,
-      "right": 0.92
+      "left": 0.6625,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -127,15 +157,19 @@
       "sura": 12,
       "ayah": 48,
       "left": 0.08,
-      "right": 0.684
+      "right": 0.6625,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
       "line": 11,
       "sura": 12,
       "ayah": 48,
-      "left": 0.5018,
-      "right": 0.92
+      "left": 0.5097,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -143,15 +177,19 @@
       "sura": 12,
       "ayah": 49,
       "left": 0.08,
-      "right": 0.5018
+      "right": 0.5097,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
       "line": 12,
       "sura": 12,
       "ayah": 49,
-      "left": 0.5942,
-      "right": 0.92
+      "left": 0.6181,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -159,7 +197,9 @@
       "sura": 12,
       "ayah": 50,
       "left": 0.08,
-      "right": 0.5942
+      "right": 0.6181,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -167,15 +207,19 @@
       "sura": 12,
       "ayah": 50,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
       "line": 14,
       "sura": 12,
       "ayah": 50,
-      "left": 0.5503,
-      "right": 0.92
+      "left": 0.5121,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -183,7 +227,9 @@
       "sura": 12,
       "ayah": 51,
       "left": 0.08,
-      "right": 0.5503
+      "right": 0.5121,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -191,15 +237,19 @@
       "sura": 12,
       "ayah": 51,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 194,
       "line": 16,
       "sura": 12,
       "ayah": 51,
-      "left": 0.1249,
-      "right": 0.92
+      "left": 0.205,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -207,7 +257,9 @@
       "sura": 12,
       "ayah": 52,
       "left": 0.08,
-      "right": 0.1249
+      "right": 0.205,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 194,
@@ -215,7 +267,9 @@
       "sura": 12,
       "ayah": 52,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     }
   ],
   "ayah_markers": [

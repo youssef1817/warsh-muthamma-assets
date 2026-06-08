@@ -8,111 +8,119 @@
     "left": 151,
     "right": 1114
   },
-  "detectedLineCount": 16,
+  "detectedLineCount": 13,
   "lineBands": [
     {
       "line": 1,
-      "top": 101,
-      "bottom": 192,
-      "center": 147
+      "top": 285,
+      "bottom": 363,
+      "center": 324
     },
     {
       "line": 2,
-      "top": 192,
-      "bottom": 363,
-      "center": 278
-    },
-    {
-      "line": 3,
       "top": 363,
       "bottom": 479,
       "center": 421
     },
     {
-      "line": 4,
+      "line": 3,
       "top": 479,
       "bottom": 590,
       "center": 535
     },
     {
-      "line": 5,
+      "line": 4,
       "top": 590,
       "bottom": 705,
       "center": 648
     },
     {
-      "line": 6,
+      "line": 5,
       "top": 705,
       "bottom": 821,
       "center": 763
     },
     {
-      "line": 7,
+      "line": 6,
       "top": 821,
       "bottom": 933,
       "center": 877
     },
     {
-      "line": 8,
+      "line": 7,
       "top": 933,
       "bottom": 1034,
       "center": 984
     },
     {
-      "line": 9,
+      "line": 8,
       "top": 1034,
       "bottom": 1203,
       "center": 1119
     },
     {
-      "line": 10,
-      "top": 1203,
-      "bottom": 1289,
-      "center": 1246
-    },
-    {
-      "line": 11,
-      "top": 1289,
-      "bottom": 1399,
-      "center": 1344
-    },
-    {
-      "line": 12,
+      "line": 9,
       "top": 1399,
       "bottom": 1511,
       "center": 1455
     },
     {
-      "line": 13,
+      "line": 10,
       "top": 1511,
       "bottom": 1624,
       "center": 1568
     },
     {
-      "line": 14,
+      "line": 11,
       "top": 1624,
       "bottom": 1738,
       "center": 1681
     },
     {
-      "line": 15,
+      "line": 12,
       "top": 1738,
       "bottom": 1848,
       "center": 1793
     },
     {
-      "line": 16,
+      "line": 13,
       "top": 1848,
       "bottom": 1941,
       "center": 1895
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 35,
+      "bottom": 175,
+      "confidence": 1
+    },
+    {
+      "type": "basmala",
+      "top": 205,
+      "bottom": 285,
+      "confidence": 1
+    },
+    {
+      "type": "sura_header",
+      "top": 1203,
+      "bottom": 1289,
+      "confidence": 1
+    },
+    {
+      "type": "basmala",
+      "top": 1289,
+      "bottom": 1399,
+      "confidence": 1
     }
   ],
   "confidence": 0.85,
   "manualOverride": false,
   "method": "peak_valley_v2",
   "debug": {
-    "rawBandCount": 16,
-    "splitBands": 16,
+    "rawBandCount": 13,
+    "splitBands": 13,
     "medianHeight": 112,
     "merged": 0,
     "tallerThan1_6": 0

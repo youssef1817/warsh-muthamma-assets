@@ -8,121 +8,123 @@
     "left": 152,
     "right": 1118
   },
-  "detectedLineCount": 19,
+  "detectedLineCount": 17,
   "lineBands": [
     {
       "line": 1,
-      "top": 103,
-      "bottom": 188,
-      "center": 146
-    },
-    {
-      "line": 2,
-      "top": 188,
-      "bottom": 273,
-      "center": 231
-    },
-    {
-      "line": 3,
       "top": 273,
       "bottom": 363,
       "center": 318
     },
     {
-      "line": 4,
+      "line": 2,
       "top": 363,
       "bottom": 455,
       "center": 409
     },
     {
-      "line": 5,
+      "line": 3,
       "top": 455,
       "bottom": 561,
       "center": 508
     },
     {
-      "line": 6,
+      "line": 4,
       "top": 561,
       "bottom": 667,
       "center": 614
     },
     {
-      "line": 7,
+      "line": 5,
       "top": 667,
       "bottom": 767,
       "center": 717
     },
     {
-      "line": 8,
+      "line": 6,
       "top": 767,
       "bottom": 877,
       "center": 822
     },
     {
-      "line": 9,
+      "line": 7,
       "top": 877,
       "bottom": 980,
       "center": 929
     },
     {
-      "line": 10,
+      "line": 8,
       "top": 980,
       "bottom": 1076,
       "center": 1028
     },
     {
-      "line": 11,
+      "line": 9,
       "top": 1076,
       "bottom": 1180,
       "center": 1128
     },
     {
-      "line": 12,
+      "line": 10,
       "top": 1180,
       "bottom": 1283,
       "center": 1232
     },
     {
-      "line": 13,
+      "line": 11,
       "top": 1283,
       "bottom": 1399,
       "center": 1341
     },
     {
-      "line": 14,
+      "line": 12,
       "top": 1399,
       "bottom": 1486,
       "center": 1443
     },
     {
-      "line": 15,
+      "line": 13,
       "top": 1486,
       "bottom": 1596,
       "center": 1541
     },
     {
-      "line": 16,
+      "line": 14,
       "top": 1596,
       "bottom": 1699,
       "center": 1648
     },
     {
-      "line": 17,
+      "line": 15,
       "top": 1699,
       "bottom": 1798,
       "center": 1749
     },
     {
-      "line": 18,
+      "line": 16,
       "top": 1798,
       "bottom": 1899,
       "center": 1849
     },
     {
-      "line": 19,
+      "line": 17,
       "top": 1899,
       "bottom": 1983,
       "center": 1941
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 103,
+      "bottom": 205,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 205,
+      "bottom": 273,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -130,9 +132,9 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 18,
-    "splitBands": 19,
+    "splitBands": 17,
     "medianHeight": 103,
-    "merged": 1,
-    "tallerThan1_6": 1
+    "merged": 0,
+    "tallerThan1_6": 0
   }
 }

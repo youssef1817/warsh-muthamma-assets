@@ -8,7 +8,7 @@
     "left": 150,
     "right": 1106
   },
-  "detectedLineCount": 17,
+  "detectedLineCount": 15,
   "lineBands": [
     {
       "line": 1,
@@ -48,69 +48,71 @@
     },
     {
       "line": 7,
-      "top": 801,
-      "bottom": 907,
-      "center": 854
-    },
-    {
-      "line": 8,
-      "top": 907,
-      "bottom": 1022,
-      "center": 965
-    },
-    {
-      "line": 9,
       "top": 1022,
       "bottom": 1126,
       "center": 1074
     },
     {
-      "line": 10,
+      "line": 8,
       "top": 1126,
       "bottom": 1234,
       "center": 1180
     },
     {
-      "line": 11,
+      "line": 9,
       "top": 1234,
       "bottom": 1338,
       "center": 1286
     },
     {
-      "line": 12,
+      "line": 10,
       "top": 1338,
       "bottom": 1444,
       "center": 1391
     },
     {
-      "line": 13,
+      "line": 11,
       "top": 1444,
       "bottom": 1554,
       "center": 1499
     },
     {
-      "line": 14,
+      "line": 12,
       "top": 1554,
       "bottom": 1660,
       "center": 1607
     },
     {
-      "line": 15,
+      "line": 13,
       "top": 1660,
       "bottom": 1779,
       "center": 1720
     },
     {
-      "line": 16,
+      "line": 14,
       "top": 1779,
       "bottom": 1885,
       "center": 1832
     },
     {
-      "line": 17,
+      "line": 15,
       "top": 1885,
       "bottom": 1967,
       "center": 1926
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 801,
+      "bottom": 907,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 907,
+      "bottom": 1022,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -118,7 +120,7 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 17,
-    "splitBands": 17,
+    "splitBands": 15,
     "medianHeight": 106,
     "merged": 0,
     "tallerThan1_6": 0

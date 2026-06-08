@@ -8,7 +8,7 @@
     "left": 152,
     "right": 1115
   },
-  "detectedLineCount": 17,
+  "detectedLineCount": 15,
   "lineBands": [
     {
       "line": 1,
@@ -78,39 +78,41 @@
     },
     {
       "line": 12,
-      "top": 1292,
-      "bottom": 1387,
-      "center": 1340
-    },
-    {
-      "line": 13,
-      "top": 1387,
-      "bottom": 1501,
-      "center": 1444
-    },
-    {
-      "line": 14,
       "top": 1501,
       "bottom": 1619,
       "center": 1560
     },
     {
-      "line": 15,
+      "line": 13,
       "top": 1619,
       "bottom": 1731,
       "center": 1675
     },
     {
-      "line": 16,
+      "line": 14,
       "top": 1731,
       "bottom": 1848,
       "center": 1790
     },
     {
-      "line": 17,
+      "line": 15,
       "top": 1848,
       "bottom": 1937,
       "center": 1893
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 1292,
+      "bottom": 1387,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 1387,
+      "bottom": 1501,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -118,7 +120,7 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 17,
-    "splitBands": 17,
+    "splitBands": 15,
     "medianHeight": 110,
     "merged": 0,
     "tallerThan1_6": 0

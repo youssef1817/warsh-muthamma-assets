@@ -8,7 +8,7 @@
     "left": 151,
     "right": 1107
   },
-  "detectedLineCount": 17,
+  "detectedLineCount": 16,
   "lineBands": [
     {
       "line": 1,
@@ -36,81 +36,89 @@
     },
     {
       "line": 5,
-      "top": 488,
-      "bottom": 660,
-      "center": 574
-    },
-    {
-      "line": 6,
       "top": 660,
       "bottom": 738,
       "center": 699
     },
     {
-      "line": 7,
+      "line": 6,
       "top": 738,
       "bottom": 844,
       "center": 791
     },
     {
-      "line": 8,
+      "line": 7,
       "top": 844,
       "bottom": 962,
       "center": 903
     },
     {
-      "line": 9,
+      "line": 8,
       "top": 962,
       "bottom": 1082,
       "center": 1022
     },
     {
-      "line": 10,
+      "line": 9,
       "top": 1082,
       "bottom": 1194,
       "center": 1138
     },
     {
-      "line": 11,
+      "line": 10,
       "top": 1194,
       "bottom": 1310,
       "center": 1252
     },
     {
-      "line": 12,
+      "line": 11,
       "top": 1310,
       "bottom": 1425,
       "center": 1368
     },
     {
-      "line": 13,
+      "line": 12,
       "top": 1425,
       "bottom": 1535,
       "center": 1480
     },
     {
-      "line": 14,
+      "line": 13,
       "top": 1535,
       "bottom": 1653,
       "center": 1594
     },
     {
-      "line": 15,
+      "line": 14,
       "top": 1653,
       "bottom": 1760,
       "center": 1707
     },
     {
-      "line": 16,
+      "line": 15,
       "top": 1760,
       "bottom": 1875,
       "center": 1818
     },
     {
-      "line": 17,
+      "line": 16,
       "top": 1875,
       "bottom": 1967,
       "center": 1921
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 488,
+      "bottom": 591,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 591,
+      "bottom": 660,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -118,7 +126,7 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 17,
-    "splitBands": 17,
+    "splitBands": 16,
     "medianHeight": 112,
     "merged": 0,
     "tallerThan1_6": 0

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
+const sharp = require('sharp');
 
 // Paths - Resolve relative to this script directory to make it portable
 // tools is at: warsh-muthamma-assets/tools
@@ -33,7 +34,7 @@ function cleanArabic(text) {
   return clean;
 }
 
-function main() {
+async function main() {
   console.log('Starting ayahinfo generation pipeline...');
 
   // 1. Open Warsh text database
@@ -144,11 +145,11 @@ function main() {
     // Special override for Thumn 1 (pages 1, 2, 3)
     if (thumnNum === 1) {
       // Page 1: Sura 1 Ayah 1-7
-      // Page 2: Sura 2 Ayah 1-9
-      // Page 3: Sura 2 Ayah 10-15
+      // Page 2: Sura 2 Ayah 1-4
+      // Page 3: Sura 2 Ayah 5-15
       pageVerses[1] = verses.filter(v => v.sura === 1);
-      pageVerses[2] = verses.filter(v => v.sura === 2 && v.ayah >= 1 && v.ayah <= 9);
-      pageVerses[3] = verses.filter(v => v.sura === 2 && v.ayah >= 10 && v.ayah <= 15);
+      pageVerses[2] = verses.filter(v => v.sura === 2 && v.ayah >= 1 && v.ayah <= 4);
+      pageVerses[3] = verses.filter(v => v.sura === 2 && v.ayah >= 5 && v.ayah <= 15);
       continue;
     }
 
@@ -193,11 +194,34 @@ function main() {
 
   console.log('Distributed all thumn verses to pages 1-485.');
 
+  function versesInSuraRange(startSura, endSura) {
+    return versesList.filter(v => v.sura >= startSura && v.sura <= endSura);
+  }
+
+  function versesInAyahRange(sura, startAyah, endAyah) {
+    return versesList.filter(v => v.sura === sura && v.ayah >= startAyah && v.ayah <= endAyah);
+  }
+
+  // The final short-surah pages contain several starts per page. Proportional
+  // thumn distribution is too coarse here, so lock these pages to the image.
+  pageVerses[475] = [...versesInSuraRange(87, 87), ...versesInAyahRange(88, 1, 16)];
+  pageVerses[476] = [...versesInAyahRange(88, 17, 26), ...versesInSuraRange(89, 89)];
+  pageVerses[477] = versesInSuraRange(90, 91);
+  pageVerses[478] = versesInSuraRange(92, 93);
+  pageVerses[479] = [...versesInSuraRange(94, 95), ...versesInAyahRange(96, 1, 5)];
+  pageVerses[480] = [...versesInAyahRange(96, 6, 20), ...versesInSuraRange(97, 97), ...versesInAyahRange(98, 1, 3)];
+  pageVerses[481] = [...versesInAyahRange(98, 4, 8), ...versesInSuraRange(99, 100)];
+  pageVerses[482] = versesInSuraRange(101, 103);
+  pageVerses[483] = versesInSuraRange(104, 106);
+  pageVerses[484] = versesInSuraRange(107, 110);
+  pageVerses[485] = versesInSuraRange(111, 114);
+
   // 6. Generate coordinates page by page
   const allHighlights = [];
   const allMarkers = [];
   const allHeaders = [];
   const allPageBands = [];
+  const allNonAyahZones = [];
   const pagesJson = {};
 
   const left_margin = 0.08;
@@ -219,6 +243,16 @@ function main() {
           center: Number((b.center / layout.imageHeight).toFixed(4))
         });
       }
+      if (layout.nonAyahZones) {
+        for (const zone of layout.nonAyahZones) {
+          allNonAyahZones.push({
+            page: p,
+            type: zone.type,
+            top: Number((zone.top / layout.imageHeight).toFixed(4)),
+            bottom: Number((zone.bottom / layout.imageHeight).toFixed(4))
+          });
+        }
+      }
     } catch (e) {
       console.warn(`Warning: Could not load layout for page ${p}`);
       layoutData[p] = { detectedLineCount: 15, imageHeight: 2000, lineBands: [] };
@@ -238,6 +272,72 @@ function main() {
     const pageHighlights = [];
     const pageMarkers = [];
     const pageHeaders = [];
+
+    // Load sharp image buffer for this page to detect valleys
+    const imagePath = path.join(assetsDir, 'pages/warsh_muthamma_png', `page${String(p).padStart(3, '0')}.png`);
+    let imgData = null;
+    let imgWidth = 1253;
+    if (fs.existsSync(imagePath)) {
+      try {
+        const { data, info } = await sharp(imagePath)
+          .grayscale()
+          .raw()
+          .toBuffer({ resolveWithObject: true });
+        imgData = data;
+        imgWidth = info.width;
+      } catch (err) {
+        console.warn(`Warning: Could not load image for page ${p}`, err);
+      }
+    }
+
+    // Helper function inside loop to scan columns and get valleys
+    function getLineValleys(lineNum) {
+      if (!imgData) return [];
+      const band = layout.lineBands.find(b => b.line === lineNum);
+      if (!band) return [];
+
+      const top = band.top;
+      const bottom = band.bottom;
+      const leftCrop = layout.textRegion.left;
+      const rightCrop = layout.textRegion.right;
+
+      let colSums = new Array(rightCrop - leftCrop).fill(0);
+      for (let x = leftCrop; x < rightCrop; x++) {
+        for (let y = top; y < bottom; y++) {
+          if (imgData[y * imgWidth + x] < 200) {
+            colSums[x - leftCrop]++;
+          }
+        }
+      }
+
+      const bandHeight = bottom - top;
+      const threshold = Math.max(1, Math.round(bandHeight * 0.04));
+
+      let valleyRanges = [];
+      let inValley = false;
+      let startX = 0;
+      for (let x = leftCrop; x < rightCrop; x++) {
+        let val = colSums[x - leftCrop];
+        if (val <= threshold) {
+          if (!inValley) {
+            startX = x;
+            inValley = true;
+          }
+        } else {
+          if (inValley) {
+            valleyRanges.push({ start: startX, end: x - 1 });
+            inValley = false;
+          }
+        }
+      }
+      if (inValley) {
+        valleyRanges.push({ start: startX, end: rightCrop - 1 });
+      }
+
+      let valleys = valleyRanges.map(r => Math.round((r.start + r.end) / 2));
+      valleys = valleys.filter(v => v > leftCrop + 40 && v < rightCrop - 40);
+      return valleys;
+    }
 
     if (p === 1) {
       // Manual preset for Page 1 (Fatiha) to look centered and not overlap ornaments
@@ -260,10 +360,11 @@ function main() {
           sura: 1,
           ayah: item.ayah,
           left: item.left,
-          right: item.right
+          right: item.right,
+          confidence: 1.0,
+          source: "manual_override"
         };
         pageHighlights.push(highlight);
-        allHighlights.push(highlight);
 
         const marker = {
           page: 1,
@@ -279,10 +380,15 @@ function main() {
 
       // Sura Header for Sura 1 (normalized coordinates)
       let header_y = 0.1;
-      if (layout.lineBands.length > 1) {
-        header_y = layout.lineBands[1].center / layout.imageHeight;
+      const matchedHeader = layout.nonAyahZones?.find(z => z.type === 'sura_header');
+      if (matchedHeader) {
+        header_y = (matchedHeader.top + matchedHeader.bottom) / 2 / layout.imageHeight;
       } else {
-        header_y = (2 - 0.5) * (3480.0 / line_count) / 3480.0;
+        if (layout.lineBands.length > 1) {
+          header_y = layout.lineBands[1].center / layout.imageHeight;
+        } else {
+          header_y = (2 - 0.5) * (3480.0 / line_count) / 3480.0;
+        }
       }
 
       const header = {
@@ -294,65 +400,13 @@ function main() {
       pageHeaders.push(header);
       allHeaders.push(header);
 
-    } else if (p === 2) {
-      // Manual preset for Page 2 (Baqarah 1-9) to look centered and start after sura header and Bismillah
-      // Sura 2 Ayah 1-9 mapped to the actual detected manual bands 1..9.
-      const baqarahLines = [
-        { ayah: 1, line: 1, left: 0.40, right: 0.60 }, // الم
-        { ayah: 2, line: 2, left: 0.25, right: 0.75 },
-        { ayah: 3, line: 3, left: 0.20, right: 0.80 },
-        { ayah: 4, line: 4, left: 0.20, right: 0.80 },
-        { ayah: 5, line: 5, left: 0.25, right: 0.75 },
-        { ayah: 6, line: 6, left: 0.20, right: 0.80 },
-        { ayah: 7, line: 7, left: 0.20, right: 0.80 },
-        { ayah: 8, line: 8, left: 0.20, right: 0.80 },
-        { ayah: 9, line: 9, left: 0.20, right: 0.80 }
-      ];
-
-      for (const item of baqarahLines) {
-        const highlight = {
-          page: 2,
-          line: item.line,
-          sura: 2,
-          ayah: item.ayah,
-          left: item.left,
-          right: item.right
-        };
-        pageHighlights.push(highlight);
-        allHighlights.push(highlight);
-
-        const marker = {
-          page: 2,
-          sura: 2,
-          ayah: item.ayah,
-          line: item.line,
-          center_x: item.left,
-          center_y: 0.5
-        };
-        pageMarkers.push(marker);
-        allMarkers.push(marker);
-      }
-
-      // Sura Header for Sura 2 (normalized coordinates)
-      let header_y = 0.1;
-      if (layout.lineBands.length > 1) {
-        header_y = layout.lineBands[1].center / layout.imageHeight;
-      } else {
-        header_y = (2 - 0.5) * (3480.0 / line_count) / 3480.0;
-      }
-
-      const header = {
-        page: 2,
-        sura: 2,
-        center_x: 0.5,
-        center_y: Number(header_y.toFixed(4))
-      };
-      pageHeaders.push(header);
-      allHeaders.push(header);
-
     } else {
       // Calculate total clean character count on page
       const totalChars = verses.reduce((sum, v) => sum + v.cleanLength, 0);
+      const headerZones = (layout.nonAyahZones || [])
+        .filter(z => z.type === 'sura_header')
+        .sort((a, b) => a.top - b.top);
+      let headerZoneCursor = 0;
 
       // Cumulative characters
       const C_cum = [];
@@ -362,7 +416,7 @@ function main() {
         C_cum.push(currentSum);
       }
 
-      // Wrap verses across 15 lines proportionally
+      // Wrap verses across active lines proportionally
       for (let i = 0; i < verses.length; i++) {
         const v = verses[i];
         const start_frac = i === 0 ? 0.0 : C_cum[i - 1] / totalChars;
@@ -400,7 +454,6 @@ function main() {
             };
 
             pageHighlights.push(highlight);
-            allHighlights.push(highlight);
           }
         }
 
@@ -423,12 +476,17 @@ function main() {
 
         // Add Sura Header if ayah is 1
         if (v.ayah === 1) {
-          const header_line_idx = Math.min(line_count - 1, Math.floor(line_start_frac));
           let header_y = 0.1;
-          if (layout.lineBands.length > header_line_idx) {
-            header_y = layout.lineBands[header_line_idx].center / layout.imageHeight;
+          const matchedHeader = headerZones[headerZoneCursor++];
+          if (matchedHeader) {
+            header_y = (matchedHeader.top + matchedHeader.bottom) / 2 / layout.imageHeight;
           } else {
-            header_y = (header_line_idx + 0.5) * (3480.0 / line_count) / 3480.0;
+            const header_line_idx = Math.min(line_count - 1, Math.floor(line_start_frac));
+            if (layout.lineBands.length > header_line_idx) {
+              header_y = layout.lineBands[header_line_idx].center / layout.imageHeight;
+            } else {
+              header_y = (header_line_idx + 0.5) * (3480.0 / line_count) / 3480.0;
+            }
           }
 
           const header = {
@@ -443,6 +501,70 @@ function main() {
         }
       }
     }
+
+    // Refine pageHighlights with Valley-alignment (Marker-assisted)
+    const highlightsByLine = {};
+    for (const h of pageHighlights) {
+      if (!highlightsByLine[h.line]) {
+        highlightsByLine[h.line] = [];
+      }
+      highlightsByLine[h.line].push(h);
+    }
+
+    for (let l = 1; l <= line_count; l++) {
+      const lineSegs = highlightsByLine[l] || [];
+      if (lineSegs.length <= 1) {
+        for (const h of lineSegs) {
+          h.confidence = 0.85;
+          h.source = "text_proportional";
+        }
+        continue;
+      }
+
+      lineSegs.sort((a, b) => b.right - a.right);
+
+      const valleys = getLineValleys(l);
+
+      for (let j = 0; j < lineSegs.length - 1; j++) {
+        const segCurrent = lineSegs[j];
+        const segNext = lineSegs[j + 1];
+
+        const boundaryFrac = segCurrent.left;
+        const boundaryPx = boundaryFrac * imgWidth;
+
+        let closestValley = null;
+        let minDist = 999999;
+        for (const v of valleys) {
+          const dist = Math.abs(v - boundaryPx);
+          if (dist < minDist) {
+            minDist = dist;
+            closestValley = v;
+          }
+        }
+
+        if (closestValley !== null && minDist < 120) {
+          const refinedFrac = Number((closestValley / imgWidth).toFixed(4));
+          segCurrent.left = refinedFrac;
+          segNext.right = refinedFrac;
+          segCurrent.confidence = 0.95;
+          segCurrent.source = "visual_valley";
+          segNext.confidence = 0.95;
+          segNext.source = "visual_valley";
+        } else {
+          if (!segCurrent.confidence) {
+            segCurrent.confidence = 0.85;
+            segCurrent.source = "text_proportional";
+          }
+          if (!segNext.confidence) {
+            segNext.confidence = 0.85;
+            segNext.source = "text_proportional";
+          }
+        }
+      }
+    }
+
+    // Accumulate to global highlights
+    allHighlights.push(...pageHighlights);
 
     // Save JSON files for manual review / adjustment later
     const pageData = {
@@ -470,6 +592,7 @@ function main() {
       DROP TABLE IF EXISTS ayah_markers;
       DROP TABLE IF EXISTS sura_headers;
       DROP TABLE IF EXISTS page_line_bands;
+      DROP TABLE IF EXISTS non_ayah_zones;
     `);
   }
 
@@ -481,7 +604,9 @@ function main() {
       sura INTEGER,
       ayah INTEGER,
       "left" REAL,
-      "right" REAL
+      "right" REAL,
+      confidence REAL,
+      source TEXT
     );
   `);
   outDb.exec(`
@@ -511,22 +636,31 @@ function main() {
       center REAL
     );
   `);
+  outDb.exec(`
+    CREATE TABLE IF NOT EXISTS non_ayah_zones (
+      page INTEGER,
+      type TEXT,
+      top REAL,
+      bottom REAL
+    );
+  `);
 
   // Create indexes
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_highlights_page ON ayah_highlights (page);`);
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_markers_page ON ayah_markers (page);`);
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_headers_page ON sura_headers (page);`);
+  outDb.exec(`CREATE INDEX IF NOT EXISTS idx_non_ayah_page ON non_ayah_zones (page);`);
 
   // Begin Transaction for fast inserts
   outDb.exec('BEGIN TRANSACTION;');
 
   // Insert highlights
   const insertHighlight = outDb.prepare(`
-    INSERT INTO ayah_highlights (page, line, sura, ayah, "left", "right")
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO ayah_highlights (page, line, sura, ayah, "left", "right", confidence, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
   for (const h of allHighlights) {
-    insertHighlight.run(h.page, h.line, h.sura, h.ayah, h.left, h.right);
+    insertHighlight.run(h.page, h.line, h.sura, h.ayah, h.left, h.right, h.confidence || 0.85, h.source || "text_proportional");
   }
 
   // Insert markers
@@ -554,6 +688,15 @@ function main() {
   `);
   for (const b of allPageBands) {
     insertBand.run(b.page, b.line, b.top, b.bottom, b.center);
+  }
+
+  // Insert non-ayah zones
+  const insertNonAyah = outDb.prepare(`
+    INSERT INTO non_ayah_zones (page, type, top, bottom)
+    VALUES (?, ?, ?, ?)
+  `);
+  for (const z of allNonAyahZones) {
+    insertNonAyah.run(z.page, z.type, z.top, z.bottom);
   }
 
   // Commit Transaction

@@ -8,7 +8,7 @@
     "left": 153,
     "right": 1123
   },
-  "detectedLineCount": 19,
+  "detectedLineCount": 16,
   "lineBands": [
     {
       "line": 1,
@@ -36,93 +36,89 @@
     },
     {
       "line": 5,
-      "top": 472,
-      "bottom": 562,
-      "center": 517
-    },
-    {
-      "line": 6,
-      "top": 562,
-      "bottom": 651,
-      "center": 607
-    },
-    {
-      "line": 7,
-      "top": 651,
-      "bottom": 741,
-      "center": 696
-    },
-    {
-      "line": 8,
       "top": 741,
       "bottom": 835,
       "center": 788
     },
     {
-      "line": 9,
+      "line": 6,
       "top": 835,
       "bottom": 928,
       "center": 882
     },
     {
-      "line": 10,
+      "line": 7,
       "top": 928,
       "bottom": 1028,
       "center": 978
     },
     {
-      "line": 11,
+      "line": 8,
       "top": 1028,
       "bottom": 1134,
       "center": 1081
     },
     {
-      "line": 12,
+      "line": 9,
       "top": 1134,
       "bottom": 1237,
       "center": 1186
     },
     {
-      "line": 13,
+      "line": 10,
       "top": 1237,
       "bottom": 1353,
       "center": 1295
     },
     {
-      "line": 14,
+      "line": 11,
       "top": 1353,
       "bottom": 1456,
       "center": 1405
     },
     {
-      "line": 15,
+      "line": 12,
       "top": 1456,
       "bottom": 1561,
       "center": 1509
     },
     {
-      "line": 16,
+      "line": 13,
       "top": 1561,
       "bottom": 1674,
       "center": 1618
     },
     {
-      "line": 17,
+      "line": 14,
       "top": 1674,
       "bottom": 1776,
       "center": 1725
     },
     {
-      "line": 18,
+      "line": 15,
       "top": 1776,
       "bottom": 1883,
       "center": 1830
     },
     {
-      "line": 19,
+      "line": 16,
       "top": 1883,
       "bottom": 1977,
       "center": 1930
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 472,
+      "bottom": 633,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 633,
+      "bottom": 741,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -130,9 +126,9 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 16,
-    "splitBands": 19,
+    "splitBands": 16,
     "medianHeight": 106,
-    "merged": 2,
-    "tallerThan1_6": 2
+    "merged": 1,
+    "tallerThan1_6": 1
   }
 }

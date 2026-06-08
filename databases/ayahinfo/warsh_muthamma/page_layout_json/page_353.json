@@ -8,7 +8,7 @@
     "left": 152,
     "right": 1115
   },
-  "detectedLineCount": 17,
+  "detectedLineCount": 15,
   "lineBands": [
     {
       "line": 1,
@@ -96,21 +96,23 @@
     },
     {
       "line": 15,
-      "top": 1643,
-      "bottom": 1758,
-      "center": 1701
-    },
-    {
-      "line": 16,
-      "top": 1758,
-      "bottom": 1874,
-      "center": 1816
-    },
-    {
-      "line": 17,
       "top": 1874,
       "bottom": 1966,
       "center": 1920
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 1643,
+      "bottom": 1758,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 1758,
+      "bottom": 1874,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -118,7 +120,7 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 16,
-    "splitBands": 17,
+    "splitBands": 15,
     "medianHeight": 116,
     "merged": 1,
     "tallerThan1_6": 1

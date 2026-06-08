@@ -26,6 +26,7 @@ function main() {
   const allMarkers = [];
   const allHeaders = [];
   const allPageBands = [];
+  const allNonAyahZones = [];
 
   const layoutDir = path.join(outputDir, 'page_layout_json');
 
@@ -64,6 +65,17 @@ function main() {
             });
           }
         }
+        if (layoutData.nonAyahZones) {
+          const imgHeight = layoutData.imageHeight || 2000;
+          for (const zone of layoutData.nonAyahZones) {
+            allNonAyahZones.push({
+              page: parseInt(file.replace('page_', '').replace('.json', '')),
+              type: zone.type,
+              top: Number((zone.top / imgHeight).toFixed(4)),
+              bottom: Number((zone.bottom / imgHeight).toFixed(4))
+            });
+          }
+        }
       }
     } catch (err) {
       console.error(`Error reading or parsing layout for ${file}:`, err);
@@ -86,6 +98,7 @@ function main() {
       DROP TABLE IF EXISTS ayah_markers;
       DROP TABLE IF EXISTS sura_headers;
       DROP TABLE IF EXISTS page_line_bands;
+      DROP TABLE IF EXISTS non_ayah_zones;
     `);
   }
 
@@ -97,7 +110,9 @@ function main() {
       sura INTEGER,
       ayah INTEGER,
       "left" REAL,
-      "right" REAL
+      "right" REAL,
+      confidence REAL,
+      source TEXT
     );
   `);
   outDb.exec(`
@@ -127,22 +142,31 @@ function main() {
       center REAL
     );
   `);
+  outDb.exec(`
+    CREATE TABLE IF NOT EXISTS non_ayah_zones (
+      page INTEGER,
+      type TEXT,
+      top REAL,
+      bottom REAL
+    );
+  `);
 
   // Create indexes
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_highlights_page ON ayah_highlights (page);`);
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_markers_page ON ayah_markers (page);`);
   outDb.exec(`CREATE INDEX IF NOT EXISTS idx_headers_page ON sura_headers (page);`);
+  outDb.exec(`CREATE INDEX IF NOT EXISTS idx_non_ayah_page ON non_ayah_zones (page);`);
 
   // Begin Transaction for fast inserts
   outDb.exec('BEGIN TRANSACTION;');
 
   // Insert highlights
   const insertHighlight = outDb.prepare(`
-    INSERT INTO ayah_highlights (page, line, sura, ayah, "left", "right")
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO ayah_highlights (page, line, sura, ayah, "left", "right", confidence, source)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
   for (const h of allHighlights) {
-    insertHighlight.run(h.page, h.line, h.sura, h.ayah, h.left, h.right);
+    insertHighlight.run(h.page, h.line, h.sura, h.ayah, h.left, h.right, h.confidence || 0.85, h.source || "text_proportional");
   }
 
   // Insert markers
@@ -172,6 +196,15 @@ function main() {
     insertBand.run(b.page, b.line, b.top, b.bottom, b.center);
   }
 
+  // Insert non-ayah zones
+  const insertNonAyah = outDb.prepare(`
+    INSERT INTO non_ayah_zones (page, type, top, bottom)
+    VALUES (?, ?, ?, ?)
+  `);
+  for (const z of allNonAyahZones) {
+    insertNonAyah.run(z.page, z.type, z.top, z.bottom);
+  }
+
   // Commit Transaction
   outDb.exec('COMMIT;');
 
@@ -179,7 +212,8 @@ function main() {
 Database written to: ${outputDbPath}
 - ${allHighlights.length} highlights
 - ${allMarkers.length} markers
-- ${allHeaders.length} headers`);
+- ${allHeaders.length} headers
+- ${allNonAyahZones.length} non-ayah zones`);
 }
 
 main();

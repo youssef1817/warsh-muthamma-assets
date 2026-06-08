@@ -8,7 +8,7 @@
     "left": 152,
     "right": 1115
   },
-  "detectedLineCount": 15,
+  "detectedLineCount": 11,
   "lineBands": [
     {
       "line": 1,
@@ -37,77 +37,79 @@
     {
       "line": 5,
       "top": 557,
-      "bottom": 669,
-      "center": 613
+      "bottom": 660,
+      "center": 609
     },
     {
       "line": 6,
-      "top": 669,
-      "bottom": 857,
-      "center": 763
+      "top": 935,
+      "bottom": 1079,
+      "center": 1007
     },
     {
       "line": 7,
-      "top": 857,
-      "bottom": 950,
-      "center": 904
-    },
-    {
-      "line": 8,
-      "top": 950,
-      "bottom": 1079,
-      "center": 1015
-    },
-    {
-      "line": 9,
       "top": 1079,
       "bottom": 1209,
       "center": 1144
     },
     {
-      "line": 10,
+      "line": 8,
       "top": 1209,
-      "bottom": 1321,
-      "center": 1265
+      "bottom": 1340,
+      "center": 1275
     },
     {
-      "line": 11,
-      "top": 1321,
-      "bottom": 1510,
-      "center": 1416
-    },
-    {
-      "line": 12,
-      "top": 1510,
-      "bottom": 1600,
-      "center": 1555
-    },
-    {
-      "line": 13,
-      "top": 1600,
+      "line": 9,
+      "top": 1590,
       "bottom": 1727,
-      "center": 1664
+      "center": 1659
     },
     {
-      "line": 14,
+      "line": 10,
       "top": 1727,
       "bottom": 1859,
       "center": 1793
     },
     {
-      "line": 15,
+      "line": 11,
       "top": 1859,
       "bottom": 1951,
       "center": 1905
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 660,
+      "bottom": 810,
+      "confidence": 1
+    },
+    {
+      "type": "basmala",
+      "top": 835,
+      "bottom": 935,
+      "confidence": 1
+    },
+    {
+      "type": "sura_header",
+      "top": 1340,
+      "bottom": 1465,
+      "confidence": 1
+    },
+    {
+      "type": "basmala",
+      "top": 1500,
+      "bottom": 1590,
+      "confidence": 1
     }
   ],
   "confidence": 0.85,
   "manualOverride": false,
   "method": "peak_valley_v2",
   "debug": {
-    "rawBandCount": 15,
-    "splitBands": 15,
-    "medianHeight": 127,
+    "rawBandCount": 11,
+    "splitBands": 11,
+    "medianHeight": 130,
     "merged": 0,
     "tallerThan1_6": 0
   }

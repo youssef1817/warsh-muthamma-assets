@@ -7,15 +7,19 @@
       "sura": 57,
       "ayah": 7,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
       "line": 2,
       "sura": 57,
       "ayah": 7,
-      "left": 0.4829,
-      "right": 0.92
+      "left": 0.5036,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -23,15 +27,19 @@
       "sura": 57,
       "ayah": 8,
       "left": 0.08,
-      "right": 0.4829
+      "right": 0.5036,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
       "line": 3,
       "sura": 57,
       "ayah": 8,
-      "left": 0.1184,
-      "right": 0.92
+      "left": 0.166,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -39,7 +47,9 @@
       "sura": 57,
       "ayah": 9,
       "left": 0.08,
-      "right": 0.1184
+      "right": 0.166,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -47,15 +57,19 @@
       "sura": 57,
       "ayah": 9,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
       "line": 5,
       "sura": 57,
       "ayah": 9,
-      "left": 0.5649,
-      "right": 0.92
+      "left": 0.5584,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -63,7 +77,9 @@
       "sura": 57,
       "ayah": 10,
       "left": 0.08,
-      "right": 0.5649
+      "right": 0.5584,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -71,7 +87,9 @@
       "sura": 57,
       "ayah": 10,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
@@ -79,15 +97,19 @@
       "sura": 57,
       "ayah": 10,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
       "line": 8,
       "sura": 57,
       "ayah": 10,
-      "left": 0.3421,
-      "right": 0.92
+      "left": 0.4083,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -95,15 +117,19 @@
       "sura": 57,
       "ayah": 11,
       "left": 0.08,
-      "right": 0.3421
+      "right": 0.4083,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
       "line": 9,
       "sura": 57,
       "ayah": 11,
-      "left": 0.3984,
-      "right": 0.92
+      "left": 0.3685,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -111,7 +137,9 @@
       "sura": 57,
       "ayah": 12,
       "left": 0.08,
-      "right": 0.3984
+      "right": 0.3685,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -119,15 +147,19 @@
       "sura": 57,
       "ayah": 12,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
       "line": 11,
       "sura": 57,
       "ayah": 12,
-      "left": 0.1918,
-      "right": 0.92
+      "left": 0.2462,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -135,7 +167,9 @@
       "sura": 57,
       "ayah": 13,
       "left": 0.08,
-      "right": 0.1918
+      "right": 0.2462,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -143,7 +177,9 @@
       "sura": 57,
       "ayah": 13,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
@@ -151,7 +187,9 @@
       "sura": 57,
       "ayah": 13,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
@@ -159,7 +197,9 @@
       "sura": 57,
       "ayah": 13,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
@@ -167,15 +207,19 @@
       "sura": 57,
       "ayah": 13,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     },
     {
       "page": 432,
       "line": 16,
       "sura": 57,
       "ayah": 13,
-      "left": 0.372,
-      "right": 0.92
+      "left": 0.4178,
+      "right": 0.92,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -183,7 +227,9 @@
       "sura": 57,
       "ayah": 14,
       "left": 0.08,
-      "right": 0.372
+      "right": 0.4178,
+      "confidence": 0.95,
+      "source": "visual_valley"
     },
     {
       "page": 432,
@@ -191,7 +237,9 @@
       "sura": 57,
       "ayah": 14,
       "left": 0.08,
-      "right": 0.92
+      "right": 0.92,
+      "confidence": 0.85,
+      "source": "text_proportional"
     }
   ],
   "ayah_markers": [

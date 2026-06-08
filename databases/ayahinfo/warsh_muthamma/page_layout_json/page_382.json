@@ -8,7 +8,7 @@
     "left": 152,
     "right": 1119
   },
-  "detectedLineCount": 18,
+  "detectedLineCount": 16,
   "lineBands": [
     {
       "line": 1,
@@ -72,51 +72,53 @@
     },
     {
       "line": 11,
-      "top": 1151,
-      "bottom": 1226,
-      "center": 1189
-    },
-    {
-      "line": 12,
-      "top": 1226,
-      "bottom": 1337,
-      "center": 1282
-    },
-    {
-      "line": 13,
       "top": 1337,
       "bottom": 1445,
       "center": 1391
     },
     {
-      "line": 14,
+      "line": 12,
       "top": 1445,
       "bottom": 1548,
       "center": 1497
     },
     {
-      "line": 15,
+      "line": 13,
       "top": 1548,
       "bottom": 1659,
       "center": 1604
     },
     {
-      "line": 16,
+      "line": 14,
       "top": 1659,
       "bottom": 1770,
       "center": 1715
     },
     {
-      "line": 17,
+      "line": 15,
       "top": 1770,
       "bottom": 1872,
       "center": 1821
     },
     {
-      "line": 18,
+      "line": 16,
       "top": 1872,
       "bottom": 1961,
       "center": 1917
+    }
+  ],
+  "nonAyahZones": [
+    {
+      "type": "sura_header",
+      "top": 1151,
+      "bottom": 1226,
+      "confidence": 0.95
+    },
+    {
+      "type": "basmala",
+      "top": 1226,
+      "bottom": 1337,
+      "confidence": 0.95
     }
   ],
   "confidence": 0.85,
@@ -124,7 +126,7 @@
   "method": "peak_valley_v2",
   "debug": {
     "rawBandCount": 17,
-    "splitBands": 18,
+    "splitBands": 16,
     "medianHeight": 106,
     "merged": 1,
     "tallerThan1_6": 1
