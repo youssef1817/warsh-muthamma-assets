@@ -20,11 +20,19 @@
         }
 
         #image-container {
-            width: 100%;
+            margin-left: 280px; /* Offset by left sidebar */
+            width: calc(100% - 280px);
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: margin-right 0.3s ease, width 0.3s ease;
+        }
+
+        /* Adjust width when right panel is open */
+        body:has(#right-panel.open) #image-container {
+            margin-right: 280px;
+            width: calc(100% - 560px);
         }
 
         #image-wrapper {
@@ -35,7 +43,7 @@
         }
 
         #page-image {
-            max-width: 100vw;
+            max-width: 100%;
             max-height: 100vh;
             width: auto;
             height: auto;
@@ -85,56 +93,87 @@
             z-index: 10;
         }
 
-        /* Floating Controls (Center bottom) */
-        .controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(8px);
-            padding: 10px 20px;
-            border-radius: 40px;
+        /* Integrated Controls in Left Panel */
+        .integrated-navigator {
             display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.08);
-            z-index: 100;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 5px;
         }
 
-        #page-label {
-            font-weight: 600;
-            font-size: 18px;
-            min-width: 60px;
-            text-align: center;
+        .page-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        #page-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
             user-select: none;
         }
 
-        .jump-container {
+        .jump-row {
             display: flex;
-            align-items: center;
-            background: rgba(0,0,0,0.4);
-            border-radius: 20px;
-            padding: 4px 8px;
+            gap: 8px;
         }
 
-        #jump-input {
-            background: transparent;
+        .jump-row input {
+            flex: 1;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: bold;
+            outline: none;
+        }
+        .jump-row input:focus {
+            border-color: #4CAF50;
+        }
+
+        .integrated-btn {
+            background: #4CAF50;
             border: none;
             color: #fff;
-            width: 50px;
-            text-align: center;
-            font-size: 16px;
-            outline: none;
-            -moz-appearance: textfield;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .integrated-btn:hover {
+            background: #45a049;
+        }
+        .integrated-btn:active {
+            transform: scale(0.95);
         }
 
-        #jump-input::-webkit-outer-spin-button,
-        #jump-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .tools-row {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0,0,0,0.25);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 10px 0;
         }
 
         .icon-btn {
@@ -254,6 +293,38 @@
 
     <!-- Left Panel: General Page Controls -->
     <div id="left-panel" class="sidebar">
+        <!-- Integrated Page Navigator & Actions -->
+        <div class="integrated-navigator">
+            <div class="page-row">
+                <button id="prev-page-btn" class="icon-btn" title="الصفحة السابقة (سهم يمين)">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+                </button>
+                <div id="page-display">ص <span id="current-page-text">1</span></div>
+                <button id="next-page-btn" class="icon-btn" title="الصفحة التالية (سهم يسار)">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                </button>
+            </div>
+            
+            <div class="jump-row">
+                <input type="number" id="jump-input" min="1" max="485" placeholder="رقم الصفحة...">
+                <button id="jump-btn" class="integrated-btn">انتقال</button>
+            </div>
+
+            <div class="tools-row">
+                <button id="toggle-overlay-btn" class="icon-btn" title="تفعيل/تعطيل التظليل">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </button>
+                <button id="refresh-btn" class="icon-btn" title="تحديث الصورة">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+                <button id="help-btn" class="icon-btn" title="مساعدة واختصارات">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
         <h3>التحكم في الأسطر (الصفحة)</h3>
         <p style="font-size: 0.85rem; color: #aaa;">تعديل هذه القيم يزيح جميع الأسطر في الصفحة ويحفظها مباشرة.</p>
         
@@ -307,23 +378,22 @@
         </div>
     </div>
 
-    <div class="controls" id="controls">
-        <div id="page-label">ص <span id="current-page-text">1</span></div>
-        <div class="jump-container">
-            <input type="number" id="jump-input" min="1" max="485" placeholder="رقم">
-            <button id="jump-btn" class="icon-btn" title="انتقال سريع">
-                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-            </button>
-            <button id="refresh-btn" class="icon-btn" title="تحديث الصورة">
-                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-            </button>
-            <button id="toggle-overlay-btn" class="icon-btn" title="إظهار/إخفاء بيانات الآيات">
-                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-            </button>
-        </div>
-    </div>
+
     
     <div id="toast" class="toast">تم الحفظ بنجاح</div>
+
+    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border:1px solid #555; padding:25px; border-radius:15px; z-index:1000; width:450px; color:#fff; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+        <h3 style="margin-top:0; border-bottom:1px solid #444; padding-bottom:10px;">دليل الاختصارات</h3>
+        <ul style="line-height:2; margin-bottom:20px; padding-right:20px; font-size:15px;">
+            <li><b>الأسهم يمين/يسار:</b> تقليب الصفحات (للسابق والتالي)</li>
+            <li><b>الأسهم أعلى/أسفل:</b> الانتقال للمربع السابق/التالي</li>
+            <li><b>Shift + أسهم يمين/يسار:</b> تحريك المربع أفقياً (يميناً ويساراً)</li>
+            <li><b>Ctrl + Shift + أعلى/أسفل:</b> توسيع السطر (من الأعلى/الأسفل)</li>
+            <li><b>Ctrl + Shift + Alt + أعلى/أسفل:</b> تضييق السطر (من الأعلى/الأسفل)</li>
+            <li><b>سحب وإفلات (بالفأرة):</b> انقر على أي مربع واسحبه أفقياً أو عمودياً للعلامات.</li>
+        </ul>
+        <button class="btn" id="close-help-btn" style="width:100%;">إغلاق</button>
+    </div>
 
     <script>
         const TOTAL_PAGES = 485;
@@ -337,8 +407,33 @@
         let currentAyahData = null;
         let originalLineBands = null; // To compute offsets properly
 
-        // Selection State
+        // Selection and Drag State
         let selectedItem = null; // { type: 'highlight'|'marker', index: number }
+        let isDragging = false;
+        let dragStartMouseX = 0;
+        let dragStartMouseY = 0;
+        let dragStartLeft = 0;
+        let dragStartRight = 0;
+        let dragStartCX = 0;
+        let dragStartCY = 0;
+        
+        // Auto-save debounce timers
+        let ayahSaveTimeout;
+        let layoutSaveTimeout;
+        
+        function autoSaveAyahData() {
+            clearTimeout(ayahSaveTimeout);
+            ayahSaveTimeout = setTimeout(() => {
+                document.getElementById('save-ayah-btn').click();
+            }, 800);
+        }
+
+        function autoSaveLayoutData() {
+            clearTimeout(layoutSaveTimeout);
+            layoutSaveTimeout = setTimeout(() => {
+                document.getElementById('save-layout-btn').click();
+            }, 800);
+        }
 
         const DOM = {
             img: document.getElementById('page-image'),
@@ -482,9 +577,15 @@
                             div.classList.add('selected-box');
                         }
 
-                        div.addEventListener('click', (e) => {
+                        div.addEventListener('mousedown', (e) => {
+                            if (e.button !== 0) return; // Only left click
                             e.stopPropagation();
                             selectItem('highlight', index);
+                            isDragging = true;
+                            dragStartMouseX = e.clientX;
+                            dragStartMouseY = e.clientY;
+                            dragStartLeft = h.left;
+                            dragStartRight = h.right;
                         });
                         DOM.overlay.appendChild(div);
                     }
@@ -511,9 +612,15 @@
                             div.classList.add('selected-box');
                         }
 
-                        div.addEventListener('click', (e) => {
+                        div.addEventListener('mousedown', (e) => {
+                            if (e.button !== 0) return;
                             e.stopPropagation();
                             selectItem('marker', index);
+                            isDragging = true;
+                            dragStartMouseX = e.clientX;
+                            dragStartMouseY = e.clientY;
+                            dragStartCX = m.center_x;
+                            dragStartCY = m.center_y || 0.5;
                         });
                         DOM.overlay.appendChild(div);
                     }
@@ -527,6 +634,39 @@
             renderBoxes(); // Refresh to show selection outline
             openRightPanel();
         }
+
+        // Drag events on document
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging || !selectedItem || !currentAyahData) return;
+            
+            const imgRect = DOM.img.getBoundingClientRect();
+            const deltaX = (e.clientX - dragStartMouseX) / imgRect.width;
+            
+            if (selectedItem.type === 'highlight') {
+                const h = currentAyahData.ayah_highlights[selectedItem.index];
+                h.left = dragStartLeft + deltaX;
+                h.right = dragStartRight + deltaX;
+            } else if (selectedItem.type === 'marker') {
+                const m = currentAyahData.ayah_markers[selectedItem.index];
+                m.center_x = dragStartCX + deltaX;
+                
+                const lineBand = currentLayoutData.lineBands.find(b => b.line === m.line);
+                if (lineBand) {
+                    const bandHeightInPx = ((lineBand.bottom - lineBand.top) / currentLayoutData.imageHeight) * imgRect.height;
+                    const deltaYBand = (e.clientY - dragStartMouseY) / bandHeightInPx;
+                    m.center_y = dragStartCY + deltaYBand;
+                }
+            }
+            renderBoxes();
+            openRightPanel(); // refresh inputs
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                autoSaveAyahData();
+            }
+        });
 
         function openRightPanel() {
             DOM.rightPanel.classList.add('open');
@@ -560,29 +700,32 @@
         document.getElementById('close-right-panel').addEventListener('click', closeRightPanel);
         DOM.img.addEventListener('click', closeRightPanel); // clicking image deselects
 
-        // Live Editor Inputs
         document.getElementById('hl-left').addEventListener('input', (e) => {
             if (selectedItem && selectedItem.type === 'highlight') {
                 currentAyahData.ayah_highlights[selectedItem.index].left = parseFloat(e.target.value) || 0;
                 renderBoxes();
+                autoSaveAyahData();
             }
         });
         document.getElementById('hl-right').addEventListener('input', (e) => {
             if (selectedItem && selectedItem.type === 'highlight') {
                 currentAyahData.ayah_highlights[selectedItem.index].right = parseFloat(e.target.value) || 0;
                 renderBoxes();
+                autoSaveAyahData();
             }
         });
         document.getElementById('mk-cx').addEventListener('input', (e) => {
             if (selectedItem && selectedItem.type === 'marker') {
                 currentAyahData.ayah_markers[selectedItem.index].center_x = parseFloat(e.target.value) || 0;
                 renderBoxes();
+                autoSaveAyahData();
             }
         });
         document.getElementById('mk-cy').addEventListener('input', (e) => {
             if (selectedItem && selectedItem.type === 'marker') {
                 currentAyahData.ayah_markers[selectedItem.index].center_y = parseFloat(e.target.value) || 0;
                 renderBoxes();
+                autoSaveAyahData();
             }
         });
 
@@ -622,10 +765,16 @@
             renderBoxes();
         }
 
-        document.getElementById('global-y-offset').addEventListener('input', applyGlobalLayoutTweaks);
-        document.getElementById('global-scale').addEventListener('input', applyGlobalLayoutTweaks);
+        document.getElementById('global-y-offset').addEventListener('input', () => {
+            applyGlobalLayoutTweaks();
+            autoSaveLayoutData();
+        });
+        document.getElementById('global-scale').addEventListener('input', () => {
+            applyGlobalLayoutTweaks();
+            autoSaveLayoutData();
+        });
 
-        // Keyboard Navigation
+        // Keyboard Navigation and Shortcuts
         window.addEventListener('keydown', (e) => {
             const activeTag = document.activeElement.tagName.toLowerCase();
             if (activeTag === 'input' || activeTag === 'textarea') {
@@ -639,8 +788,93 @@
                 return; // ignore arrow keys when typing
             }
 
-            if (e.key === 'ArrowLeft') updatePage(currentPage + 1);
-            else if (e.key === 'ArrowRight') updatePage(currentPage - 1);
+            // Box shortcuts
+            if (selectedItem && (e.key.startsWith('Arrow'))) {
+                
+                if (e.key === 'ArrowUp' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                    const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
+                    let newIndex = selectedItem.index - 1;
+                    if (newIndex < 0) newIndex = arr.length - 1;
+                    selectItem(selectedItem.type, newIndex);
+                    e.preventDefault();
+                    return;
+                }
+                if (e.key === 'ArrowDown' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                    const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
+                    let newIndex = selectedItem.index + 1;
+                    if (newIndex >= arr.length) newIndex = 0;
+                    selectItem(selectedItem.type, newIndex);
+                    e.preventDefault();
+                    return;
+                }
+
+                let updatedAyah = false;
+                let updatedLayout = false;
+
+                if (selectedItem.type === 'highlight') {
+                    const h = currentAyahData.ayah_highlights[selectedItem.index];
+                    const lineBand = currentLayoutData.lineBands.find(b => b.line === h.line);
+                    
+                    if (e.shiftKey && !e.ctrlKey && !e.altKey) {
+                        // Horizontal Move
+                        const step = 0.001;
+                        if (e.key === 'ArrowLeft') { h.left -= step; h.right -= step; updatedAyah = true; }
+                        else if (e.key === 'ArrowRight') { h.left += step; h.right += step; updatedAyah = true; }
+                    } else if (e.ctrlKey && e.shiftKey) {
+                        // Vertical Resizing of LineBand
+                        const step = 1;
+                        if (!e.altKey) {
+                            // Expand
+                            if (e.key === 'ArrowUp') { lineBand.top -= step; updatedLayout = true; }
+                            else if (e.key === 'ArrowDown') { lineBand.bottom += step; updatedLayout = true; }
+                        } else {
+                            // Shrink
+                            if (e.key === 'ArrowUp') { lineBand.bottom -= step; updatedLayout = true; }
+                            else if (e.key === 'ArrowDown') { lineBand.top += step; updatedLayout = true; }
+                        }
+                    }
+                } else if (selectedItem.type === 'marker') {
+                    const m = currentAyahData.ayah_markers[selectedItem.index];
+                    if (e.shiftKey && !e.ctrlKey && !e.altKey) {
+                        const step = 0.001;
+                        if (e.key === 'ArrowLeft') { m.center_x -= step; updatedAyah = true; }
+                        else if (e.key === 'ArrowRight') { m.center_x += step; updatedAyah = true; }
+                        else if (e.key === 'ArrowUp') { m.center_y -= step; updatedAyah = true; }
+                        else if (e.key === 'ArrowDown') { m.center_y += step; updatedAyah = true; }
+                    }
+                }
+
+                if (updatedAyah || updatedLayout) {
+                    e.preventDefault(); // Prevent page scroll
+                    renderBoxes();
+                    openRightPanel();
+                    if (updatedAyah) autoSaveAyahData();
+                    if (updatedLayout) {
+                        originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands)); // Sync original
+                        autoSaveLayoutData();
+                    }
+                    return;
+                }
+            } else if (!selectedItem && e.key === 'ArrowDown' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                // If nothing selected, select first highlight
+                if (currentAyahData && currentAyahData.ayah_highlights && currentAyahData.ayah_highlights.length > 0) {
+                    selectItem('highlight', 0);
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            // Normal navigation
+            if (e.key === 'ArrowLeft' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage + 1);
+            else if (e.key === 'ArrowRight' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage - 1);
+        });
+
+        document.getElementById('prev-page-btn').addEventListener('click', () => {
+            updatePage(currentPage - 1);
+        });
+
+        document.getElementById('next-page-btn').addEventListener('click', () => {
+            updatePage(currentPage + 1);
         });
 
         document.getElementById('jump-btn').addEventListener('click', () => {
@@ -651,6 +885,14 @@
         document.getElementById('refresh-btn').addEventListener('click', () => {
             const pageStr = String(currentPage).padStart(3, '0');
             DOM.img.src = `${IMAGE_BASE_PATH}${pageStr}.png?t=${new Date().getTime()}`;
+        });
+
+        // Help Modal
+        document.getElementById('help-btn').addEventListener('click', () => {
+            document.getElementById('help-modal').style.display = 'block';
+        });
+        document.getElementById('close-help-btn').addEventListener('click', () => {
+            document.getElementById('help-modal').style.display = 'none';
         });
 
         // Init
