@@ -89,8 +89,8 @@ function updatePage(page) {
     
     const pageStr = String(currentPage).padStart(3, '0');
     DOM.img.src = `${IMAGE_BASE_PATH}${pageStr}.png`;
-    DOM.pageText.textContent = currentPage;
-    DOM.jumpInput.value = ''; 
+    if (DOM.pageText) DOM.pageText.textContent = currentPage;
+    DOM.jumpInput.value = currentPage; 
     
     localStorage.setItem('warsh_muthamma_last_page', currentPage);
     closeRightPanel();
@@ -826,7 +826,7 @@ document.getElementById('next-page-btn').addEventListener('click', () => {
     updatePage(currentPage + 1);
 });
 
-document.getElementById('jump-btn').addEventListener('click', () => {
+DOM.jumpInput.addEventListener('change', () => {
     const val = parseInt(DOM.jumpInput.value);
     if (!isNaN(val) && val >= 1 && val <= TOTAL_PAGES) updatePage(val);
 });
