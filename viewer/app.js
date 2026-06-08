@@ -264,7 +264,7 @@ function selectItem(type, index) {
             selectedItemOriginals = { left: h.left, right: h.right };
         } else if (type === 'marker') {
             const m = currentAyahData.ayah_markers[index];
-            selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5 };
+            selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
         }
     }
     selectedItem = { type, index };
@@ -435,21 +435,28 @@ function openRightPanel() {
         if (document.activeElement !== document.getElementById('mk-cy')) {
             document.getElementById('mk-cy').value = m.center_y || 0.5;
         }
+        if (document.activeElement !== document.getElementById('mk-line')) {
+            document.getElementById('mk-line').value = m.line;
+        }
 
         // Compare values
         const origCX = selectedItemOriginals ? selectedItemOriginals.center_x : m.center_x;
         const origCY = selectedItemOriginals ? selectedItemOriginals.center_y : (m.center_y || 0.5);
+        const origLine = selectedItemOriginals ? selectedItemOriginals.line : m.line;
         const currCY = m.center_y || 0.5;
 
         document.getElementById('mk-cx-orig').textContent = origCX.toFixed(4);
         document.getElementById('mk-cx-curr').textContent = m.center_x.toFixed(4);
         document.getElementById('mk-cy-orig').textContent = origCY.toFixed(4);
         document.getElementById('mk-cy-curr').textContent = currCY.toFixed(4);
+        document.getElementById('mk-line-orig').textContent = origLine;
+        document.getElementById('mk-line-curr').textContent = m.line;
 
         // Update badge state
         const isCXChanged = Math.abs(m.center_x - origCX) > 0.00001;
         const isCYChanged = Math.abs(currCY - origCY) > 0.00001;
-        const isChanged = isCXChanged || isCYChanged;
+        const isLineChanged = m.line !== origLine;
+        const isChanged = isCXChanged || isCYChanged || isLineChanged;
 
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
@@ -462,6 +469,7 @@ function openRightPanel() {
         // Update inline save buttons
         const btnSaveCX = document.getElementById('save-mk-cx');
         const btnSaveCY = document.getElementById('save-mk-cy');
+        const btnSaveLine = document.getElementById('save-mk-line');
         if (isCXChanged) {
             btnSaveCX.className = "save-inline-btn unsaved";
             btnSaveCX.title = "تغيير غير محفوظ - انقر للحفظ";
@@ -475,6 +483,13 @@ function openRightPanel() {
         } else {
             btnSaveCY.className = "save-inline-btn saved";
             btnSaveCY.title = "تم الحفظ";
+        }
+        if (isLineChanged) {
+            btnSaveLine.className = "save-inline-btn unsaved";
+            btnSaveLine.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveLine.className = "save-inline-btn saved";
+            btnSaveLine.title = "تم الحفظ";
         }
     }
 }
@@ -500,6 +515,7 @@ function clearRightPanel() {
     document.getElementById('hl-right').value = "";
     document.getElementById('mk-cx').value = "";
     document.getElementById('mk-cy').value = "";
+    document.getElementById('mk-line').value = "";
 
     // Reset comparison texts
     document.getElementById('hl-left-orig').textContent = "-";
@@ -510,10 +526,12 @@ function clearRightPanel() {
     document.getElementById('mk-cx-curr').textContent = "-";
     document.getElementById('mk-cy-orig').textContent = "-";
     document.getElementById('mk-cy-curr').textContent = "-";
+    document.getElementById('mk-line-orig').textContent = "-";
+    document.getElementById('mk-line-curr').textContent = "-";
     document.getElementById('line-height-orig').textContent = "-";
     document.getElementById('line-height-curr').textContent = "-";
 
-    const ids = ['save-hl-left', 'save-hl-right', 'save-mk-cx', 'save-mk-cy'];
+    const ids = ['save-hl-left', 'save-hl-right', 'save-mk-cx', 'save-mk-cy', 'save-mk-line'];
     ids.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -598,6 +616,16 @@ document.getElementById('mk-cy').addEventListener('input', (e) => {
     }
 });
 
+document.getElementById('mk-line').addEventListener('input', (e) => {
+    if (selectedItem && selectedItem.type === 'marker') {
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        m.line = parseInt(e.target.value) || 1;
+        document.getElementById('meta-line').textContent = m.line;
+        renderBoxes();
+        openRightPanel();
+    }
+});
+
 // Sync Highlight With Marker
 function syncHighlightWithMarker(m) {
     const syncCheckbox = document.getElementById('sync-marker-highlight');
@@ -614,17 +642,65 @@ function syncHighlightWithMarker(m) {
         }
     }
 
-    // 2. Sync the right boundary of the next ayah highlight on the same line
+    // 2. Sync the boundary of the next ayah highlight on the same line.
+    // In RTL page coordinates, the next ayah segment that starts after the
+    // marker is visually to the marker's left, so the boundary touching the
+    // marker is that segment's right edge.
     if (syncNextCheckbox && syncNextCheckbox.checked) {
-        // Look for the highlight that immediately follows this one logically (usually m.ayah + 1)
-        const nextHighlight = currentAyahData.ayah_highlights.find(h => 
-            h.line === m.line && 
-            ((h.sura === m.sura && h.ayah === m.ayah + 1) || (h.sura === m.sura + 1 && h.ayah === 1))
-        );
+        const nextHighlight = findNextHighlightOnLine(m) || createNextHighlightOnLine(m);
         if (nextHighlight) {
             nextHighlight.right = m.center_x;
         }
     }
+}
+
+function findNextHighlightOnLine(marker) {
+    if (!currentAyahData || !currentAyahData.ayah_highlights) return null;
+
+    const sameLine = currentAyahData.ayah_highlights.filter(h => h.line === marker.line);
+    if (sameLine.length === 0) return null;
+
+    const logicalNext = sameLine.find(h =>
+        (h.sura === marker.sura && h.ayah === marker.ayah + 1) ||
+        (h.sura === marker.sura + 1 && h.ayah === 1)
+    );
+    if (logicalNext) return logicalNext;
+
+    const markerX = marker.center_x;
+    const leftSideCandidates = sameLine
+        .filter(h => h.sura !== marker.sura || h.ayah !== marker.ayah)
+        .filter(h => Math.max(h.left, h.right) <= markerX + 0.08)
+        .sort((a, b) => Math.abs(Math.max(a.left, a.right) - markerX) - Math.abs(Math.max(b.left, b.right) - markerX));
+
+    return leftSideCandidates[0] || null;
+}
+
+function createNextHighlightOnLine(marker) {
+    if (!currentAyahData || !currentAyahData.ayah_highlights) return null;
+
+    const nextMarker = currentAyahData.ayah_markers
+        ? currentAyahData.ayah_markers
+            .filter(m => m.line === marker.line)
+            .filter(m =>
+                (m.sura === marker.sura && m.ayah === marker.ayah + 1) ||
+                (m.sura === marker.sura + 1 && m.ayah === 1)
+            )
+            .sort((a, b) => b.center_x - a.center_x)[0]
+        : null;
+
+    const nextHighlight = {
+        page: currentPage,
+        line: marker.line,
+        sura: nextMarker ? nextMarker.sura : marker.sura,
+        ayah: nextMarker ? nextMarker.ayah : marker.ayah + 1,
+        left: nextMarker ? nextMarker.center_x : 0.03,
+        right: marker.center_x,
+        confidence: 0.5,
+        source: 'manual_marker_sync'
+    };
+
+    currentAyahData.ayah_highlights.push(nextHighlight);
+    return nextHighlight;
 }
 
 // Reset Button Listeners
@@ -669,6 +745,18 @@ document.getElementById('reset-mk-cy').addEventListener('click', () => {
     }
 });
 
+document.getElementById('reset-mk-line').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        m.line = selectedItemOriginals.line;
+        document.getElementById('mk-line').value = m.line;
+        document.getElementById('meta-line').textContent = m.line;
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+
 document.getElementById('reset-global-y-offset').addEventListener('click', () => {
     document.getElementById('global-y-offset').value = 0;
     applyGlobalLayoutTweaks();
@@ -698,6 +786,9 @@ document.getElementById('save-mk-cx').addEventListener('click', () => {
 document.getElementById('save-mk-cy').addEventListener('click', () => {
     document.getElementById('save-ayah-btn').click();
 });
+document.getElementById('save-mk-line').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
 
 document.getElementById('save-global-y-offset').addEventListener('click', () => {
     document.getElementById('save-layout-btn').click();
@@ -721,7 +812,7 @@ document.getElementById('save-ayah-btn').addEventListener('click', () => {
                     selectedItemOriginals = { left: h.left, right: h.right };
                 } else if (selectedItem.type === 'marker') {
                     const m = currentAyahData.ayah_markers[selectedItem.index];
-                    selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5 };
+                    selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
                 }
                 openRightPanel();
                 flashSavedFeedback();
@@ -1208,6 +1299,22 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
         document.addEventListener('mouseup', onMouseUp);
     });
 })();
+
+// Init Checkboxes
+const syncCheckbox = document.getElementById('sync-marker-highlight');
+const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
+if (syncCheckbox) {
+    syncCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_marker') === 'true';
+    syncCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('warsh_muthamma_sync_marker', e.target.checked);
+    });
+}
+if (syncNextCheckbox) {
+    syncNextCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_next') === 'true';
+    syncNextCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('warsh_muthamma_sync_next', e.target.checked);
+    });
+}
 
 // Init
 updatePage(currentPage);
