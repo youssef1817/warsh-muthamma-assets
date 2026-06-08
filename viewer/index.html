@@ -127,6 +127,17 @@
     <!-- Right Panel: Box specific Controls -->
     <div id="right-panel" class="sidebar">
         <div id="right-resizer" class="resizer-handle resizer-right"></div>
+        <div class="top-action-row">
+            <button id="save-all-btn" class="icon-btn action-save" title="حفظ عام للصفحة الحالية (Ctrl+S)">
+                <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zM12 19c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zM6 8V5h9v3H6z"/></svg>
+            </button>
+            <button id="undo-btn" class="icon-btn" title="تراجع (Ctrl+Z)" disabled>
+                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+            </button>
+            <button id="redo-btn" class="icon-btn" title="إرجاع (Ctrl+Y / Ctrl+Shift+Z)" disabled>
+                <svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62c-1.39-1.16-3.16-1.88-5.12-1.88-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 11.03 6.85 8 11.5 8z"/></svg>
+            </button>
+        </div>
         <h3>تعديل العنصر</h3>
         
         <!-- Metadata section -->
@@ -193,8 +204,14 @@
                             <div><span class="lbl">الحالية:</span> <span id="line-top-curr" class="val-curr">-</span></div>
                         </div>
                         <div class="control-group">
-                            <div class="input-with-reset" style="padding: 0;">
-                                <input type="number" id="hl-line-top" step="1" style="padding-left: 10px !important;">
+                            <div class="input-with-reset">
+                                <input type="number" id="hl-line-top" step="1">
+                                <button class="reset-inline-btn" id="reset-hl-line-top" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-hl-line-top" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -206,8 +223,14 @@
                             <div><span class="lbl">الحالية:</span> <span id="line-bottom-curr" class="val-curr">-</span></div>
                         </div>
                         <div class="control-group">
-                            <div class="input-with-reset" style="padding: 0;">
-                                <input type="number" id="hl-line-bottom" step="1" style="padding-left: 10px !important;">
+                            <div class="input-with-reset">
+                                <input type="number" id="hl-line-bottom" step="1">
+                                <button class="reset-inline-btn" id="reset-hl-line-bottom" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-hl-line-bottom" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -286,6 +309,10 @@
                         <input type="checkbox" id="sync-next-ayah-highlight" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
                         <span>🔗 محاذاة بداية الآية الموالية تلقائياً مع الدائرة</span>
                     </label>
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#4CAF50; font-weight:bold;">
+                        <input type="checkbox" id="sync-create-next-highlight" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
+                        <span>إنشاء مربع للآية الموالية عند تحريك الدائرة في نفس السطر</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -306,6 +333,9 @@
     <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border:1px solid #555; padding:25px; border-radius:15px; z-index:1000; width:470px; color:#fff; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
         <h3 style="margin-top:0; border-bottom:1px solid #444; padding-bottom:10px;">دليل الاختصارات</h3>
         <ul style="line-height:2; margin-bottom:20px; padding-right:20px; font-size:15px;">
+            <li><b>Ctrl + S:</b> حفظ عام للصفحة الحالية، ويشمل بيانات الآيات وتخطيط الأسطر.</li>
+            <li><b>Ctrl + Z:</b> التراجع عن آخر تعديل في الصفحة الحالية.</li>
+            <li><b>Ctrl + Y / Ctrl + Shift + Z:</b> إرجاع آخر تعديل تم التراجع عنه.</li>
             <li><b>الأسهم يمين/يسار:</b> تقليب الصفحات (للسابق والتالي)</li>
             <li><b>الأسهم أعلى/أسفل:</b> الانتقال للمربع السابق/التالي</li>
             <li><b>Shift + أسهم يمين/يسار:</b> تحريك المربع أفقياً (يميناً ويساراً)</li>

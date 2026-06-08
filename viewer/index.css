@@ -187,6 +187,23 @@ body, html {
 }
 
 /* Integrated Controls in Left Panel */
+.top-action-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 0 4px;
+}
+
+.top-action-row .icon-btn {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.top-action-row .action-save {
+    color: #FF9800;
+}
+
 .integrated-navigator-row {
     display: flex;
     align-items: center;
@@ -262,6 +279,15 @@ body, html {
 .icon-btn:hover {
     background: rgba(255,255,255,0.1);
     transform: scale(1.1);
+}
+.icon-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+.icon-btn:disabled:hover {
+    background: transparent;
+    transform: none;
 }
 .icon-btn svg { width: 22px; height: 22px; fill: currentColor; }
 

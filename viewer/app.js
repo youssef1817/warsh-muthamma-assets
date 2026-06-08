@@ -25,6 +25,12 @@ let dragStartImageY = 0;
 let dragStartBandTop = 0;
 let dragStartBandBottom = 0;
 
+// Undo/redo history for the currently loaded page.
+const HISTORY_LIMIT = 100;
+let undoStack = [];
+let redoStack = [];
+let activeHistoryTransaction = null;
+
 // Auto-save debounce timers
 let ayahSaveTimeout;
 let layoutSaveTimeout;
@@ -47,7 +53,10 @@ const DOM = {
     hlControls: document.getElementById('highlight-controls'),
     mkControls: document.getElementById('marker-controls'),
     toast: document.getElementById('toast'),
-    toggleOverlayBtn: document.getElementById('toggle-overlay-btn')
+    toggleOverlayBtn: document.getElementById('toggle-overlay-btn'),
+    saveAllBtn: document.getElementById('save-all-btn'),
+    undoBtn: document.getElementById('undo-btn'),
+    redoBtn: document.getElementById('redo-btn')
 };
 
 function showToast(msg, isError = false) {
@@ -55,6 +64,140 @@ function showToast(msg, isError = false) {
     DOM.toast.style.background = isError ? '#f44336' : '#4CAF50';
     DOM.toast.style.opacity = 1;
     setTimeout(() => DOM.toast.style.opacity = 0, 3000);
+}
+
+function cloneData(value) {
+    return value == null ? value : JSON.parse(JSON.stringify(value));
+}
+
+function readHistoryInputValues() {
+    const ids = [
+        'global-y-offset',
+        'global-scale',
+        'global-height',
+        'global-pad-left',
+        'global-pad-right',
+        'global-first-line-pad',
+        'global-last-line-pad'
+    ];
+    return ids.reduce((values, id) => {
+        const el = document.getElementById(id);
+        if (el) values[id] = el.value;
+        return values;
+    }, {});
+}
+
+function writeHistoryInputValues(values) {
+    Object.entries(values || {}).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+    });
+}
+
+function createHistorySnapshot(label = '') {
+    if (!currentLayoutData && !currentAyahData) return null;
+    return {
+        label,
+        page: currentPage,
+        currentLayoutData: cloneData(currentLayoutData),
+        currentAyahData: cloneData(currentAyahData),
+        originalLineBands: cloneData(originalLineBands),
+        selectedItem: cloneData(selectedItem),
+        selectedItemOriginals: cloneData(selectedItemOriginals),
+        inputValues: readHistoryInputValues()
+    };
+}
+
+function snapshotFingerprint(snapshot) {
+    if (!snapshot) return '';
+    return JSON.stringify({
+        currentLayoutData: snapshot.currentLayoutData,
+        currentAyahData: snapshot.currentAyahData,
+        originalLineBands: snapshot.originalLineBands,
+        selectedItem: snapshot.selectedItem,
+        inputValues: snapshot.inputValues
+    });
+}
+
+function updateUndoRedoButtons() {
+    if (DOM.undoBtn) DOM.undoBtn.disabled = undoStack.length === 0;
+    if (DOM.redoBtn) DOM.redoBtn.disabled = redoStack.length === 0;
+    if (DOM.saveAllBtn) DOM.saveAllBtn.disabled = !currentLayoutData && !currentAyahData;
+}
+
+function resetHistory() {
+    undoStack = [];
+    redoStack = [];
+    activeHistoryTransaction = null;
+    updateUndoRedoButtons();
+}
+
+function pushUndoSnapshot(label = '') {
+    const snapshot = createHistorySnapshot(label);
+    if (!snapshot) return;
+
+    const last = undoStack[undoStack.length - 1];
+    if (last && snapshotFingerprint(last) === snapshotFingerprint(snapshot)) return;
+
+    undoStack.push(snapshot);
+    if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
+    redoStack = [];
+    updateUndoRedoButtons();
+}
+
+function beginHistoryTransaction(label = '') {
+    if (activeHistoryTransaction) return;
+    pushUndoSnapshot(label);
+    activeHistoryTransaction = label || 'edit';
+}
+
+function endHistoryTransaction() {
+    activeHistoryTransaction = null;
+}
+
+function restoreHistorySnapshot(snapshot) {
+    if (!snapshot) return;
+    currentLayoutData = cloneData(snapshot.currentLayoutData);
+    currentAyahData = cloneData(snapshot.currentAyahData);
+    originalLineBands = cloneData(snapshot.originalLineBands);
+    selectedItem = cloneData(snapshot.selectedItem);
+    selectedItemOriginals = cloneData(snapshot.selectedItemOriginals);
+    writeHistoryInputValues(snapshot.inputValues);
+
+    if (selectedItem && selectedItem.type === 'highlight' && !currentAyahData?.ayah_highlights?.[selectedItem.index]) {
+        selectedItem = null;
+        selectedItemOriginals = null;
+    }
+    if (selectedItem && selectedItem.type === 'marker' && !currentAyahData?.ayah_markers?.[selectedItem.index]) {
+        selectedItem = null;
+        selectedItemOriginals = null;
+    }
+
+    renderBoxes();
+    if (selectedItem) openRightPanel();
+    else clearRightPanel();
+    if (typeof updateLeftPanelSaveButtons === 'function') updateLeftPanelSaveButtons();
+    updateUndoRedoButtons();
+}
+
+function undoLastChange() {
+    if (undoStack.length === 0) return;
+    const current = createHistorySnapshot('redo');
+    const previous = undoStack.pop();
+    if (current) redoStack.push(current);
+    activeHistoryTransaction = null;
+    restoreHistorySnapshot(previous);
+    showToast('تم التراجع');
+}
+
+function redoLastChange() {
+    if (redoStack.length === 0) return;
+    const current = createHistorySnapshot('undo');
+    const next = redoStack.pop();
+    if (current) undoStack.push(current);
+    activeHistoryTransaction = null;
+    restoreHistorySnapshot(next);
+    showToast('تم الإرجاع');
 }
 
 async function saveToServer(filepath, content, onSuccessCallback) {
@@ -67,9 +210,11 @@ async function saveToServer(filepath, content, onSuccessCallback) {
         if (!res.ok) throw new Error('Save failed');
         showToast('تم الحفظ بنجاح');
         if (onSuccessCallback) onSuccessCallback();
+        return true;
     } catch (err) {
         console.error(err);
         showToast('خطأ أثناء الحفظ! هل الخادم Node.js يعمل؟', true);
+        return false;
     }
 }
 
@@ -121,6 +266,7 @@ async function loadOverlayData(page) {
     currentLayoutData = null;
     currentAyahData = null;
     originalLineBands = null;
+    resetHistory();
 
     const pageStr = String(page).padStart(3, '0');
     const layoutUrl = `../databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
@@ -147,6 +293,7 @@ async function loadOverlayData(page) {
         }
 
         renderBoxes();
+        resetHistory();
     } catch (err) {
         console.error("Could not load overlay data:", err);
         showToast("تعذر جلب البيانات. هل الخادم يعمل؟", true);
@@ -216,6 +363,7 @@ function renderBoxes() {
                             if (e.button !== 0) return; // Only left click
                             e.stopPropagation(); // prevent box mousedown
                             selectItem('highlight', index);
+                            beginHistoryTransaction('resize highlight');
                             isDragging = true;
                             dragMode = `resize-${edge}`;
                             dragStartMouseX = e.clientX;
@@ -237,6 +385,7 @@ function renderBoxes() {
                     if (e.button !== 0) return; // Only left click
                     e.stopPropagation();
                     selectItem('highlight', index);
+                    beginHistoryTransaction('move highlight');
                     isDragging = true;
                     dragMode = 'move';
                     dragStartMouseX = e.clientX;
@@ -273,6 +422,7 @@ function renderBoxes() {
                     if (e.button !== 0) return;
                     e.stopPropagation();
                     selectItem('marker', index);
+                    beginHistoryTransaction('move marker');
                     isDragging = true;
                     dragStartMouseX = e.clientX;
                     dragStartMouseY = e.clientY;
@@ -358,7 +508,7 @@ document.addEventListener('mousemove', (e) => {
             syncMarkerLineChange(m, oldLine, oldCenterX);
         }
         if (typeof syncHighlightWithMarker === 'function') {
-            syncHighlightWithMarker(m, { allowCreateNext: false });
+            syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
         }
     }
     renderBoxes();
@@ -378,6 +528,7 @@ document.addEventListener('mouseup', () => {
             autoSaveAyahData();
         }
         dragMode = 'move';
+        endHistoryTransaction();
     }
 });
 
@@ -417,6 +568,8 @@ function openRightPanel() {
         }
         
         // Line top/bottom inputs
+        let isTopChanged = false;
+        let isBottomChanged = false;
         const band = currentLayoutData.lineBands.find(b => b.line === h.line);
         if (band) {
             if (document.activeElement !== document.getElementById('hl-line-top')) {
@@ -437,6 +590,9 @@ function openRightPanel() {
             const currHeight = band.bottom - band.top;
             document.getElementById('line-height-orig').textContent = origHeight;
             document.getElementById('line-height-curr').textContent = currHeight;
+
+            isTopChanged = origBand && origBand.top !== band.top;
+            isBottomChanged = origBand && origBand.bottom !== band.bottom;
         }
 
         // Compare values
@@ -450,7 +606,7 @@ function openRightPanel() {
         // Update badge state
         const isLeftChanged = Math.abs(h.left - origLeft) > 0.00001;
         const isRightChanged = Math.abs(h.right - origRight) > 0.00001;
-        const isChanged = isLeftChanged || isRightChanged;
+        const isChanged = isLeftChanged || isRightChanged || isTopChanged || isBottomChanged;
         
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
@@ -463,6 +619,9 @@ function openRightPanel() {
         // Update inline save buttons
         const btnSaveLeft = document.getElementById('save-hl-left');
         const btnSaveRight = document.getElementById('save-hl-right');
+        const btnSaveTop = document.getElementById('save-hl-line-top');
+        const btnSaveBottom = document.getElementById('save-hl-line-bottom');
+        
         if (isLeftChanged) {
             btnSaveLeft.className = "save-inline-btn unsaved";
             btnSaveLeft.title = "تغيير غير محفوظ - انقر للحفظ";
@@ -476,6 +635,20 @@ function openRightPanel() {
         } else {
             btnSaveRight.className = "save-inline-btn saved";
             btnSaveRight.title = "تم الحفظ";
+        }
+        if (isTopChanged) {
+            btnSaveTop.className = "save-inline-btn unsaved";
+            btnSaveTop.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveTop.className = "save-inline-btn saved";
+            btnSaveTop.title = "تم الحفظ";
+        }
+        if (isBottomChanged) {
+            btnSaveBottom.className = "save-inline-btn unsaved";
+            btnSaveBottom.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveBottom.className = "save-inline-btn saved";
+            btnSaveBottom.title = "تم الحفظ";
         }
 
     } else if (selectedItem.type === 'marker') {
@@ -579,6 +752,8 @@ function clearRightPanel() {
 
     document.getElementById('hl-left').value = "";
     document.getElementById('hl-right').value = "";
+    document.getElementById('hl-line-top').value = "";
+    document.getElementById('hl-line-bottom').value = "";
     document.getElementById('mk-cx').value = "";
     document.getElementById('mk-cy').value = "";
     document.getElementById('mk-line').value = "";
@@ -597,7 +772,7 @@ function clearRightPanel() {
     document.getElementById('line-height-orig').textContent = "-";
     document.getElementById('line-height-curr').textContent = "-";
 
-    const ids = ['save-hl-left', 'save-hl-right', 'save-mk-cx', 'save-mk-cy', 'save-mk-line'];
+    const ids = ['save-hl-left', 'save-hl-right', 'save-hl-line-top', 'save-hl-line-bottom', 'save-mk-cx', 'save-mk-cy', 'save-mk-line'];
     ids.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -670,7 +845,7 @@ document.getElementById('mk-cx').addEventListener('input', (e) => {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.center_x = parseFloat(e.target.value) || 0;
         if (typeof syncHighlightWithMarker === 'function') {
-            syncHighlightWithMarker(m, { allowCreateNext: false });
+            syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
         }
         renderBoxes();
         openRightPanel();
@@ -698,13 +873,40 @@ document.getElementById('mk-line').addEventListener('input', (e) => {
             syncMarkerLineChange(m, oldLine, oldCenterX);
         }
         if (typeof syncHighlightWithMarker === 'function') {
-            syncHighlightWithMarker(m, { allowCreateNext: false });
+            syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
         }
         document.getElementById('meta-line').textContent = m.line;
         renderBoxes();
         openRightPanel();
     }
 });
+
+function attachInputHistory(ids) {
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('focus', () => beginHistoryTransaction(`edit ${id}`));
+        el.addEventListener('blur', endHistoryTransaction);
+        el.addEventListener('change', endHistoryTransaction);
+    });
+}
+
+attachInputHistory([
+    'hl-left',
+    'hl-right',
+    'hl-line-top',
+    'hl-line-bottom',
+    'mk-cx',
+    'mk-cy',
+    'mk-line',
+    'global-y-offset',
+    'global-scale',
+    'global-height',
+    'global-pad-left',
+    'global-pad-right',
+    'global-first-line-pad',
+    'global-last-line-pad'
+]);
 
 function getMarkerImageY(marker) {
     if (!currentLayoutData || !currentLayoutData.lineBands) return 0;
@@ -738,11 +940,17 @@ function findLineBandForImageY(imageY) {
         })[0];
 }
 
+function shouldCreateNextHighlightOnMarkerMove() {
+    const checkbox = document.getElementById('sync-create-next-highlight');
+    return Boolean(checkbox && checkbox.checked);
+}
+
 // Sync Highlight With Marker
 function syncHighlightWithMarker(m, options = {}) {
     const syncCheckbox = document.getElementById('sync-marker-highlight');
     const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
     const allowCreateNext = options.allowCreateNext === true;
+    const shouldSyncNext = Boolean(syncNextCheckbox && syncNextCheckbox.checked) || allowCreateNext;
     
     // The text is RTL. The end of the ayah text is on the left side (h.left).
     // 1. Sync the left boundary of the current ayah highlight on the same line
@@ -759,7 +967,7 @@ function syncHighlightWithMarker(m, options = {}) {
     // In RTL page coordinates, the next ayah segment that starts after the
     // marker is visually to the marker's left, so the boundary touching the
     // marker is that segment's right edge.
-    if (syncNextCheckbox && syncNextCheckbox.checked) {
+    if (shouldSyncNext) {
         const nextHighlight = findNextHighlightOnLine(m) || (allowCreateNext ? createNextHighlightOnLine(m) : null);
         if (nextHighlight) {
             nextHighlight.right = clampHighlightBoundary(m.center_x, nextHighlight.left, 'right');
@@ -922,6 +1130,7 @@ function createNextHighlightOnLine(marker) {
 // Reset Button Listeners
 document.getElementById('reset-hl-left').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'highlight' && selectedItemOriginals) {
+        pushUndoSnapshot('reset highlight left');
         const h = currentAyahData.ayah_highlights[selectedItem.index];
         h.left = selectedItemOriginals.left;
         document.getElementById('hl-left').value = h.left;
@@ -932,6 +1141,7 @@ document.getElementById('reset-hl-left').addEventListener('click', () => {
 });
 document.getElementById('reset-hl-right').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'highlight' && selectedItemOriginals) {
+        pushUndoSnapshot('reset highlight right');
         const h = currentAyahData.ayah_highlights[selectedItem.index];
         h.right = selectedItemOriginals.right;
         document.getElementById('hl-right').value = h.right;
@@ -942,6 +1152,7 @@ document.getElementById('reset-hl-right').addEventListener('click', () => {
 });
 document.getElementById('reset-mk-cx').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        pushUndoSnapshot('reset marker x');
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.center_x = selectedItemOriginals.center_x;
         document.getElementById('mk-cx').value = m.center_x;
@@ -952,6 +1163,7 @@ document.getElementById('reset-mk-cx').addEventListener('click', () => {
 });
 document.getElementById('reset-mk-cy').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        pushUndoSnapshot('reset marker y');
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.center_y = selectedItemOriginals.center_y;
         document.getElementById('mk-cy').value = m.center_y;
@@ -963,6 +1175,7 @@ document.getElementById('reset-mk-cy').addEventListener('click', () => {
 
 document.getElementById('reset-mk-line').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        pushUndoSnapshot('reset marker line');
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.line = selectedItemOriginals.line;
         document.getElementById('mk-line').value = m.line;
@@ -973,17 +1186,51 @@ document.getElementById('reset-mk-line').addEventListener('click', () => {
     }
 });
 
+document.getElementById('reset-hl-line-top').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'highlight' && originalLineBands) {
+        pushUndoSnapshot('reset line top');
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+        const origBand = originalLineBands.find(b => b.line === h.line);
+        if (band && origBand) {
+            band.top = origBand.top;
+            document.getElementById('hl-line-top').value = band.top;
+            renderBoxes();
+            openRightPanel();
+            autoSaveLayoutData();
+        }
+    }
+});
+document.getElementById('reset-hl-line-bottom').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'highlight' && originalLineBands) {
+        pushUndoSnapshot('reset line bottom');
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+        const origBand = originalLineBands.find(b => b.line === h.line);
+        if (band && origBand) {
+            band.bottom = origBand.bottom;
+            document.getElementById('hl-line-bottom').value = band.bottom;
+            renderBoxes();
+            openRightPanel();
+            autoSaveLayoutData();
+        }
+    }
+});
+
 document.getElementById('reset-global-y-offset').addEventListener('click', () => {
+    pushUndoSnapshot('reset global y');
     document.getElementById('global-y-offset').value = 0;
     applyGlobalLayoutTweaks();
     autoSaveLayoutData();
 });
 document.getElementById('reset-global-scale').addEventListener('click', () => {
+    pushUndoSnapshot('reset global scale');
     document.getElementById('global-scale').value = 1.0;
     applyGlobalLayoutTweaks();
     autoSaveLayoutData();
 });
 document.getElementById('reset-global-height').addEventListener('click', () => {
+    pushUndoSnapshot('reset global height');
     document.getElementById('global-height').value = "";
     applyGlobalLayoutTweaks();
     updateLeftPanelSaveButtons();
@@ -995,6 +1242,12 @@ document.getElementById('save-hl-left').addEventListener('click', () => {
 });
 document.getElementById('save-hl-right').addEventListener('click', () => {
     document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-hl-line-top').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
+});
+document.getElementById('save-hl-line-bottom').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
 });
 document.getElementById('save-mk-cx').addEventListener('click', () => {
     document.getElementById('save-ayah-btn').click();
@@ -1015,6 +1268,10 @@ document.getElementById('save-global-scale').addEventListener('click', () => {
 document.getElementById('save-global-height').addEventListener('click', () => {
     document.getElementById('save-layout-btn').click();
 });
+
+if (DOM.saveAllBtn) DOM.saveAllBtn.addEventListener('click', saveCurrentPageAll);
+if (DOM.undoBtn) DOM.undoBtn.addEventListener('click', undoLastChange);
+if (DOM.redoBtn) DOM.redoBtn.addEventListener('click', redoLastChange);
 
 // Save Actions
 document.getElementById('save-ayah-btn').addEventListener('click', () => {
@@ -1055,6 +1312,62 @@ function flashSavedFeedback() {
             card.classList.remove('success-glow');
         });
     }, 1000);
+}
+
+function syncSelectionOriginalsFromCurrent() {
+    if (!selectedItem || !currentAyahData) return;
+    if (selectedItem.type === 'highlight') {
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        if (h) selectedItemOriginals = { left: h.left, right: h.right };
+    } else if (selectedItem.type === 'marker') {
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        if (m) selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
+    }
+}
+
+function syncLayoutOriginalsFromCurrent(resetInputs = false) {
+    if (!currentLayoutData || !currentLayoutData.lineBands) return;
+    originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands));
+    if (originalLineBands.length > 0) {
+        const avgHeight = Math.round(originalLineBands.reduce((sum, b) => sum + (b.bottom - b.top), 0) / originalLineBands.length);
+        document.getElementById('global-height-orig').textContent = `Ø§Ù„Ø£ØµÙ„ÙŠØ©: ~${avgHeight}`;
+    } else {
+        document.getElementById('global-height-orig').textContent = `Ø§Ù„Ø£ØµÙ„ÙŠØ©: -`;
+    }
+
+    if (resetInputs) {
+        document.getElementById('global-y-offset').value = 0;
+        document.getElementById('global-scale').value = 1.0;
+        document.getElementById('global-height').value = "";
+        updateLeftPanelSaveButtons();
+    }
+}
+
+async function saveCurrentPageAll() {
+    if (!currentAyahData && !currentLayoutData) return;
+
+    const pageStr = String(currentPage).padStart(3, '0');
+    const oldDisabled = DOM.saveAllBtn ? DOM.saveAllBtn.disabled : false;
+    if (DOM.saveAllBtn) DOM.saveAllBtn.disabled = true;
+
+    let ok = true;
+    if (currentAyahData) {
+        const ayahPath = `databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
+        ok = await saveToServer(ayahPath, currentAyahData, syncSelectionOriginalsFromCurrent) && ok;
+    }
+    if (currentLayoutData) {
+        const layoutPath = `databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
+        ok = await saveToServer(layoutPath, currentLayoutData, () => syncLayoutOriginalsFromCurrent(true)) && ok;
+    }
+
+    if (selectedItem) openRightPanel();
+    if (ok) {
+        flashSavedFeedback();
+        showToast('تم حفظ الصفحة كاملة');
+    }
+
+    if (DOM.saveAllBtn) DOM.saveAllBtn.disabled = oldDisabled;
+    updateUndoRedoButtons();
 }
 
 document.getElementById('save-layout-btn').addEventListener('click', () => {
@@ -1151,6 +1464,24 @@ document.getElementById('global-height').addEventListener('input', () => {
 
 // Keyboard Navigation and Shortcuts
 window.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    const cmd = e.ctrlKey || e.metaKey;
+    if (cmd && !e.altKey && key === 's') {
+        e.preventDefault();
+        saveCurrentPageAll();
+        return;
+    }
+    if (cmd && !e.altKey && key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undoLastChange();
+        return;
+    }
+    if (cmd && !e.altKey && (key === 'y' || (key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        redoLastChange();
+        return;
+    }
+
     const activeTag = document.activeElement.tagName.toLowerCase();
     if (activeTag === 'input' || activeTag === 'textarea') {
         if (e.key === 'Enter' && document.activeElement === DOM.jumpInput) {
@@ -1185,6 +1516,8 @@ window.addEventListener('keydown', (e) => {
 
         let updatedAyah = false;
         let updatedLayout = false;
+        const shouldCaptureHistory = e.shiftKey || e.ctrlKey || e.altKey;
+        if (shouldCaptureHistory) pushUndoSnapshot('keyboard edit');
 
         if (selectedItem.type === 'highlight') {
             const h = currentAyahData.ayah_highlights[selectedItem.index];
@@ -1220,7 +1553,7 @@ window.addEventListener('keydown', (e) => {
                 else if (e.key === 'ArrowDown') { m.center_y += step; updatedAyah = true; }
                 normalizeMarkerLineAfterKeyboardMove(m, oldLine, oldCenterX);
                 if (updatedAyah && typeof syncHighlightWithMarker === 'function') {
-                    syncHighlightWithMarker(m, { allowCreateNext: false });
+                    syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
                 }
             }
         }
@@ -1301,6 +1634,7 @@ document.getElementById('save-ayah-pad-btn').addEventListener('click', () => {
     const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
     
     if (padLeft !== 0 || padRight !== 0) {
+        pushUndoSnapshot('apply page ayah padding');
         if (currentAyahData.ayah_highlights) {
             currentAyahData.ayah_highlights.forEach(h => {
                 h.left = Math.max(0, h.left - padLeft);
@@ -1382,6 +1716,7 @@ document.getElementById('save-first-last-page-btn').addEventListener('click', ()
     const padLastBottom = parseInt(document.getElementById('global-last-line-pad').value) || 0;
     
     if (padFirstTop === 0 && padLastBottom === 0) return;
+    pushUndoSnapshot('apply first/last line padding');
     
     const bands = currentLayoutData.lineBands;
     const first = bands[0];
@@ -1540,6 +1875,7 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
 // Init Checkboxes
 const syncCheckbox = document.getElementById('sync-marker-highlight');
 const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
+const syncCreateNextCheckbox = document.getElementById('sync-create-next-highlight');
 if (syncCheckbox) {
     syncCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_marker') === 'true';
     syncCheckbox.addEventListener('change', (e) => {
@@ -1550,6 +1886,12 @@ if (syncNextCheckbox) {
     syncNextCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_next') === 'true';
     syncNextCheckbox.addEventListener('change', (e) => {
         localStorage.setItem('warsh_muthamma_sync_next', e.target.checked);
+    });
+}
+if (syncCreateNextCheckbox) {
+    syncCreateNextCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_create_next') === 'true';
+    syncCreateNextCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('warsh_muthamma_sync_create_next', e.target.checked);
     });
 }
 
