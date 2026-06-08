@@ -104,6 +104,61 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    if (req.url === '/api/batch-adjust-first-last-lines' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const { padFirstTop, padLastBottom } = JSON.parse(body);
+                const layoutDir = path.resolve(ROOT_DIR, 'databases', 'ayahinfo', 'warsh_muthamma', 'page_layout_json');
+                
+                if (!fs.existsSync(layoutDir)) {
+                    res.writeHead(404);
+                    return res.end(JSON.stringify({ error: 'page_layout_json directory not found' }));
+                }
+
+                const files = fs.readdirSync(layoutDir).filter(f => f.endsWith('.json'));
+                let modifiedCount = 0;
+
+                for (const file of files) {
+                    const filepath = path.join(layoutDir, file);
+                    let content = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+                    let changed = false;
+
+                    if (content.lineBands && Array.isArray(content.lineBands) && content.lineBands.length > 0) {
+                        const first = content.lineBands[0];
+                        const last = content.lineBands[content.lineBands.length - 1];
+
+                        if (padFirstTop !== 0) {
+                            first.top = Math.max(0, first.top - padFirstTop);
+                            first.center = Math.round((first.top + first.bottom) / 2);
+                            changed = true;
+                        }
+
+                        if (padLastBottom !== 0) {
+                            last.bottom = last.bottom + padLastBottom;
+                            last.center = Math.round((last.top + last.bottom) / 2);
+                            changed = true;
+                        }
+                    }
+
+                    if (changed) {
+                        fs.writeFileSync(filepath, JSON.stringify(content, null, 2), 'utf8');
+                        modifiedCount++;
+                    }
+                }
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, filesModified: modifiedCount }));
+            } catch (err) {
+                console.error("Batch first-last layout adjustment error:", err);
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            }
+        });
+        return;
+    }
+
     let reqUrl = req.url.split('?')[0]; 
     let filePath = path.join(ROOT_DIR, reqUrl);
     

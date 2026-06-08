@@ -12,9 +12,9 @@
   "lineBands": [
     {
       "line": 1,
-      "top": 100,
+      "top": 50,
       "bottom": 157,
-      "center": 129
+      "center": 104
     },
     {
       "line": 2,
@@ -97,8 +97,8 @@
     {
       "line": 15,
       "top": 1828,
-      "bottom": 1920,
-      "center": 1874
+      "bottom": 1955,
+      "center": 1892
     }
   ],
   "nonAyahZones": [],

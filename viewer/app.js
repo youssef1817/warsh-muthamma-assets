@@ -156,10 +156,23 @@ function renderBoxes() {
     const lineMap = {};
     
     if (currentLayoutData.lineBands) {
-        currentLayoutData.lineBands.forEach(b => {
+        const padFirstTop = parseInt(document.getElementById('global-first-line-pad').value) || 0;
+        const padLastBottom = parseInt(document.getElementById('global-last-line-pad').value) || 0;
+
+        currentLayoutData.lineBands.forEach((b, index) => {
+            let top = b.top;
+            let bottom = b.bottom;
+
+            if (index === 0) {
+                top = Math.max(0, top - padFirstTop);
+            }
+            if (index === currentLayoutData.lineBands.length - 1) {
+                bottom = bottom + padLastBottom;
+            }
+
             lineMap[b.line] = {
-                top: b.top / imgHeight * 100,
-                height: (b.bottom - b.top) / imgHeight * 100
+                top: top / imgHeight * 100,
+                height: (bottom - top) / imgHeight * 100
             };
         });
     }
@@ -1020,6 +1033,94 @@ document.getElementById('apply-pad-all-btn').addEventListener('click', async () 
         alert("حدث خطأ أثناء الاتصال بالخادم.");
     } finally {
         const btn = document.getElementById('apply-pad-all-btn');
+        btn.textContent = "تطبيق وحفظ في كل الصفحات";
+        btn.disabled = false;
+    }
+});
+
+// Live Preview for first and last line pad inputs
+document.getElementById('global-first-line-pad').addEventListener('input', () => {
+    renderBoxes();
+});
+document.getElementById('global-last-line-pad').addEventListener('input', () => {
+    renderBoxes();
+});
+
+// Save first/last line adjustments locally on current page
+document.getElementById('save-first-last-page-btn').addEventListener('click', () => {
+    if (!currentLayoutData || !currentLayoutData.lineBands || currentLayoutData.lineBands.length === 0) return;
+    
+    const padFirstTop = parseInt(document.getElementById('global-first-line-pad').value) || 0;
+    const padLastBottom = parseInt(document.getElementById('global-last-line-pad').value) || 0;
+    
+    if (padFirstTop === 0 && padLastBottom === 0) return;
+    
+    const bands = currentLayoutData.lineBands;
+    const first = bands[0];
+    const last = bands[bands.length - 1];
+    
+    first.top = Math.max(0, first.top - padFirstTop);
+    first.center = Math.round((first.top + first.bottom) / 2);
+    
+    last.bottom = last.bottom + padLastBottom;
+    last.center = Math.round((last.top + last.bottom) / 2);
+    
+    const pageStr = String(currentPage).padStart(3, '0');
+    const path = `databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
+    saveToServer(path, currentLayoutData, () => {
+        originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands));
+        document.getElementById('global-first-line-pad').value = 0;
+        document.getElementById('global-last-line-pad').value = 0;
+        renderBoxes();
+        
+        // Show success visual feedback on the button
+        const btn = document.getElementById('save-first-last-page-btn');
+        const origText = btn.textContent;
+        btn.textContent = "تم الحفظ!";
+        setTimeout(() => { btn.textContent = origText; }, 1500);
+    });
+});
+
+// Save first/last line adjustments globally on all pages
+document.getElementById('apply-first-last-all-btn').addEventListener('click', async () => {
+    const padFirstTop = parseInt(document.getElementById('global-first-line-pad').value) || 0;
+    const padLastBottom = parseInt(document.getElementById('global-last-line-pad').value) || 0;
+    
+    if (padFirstTop === 0 && padLastBottom === 0) {
+        alert("يرجى إدخال قيمة تمديد السطر الأول أو الأخير أولاً.");
+        return;
+    }
+
+    const conf = confirm(`هل أنت متأكد من رغبتك في تطبيق تمديد السطر الأول للأعلى (${padFirstTop}px) وتمديد السطر الأخير للأسفل (${padLastBottom}px) على جميع ملفات التخطيط (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
+    if (!conf) return;
+
+    try {
+        const btn = document.getElementById('apply-first-last-all-btn');
+        btn.textContent = "جاري التطبيق...";
+        btn.disabled = true;
+
+        const res = await fetch('/api/batch-adjust-first-last-lines', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ padFirstTop, padLastBottom })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            alert(`تم تطبيق التعديلات بنجاح على ${data.filesModified} صفحة تخطيط.`);
+            // Reset the inputs
+            document.getElementById('global-first-line-pad').value = 0;
+            document.getElementById('global-last-line-pad').value = 0;
+            // Reload page to fetch updated data
+            updatePage(currentPage);
+        } else {
+            alert("حدث خطأ: " + (data.error || "غير معروف"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("حدث خطأ أثناء الاتصال بالخادم.");
+    } finally {
+        const btn = document.getElementById('apply-first-last-all-btn');
         btn.textContent = "تطبيق وحفظ في كل الصفحات";
         btn.disabled = false;
     }
