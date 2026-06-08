@@ -213,7 +213,7 @@ function renderBoxes() {
                 div.style.left = cx + '%';
                 div.style.top = cy + '%';
                 div.style.width = '2.5%';
-                div.style.height = '3.5%';
+                div.style.aspectRatio = '1 / 1';
                 div.title = `نهاية الآية ${m.ayah}`;
                 
                 if (selectedItem && selectedItem.type === 'marker' && selectedItem.index === index) {
