@@ -21,18 +21,12 @@
 
         #image-container {
             margin-left: 250px; /* Offset by left sidebar */
-            width: calc(100% - 250px);
+            margin-right: 250px; /* Offset by right sidebar */
+            width: calc(100% - 500px);
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: margin-right 0.3s ease, width 0.3s ease;
-        }
-
-        /* Adjust width when right panel is open */
-        body:has(#right-panel.open) #image-container {
-            margin-right: 250px;
-            width: calc(100% - 500px);
         }
 
         #image-wrapper {
@@ -324,10 +318,7 @@
         #right-panel {
             right: 0;
             border-left: none;
-            transform: translateX(100%); /* hidden by default */
-        }
-        #right-panel.open {
-            transform: translateX(0);
+            transform: translateX(0); /* always visible */
         }
 
         .sidebar h3 {
@@ -514,7 +505,7 @@
         </div>
 
         <button class="btn btn-save" id="save-ayah-btn" style="background: #FF9800; border-color: #e68a00; margin-top: 10px;">حفظ بيانات الآيات</button>
-        <button class="btn btn-danger" id="close-right-panel">إغلاق اللوحة</button>
+        <button class="btn btn-danger" id="close-right-panel">إلغاء التحديد</button>
     </div>
 
     <div id="image-container">
@@ -827,10 +818,20 @@
         });
 
         function openRightPanel() {
-            DOM.rightPanel.classList.add('open');
-            if (!selectedItem || !currentAyahData) return;
+            if (!selectedItem || !currentAyahData) {
+                clearRightPanel();
+                return;
+            }
+
+            const btnSave = document.getElementById('save-ayah-btn');
+            btnSave.disabled = false;
+            btnSave.style.opacity = 1;
+            btnSave.style.cursor = 'pointer';
 
             const badge = document.getElementById('save-status-badge');
+            badge.style.background = "";
+            badge.style.color = "";
+            badge.style.border = "";
             
             if (selectedItem.type === 'highlight') {
                 const h = currentAyahData.ayah_highlights[selectedItem.index];
@@ -902,10 +903,49 @@
             }
         }
 
+        function clearRightPanel() {
+            document.getElementById('meta-type').textContent = "-";
+            document.getElementById('meta-sura').textContent = "-";
+            document.getElementById('meta-ayah').textContent = "-";
+            document.getElementById('meta-line').textContent = "-";
+
+            const badge = document.getElementById('save-status-badge');
+            badge.textContent = "لا يوجد اختيار";
+            badge.className = "badge";
+            badge.style.background = "rgba(255, 255, 255, 0.05)";
+            badge.style.color = "#aaa";
+            badge.style.border = "1px solid rgba(255, 255, 255, 0.1)";
+
+            // Show empty input fields but disabled
+            document.getElementById('highlight-value-fields').style.display = 'flex';
+            document.getElementById('marker-value-fields').style.display = 'flex';
+
+            document.getElementById('hl-left').value = "";
+            document.getElementById('hl-right').value = "";
+            document.getElementById('mk-cx').value = "";
+            document.getElementById('mk-cy').value = "";
+
+            // Reset comparison texts
+            document.getElementById('hl-left-orig').textContent = "-";
+            document.getElementById('hl-left-curr').textContent = "-";
+            document.getElementById('hl-right-orig').textContent = "-";
+            document.getElementById('hl-right-curr').textContent = "-";
+            document.getElementById('mk-cx-orig').textContent = "-";
+            document.getElementById('mk-cx-curr').textContent = "-";
+            document.getElementById('mk-cy-orig').textContent = "-";
+            document.getElementById('mk-cy-curr').textContent = "-";
+
+            const btnSave = document.getElementById('save-ayah-btn');
+            btnSave.disabled = true;
+            btnSave.style.opacity = 0.5;
+            btnSave.style.cursor = 'not-allowed';
+        }
+
         function closeRightPanel() {
-            DOM.rightPanel.classList.remove('open');
             selectedItem = null;
+            selectedItemOriginals = null;
             renderBoxes();
+            clearRightPanel();
         }
 
         document.getElementById('close-right-panel').addEventListener('click', closeRightPanel);
@@ -1140,6 +1180,7 @@
 
         // Init
         updatePage(currentPage);
+        clearRightPanel();
 
     </script>
 </body>
