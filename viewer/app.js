@@ -357,7 +357,9 @@ document.addEventListener('mousemove', (e) => {
         if (oldLine !== m.line) {
             syncMarkerLineChange(m, oldLine, oldCenterX);
         }
-        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
+        if (typeof syncHighlightWithMarker === 'function') {
+            syncHighlightWithMarker(m, { allowCreateNext: false });
+        }
     }
     renderBoxes();
     openRightPanel(); // refresh inputs
@@ -667,7 +669,9 @@ document.getElementById('mk-cx').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.center_x = parseFloat(e.target.value) || 0;
-        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
+        if (typeof syncHighlightWithMarker === 'function') {
+            syncHighlightWithMarker(m, { allowCreateNext: false });
+        }
         renderBoxes();
         openRightPanel();
     }
@@ -693,7 +697,9 @@ document.getElementById('mk-line').addEventListener('input', (e) => {
         if (oldLine !== m.line) {
             syncMarkerLineChange(m, oldLine, oldCenterX);
         }
-        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
+        if (typeof syncHighlightWithMarker === 'function') {
+            syncHighlightWithMarker(m, { allowCreateNext: false });
+        }
         document.getElementById('meta-line').textContent = m.line;
         renderBoxes();
         openRightPanel();
@@ -733,9 +739,10 @@ function findLineBandForImageY(imageY) {
 }
 
 // Sync Highlight With Marker
-function syncHighlightWithMarker(m) {
+function syncHighlightWithMarker(m, options = {}) {
     const syncCheckbox = document.getElementById('sync-marker-highlight');
     const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
+    const allowCreateNext = options.allowCreateNext === true;
     
     // The text is RTL. The end of the ayah text is on the left side (h.left).
     // 1. Sync the left boundary of the current ayah highlight on the same line
@@ -753,7 +760,7 @@ function syncHighlightWithMarker(m) {
     // marker is visually to the marker's left, so the boundary touching the
     // marker is that segment's right edge.
     if (syncNextCheckbox && syncNextCheckbox.checked) {
-        const nextHighlight = findNextHighlightOnLine(m) || createNextHighlightOnLine(m);
+        const nextHighlight = findNextHighlightOnLine(m) || (allowCreateNext ? createNextHighlightOnLine(m) : null);
         if (nextHighlight) {
             nextHighlight.right = clampHighlightBoundary(m.center_x, nextHighlight.left, 'right');
         }
@@ -895,13 +902,14 @@ function createNextHighlightOnLine(marker) {
     if (!nextMarker && !hasVisibleSpaceForNextAyah) {
         return null;
     }
+    const conservativeLeft = Math.max(0.03, marker.center_x - 0.12);
 
     const nextHighlight = {
         page: currentPage,
         line: marker.line,
         sura: nextIdentity.sura,
         ayah: nextIdentity.ayah,
-        left: nextMarker ? nextMarker.center_x : 0.03,
+        left: nextMarker ? nextMarker.center_x : conservativeLeft,
         right: marker.center_x,
         confidence: 0.5,
         source: 'manual_marker_sync'
@@ -1212,7 +1220,7 @@ window.addEventListener('keydown', (e) => {
                 else if (e.key === 'ArrowDown') { m.center_y += step; updatedAyah = true; }
                 normalizeMarkerLineAfterKeyboardMove(m, oldLine, oldCenterX);
                 if (updatedAyah && typeof syncHighlightWithMarker === 'function') {
-                    syncHighlightWithMarker(m);
+                    syncHighlightWithMarker(m, { allowCreateNext: false });
                 }
             }
         }
