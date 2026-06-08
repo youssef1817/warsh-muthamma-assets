@@ -128,41 +128,71 @@
         <div class="values-section">
             <h4>القيم الجغرافية للمربع</h4>
             
-            <div id="highlight-value-fields" style="display: none;">
-                <div class="val-compare-card" id="card-hl-left">
-                    <div class="compare-title">البداية الأفقية (Left)</div>
-                    <div class="compare-row">
-                        <div><span class="lbl">الأصلية:</span> <span id="hl-left-orig" class="val-orig">0.0000</span></div>
-                        <div><span class="lbl">الحالية:</span> <span id="hl-left-curr" class="val-curr">0.0000</span></div>
+            <div id="highlight-value-fields" style="display: none; flex-direction: column; gap: 8px;">
+                <div style="display: flex; flex-direction: row; gap: 8px; width: 100%;">
+                    <div class="val-compare-card" id="card-hl-left">
+                        <div class="compare-title">البداية الأفقية (Left)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="hl-left-orig" class="val-orig">0.0000</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="hl-left-curr" class="val-curr">0.0000</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset">
+                                <input type="number" id="hl-left" step="0.0001">
+                                <button class="reset-inline-btn" id="reset-hl-left" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-hl-left" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="control-group">
-                        <div class="input-with-reset">
-                            <input type="number" id="hl-left" step="0.0001">
-                            <button class="reset-inline-btn" id="reset-hl-left" title="إعادة تعيين">
-                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                            </button>
-                            <button class="save-inline-btn saved" id="save-hl-left" title="تم الحفظ">
-                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                            </button>
+                    
+                    <div class="val-compare-card" id="card-hl-right">
+                        <div class="compare-title">النهاية الأفقية (Right)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="hl-right-orig" class="val-orig">0.0000</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="hl-right-curr" class="val-curr">0.0000</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset">
+                                <input type="number" id="hl-right" step="0.0001">
+                                <button class="reset-inline-btn" id="reset-hl-right" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-hl-right" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="val-compare-card" id="card-hl-right">
-                    <div class="compare-title">النهاية الأفقية (Right)</div>
-                    <div class="compare-row">
-                        <div><span class="lbl">الأصلية:</span> <span id="hl-right-orig" class="val-orig">0.0000</span></div>
-                        <div><span class="lbl">الحالية:</span> <span id="hl-right-curr" class="val-curr">0.0000</span></div>
+
+                <div style="display: flex; flex-direction: row; gap: 8px; width: 100%;">
+                    <div class="val-compare-card" id="card-hl-line-top">
+                        <div class="compare-title">أعلى السطر (Line Top)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="line-top-orig" class="val-orig">-</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="line-top-curr" class="val-curr">-</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset" style="padding: 0;">
+                                <input type="number" id="hl-line-top" step="1" style="padding-left: 10px !important;">
+                            </div>
+                        </div>
                     </div>
-                    <div class="control-group">
-                        <div class="input-with-reset">
-                            <input type="number" id="hl-right" step="0.0001">
-                            <button class="reset-inline-btn" id="reset-hl-right" title="إعادة تعيين">
-                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                            </button>
-                            <button class="save-inline-btn saved" id="save-hl-right" title="تم الحفظ">
-                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                            </button>
+                    
+                    <div class="val-compare-card" id="card-hl-line-bottom">
+                        <div class="compare-title">أسفل السطر (Bottom)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="line-bottom-orig" class="val-orig">-</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="line-bottom-curr" class="val-curr">-</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset" style="padding: 0;">
+                                <input type="number" id="hl-line-bottom" step="1" style="padding-left: 10px !important;">
+                            </div>
                         </div>
                     </div>
                 </div>

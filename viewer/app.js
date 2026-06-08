@@ -327,6 +327,23 @@ function openRightPanel() {
         if (document.activeElement !== document.getElementById('hl-right')) {
             document.getElementById('hl-right').value = h.right;
         }
+        
+        // Line top/bottom inputs
+        const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+        if (band) {
+            if (document.activeElement !== document.getElementById('hl-line-top')) {
+                document.getElementById('hl-line-top').value = band.top;
+            }
+            if (document.activeElement !== document.getElementById('hl-line-bottom')) {
+                document.getElementById('hl-line-bottom').value = band.bottom;
+            }
+            
+            const origBand = originalLineBands ? originalLineBands.find(b => b.line === h.line) : band;
+            document.getElementById('line-top-orig').textContent = origBand ? origBand.top : band.top;
+            document.getElementById('line-top-curr').textContent = band.top;
+            document.getElementById('line-bottom-orig').textContent = origBand ? origBand.bottom : band.bottom;
+            document.getElementById('line-bottom-curr').textContent = band.bottom;
+        }
 
         // Compare values
         const origLeft = selectedItemOriginals ? selectedItemOriginals.left : h.left;
@@ -442,9 +459,9 @@ function clearRightPanel() {
     badge.style.color = "#aaa";
     badge.style.border = "1px solid rgba(255, 255, 255, 0.1)";
 
-    // Show empty input fields but disabled
-    document.getElementById('highlight-value-fields').style.display = 'flex';
-    document.getElementById('marker-value-fields').style.display = 'flex';
+    // Hide value fields when nothing is selected
+    document.getElementById('highlight-value-fields').style.display = 'none';
+    document.getElementById('marker-value-fields').style.display = 'none';
 
     document.getElementById('hl-left').value = "";
     document.getElementById('hl-right').value = "";
@@ -500,6 +517,35 @@ document.getElementById('hl-right').addEventListener('input', (e) => {
         openRightPanel();
     }
 });
+
+// Highlight Line Layout Tweaks
+document.getElementById('hl-line-top').addEventListener('input', (e) => {
+    if (selectedItem && selectedItem.type === 'highlight') {
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+        if (band) {
+            band.top = parseInt(e.target.value) || 0;
+            renderBoxes();
+            openRightPanel();
+        }
+    }
+});
+document.getElementById('hl-line-bottom').addEventListener('input', (e) => {
+    if (selectedItem && selectedItem.type === 'highlight') {
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+        if (band) {
+            band.bottom = parseInt(e.target.value) || 0;
+            renderBoxes();
+            openRightPanel();
+        }
+    }
+});
+
+// Trigger save on layout blur/change
+document.getElementById('hl-line-top').addEventListener('change', autoSaveLayoutData);
+document.getElementById('hl-line-bottom').addEventListener('change', autoSaveLayoutData);
+
 document.getElementById('mk-cx').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
