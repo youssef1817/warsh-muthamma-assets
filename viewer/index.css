@@ -358,7 +358,7 @@ body, html {
 }
 
 #highlight-value-fields {
-    flex-direction: row !important;
+    flex-direction: column !important;
     gap: 8px;
 }
 

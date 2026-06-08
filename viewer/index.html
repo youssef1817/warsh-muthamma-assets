@@ -238,10 +238,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="val-compare-card" style="padding: 10px; flex: unset; margin-top: 4px;">
+                <div class="val-compare-card" style="padding: 10px; flex: unset; margin-top: 4px; display: flex; flex-direction: column; gap: 8px;">
                     <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#4CAF50; font-weight:bold;">
                         <input type="checkbox" id="sync-marker-highlight" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
                         <span>🔗 محاذاة نهاية التظليل تلقائياً مع الدائرة</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#4CAF50; font-weight:bold;">
+                        <input type="checkbox" id="sync-next-ayah-highlight" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
+                        <span>🔗 محاذاة بداية الآية الموالية تلقائياً مع الدائرة</span>
                     </label>
                 </div>
             </div>
@@ -260,7 +264,7 @@
     
     <div id="toast" class="toast">تم الحفظ بنجاح</div>
 
-    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border:1px solid #555; padding:25px; border-radius:15px; z-index:1000; width:450px; color:#fff; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+    <div id="help-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px); border:1px solid #555; padding:25px; border-radius:15px; z-index:1000; width:470px; color:#fff; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
         <h3 style="margin-top:0; border-bottom:1px solid #444; padding-bottom:10px;">دليل الاختصارات</h3>
         <ul style="line-height:2; margin-bottom:20px; padding-right:20px; font-size:15px;">
             <li><b>الأسهم يمين/يسار:</b> تقليب الصفحات (للسابق والتالي)</li>
@@ -269,6 +273,8 @@
             <li><b>Ctrl + Shift + أعلى/أسفل:</b> توسيع السطر (من الأعلى/الأسفل)</li>
             <li><b>Ctrl + Shift + Alt + أعلى/أسفل:</b> تضييق السطر (من الأعلى/الأسفل)</li>
             <li><b>سحب وإفلات (بالفأرة):</b> انقر على أي مربع واسحبه أفقياً أو عمودياً للعلامات.</li>
+            <li><b>Shift + سحب الدائرة:</b> تحريك الدائرة أفقياً فقط (قفل التحريك العمودي).</li>
+            <li><b>Ctrl + Shift + سحب الدائرة:</b> تحريك الدائرة عمودياً فقط (قفل التحريك الأفقي).</li>
         </ul>
         <button class="btn" id="close-help-btn" style="width:100%;">إغلاق</button>
     </div>
