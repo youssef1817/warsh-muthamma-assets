@@ -10,6 +10,7 @@
 
     <!-- Left Panel: General Page Controls -->
     <div id="left-panel" class="sidebar">
+        <div id="left-resizer" class="resizer-handle resizer-left"></div>
         <!-- Integrated Page Navigator & Actions -->
         <div class="integrated-navigator">
             <div class="page-row">
@@ -65,6 +66,18 @@
             <div class="input-with-reset">
                 <input type="number" id="global-scale" value="1.0" step="0.01">
                 <button class="reset-inline-btn" id="reset-global-scale" title="إعادة تعيين">
+                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="field-header">
+                <label>ارتفاع موحد (Base Height):</label>
+                <span class="left-orig-val" id="global-height-orig">الأصلية: -</span>
+            </div>
+            <div class="input-with-reset">
+                <input type="number" id="global-height" placeholder="افتراضي (متغير)..." min="0" step="1">
+                <button class="reset-inline-btn" id="reset-global-height" title="إعادة تعيين">
                     <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                 </button>
             </div>

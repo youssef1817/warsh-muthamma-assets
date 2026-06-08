@@ -104,6 +104,7 @@ function updatePage(page) {
     // Reset left panel inputs
     document.getElementById('global-y-offset').value = 0;
     document.getElementById('global-scale').value = 1.0;
+    document.getElementById('global-height').value = "";
 
     if (overlayEnabled) {
         DOM.overlay.style.display = 'block';
@@ -135,6 +136,14 @@ async function loadOverlayData(page) {
         // Deep copy to store original lines for offset computing
         if (currentLayoutData.lineBands) {
             originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands));
+            if (originalLineBands.length > 0) {
+                const avgHeight = Math.round(originalLineBands.reduce((sum, b) => sum + (b.bottom - b.top), 0) / originalLineBands.length);
+                document.getElementById('global-height-orig').textContent = `الأصلية: ~${avgHeight}`;
+            } else {
+                document.getElementById('global-height-orig').textContent = `الأصلية: -`;
+            }
+        } else {
+            document.getElementById('global-height-orig').textContent = `الأصلية: -`;
         }
 
         renderBoxes();
@@ -497,6 +506,11 @@ document.getElementById('reset-global-scale').addEventListener('click', () => {
     applyGlobalLayoutTweaks();
     autoSaveLayoutData();
 });
+document.getElementById('reset-global-height').addEventListener('click', () => {
+    document.getElementById('global-height').value = "";
+    applyGlobalLayoutTweaks();
+    autoSaveLayoutData();
+});
 
 // Save Actions
 document.getElementById('save-ayah-btn').addEventListener('click', () => {
@@ -547,9 +561,16 @@ document.getElementById('save-layout-btn').addEventListener('click', () => {
             // Sync originalLineBands to current layout and reset inputs to baseline
             if (currentLayoutData.lineBands) {
                 originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands));
+                if (originalLineBands.length > 0) {
+                    const avgHeight = Math.round(originalLineBands.reduce((sum, b) => sum + (b.bottom - b.top), 0) / originalLineBands.length);
+                    document.getElementById('global-height-orig').textContent = `الأصلية: ~${avgHeight}`;
+                } else {
+                    document.getElementById('global-height-orig').textContent = `الأصلية: -`;
+                }
             }
             document.getElementById('global-y-offset').value = 0;
             document.getElementById('global-scale').value = 1.0;
+            document.getElementById('global-height').value = "";
         });
     }
 });
@@ -559,10 +580,12 @@ function applyGlobalLayoutTweaks() {
     if (!originalLineBands || !currentLayoutData) return;
     const yOffset = parseInt(document.getElementById('global-y-offset').value) || 0;
     const scale = parseFloat(document.getElementById('global-scale').value) || 1.0;
+    const fixedHeight = parseInt(document.getElementById('global-height').value) || 0;
 
     currentLayoutData.lineBands = originalLineBands.map(orig => {
         const center = orig.center + yOffset;
-        const halfHeight = ((orig.bottom - orig.top) / 2) * scale;
+        const baseHeight = fixedHeight > 0 ? fixedHeight : (orig.bottom - orig.top);
+        const halfHeight = (baseHeight / 2) * scale;
         return {
             line: orig.line,
             top: Math.round(center - halfHeight),
@@ -578,6 +601,10 @@ document.getElementById('global-y-offset').addEventListener('input', () => {
     autoSaveLayoutData();
 });
 document.getElementById('global-scale').addEventListener('input', () => {
+    applyGlobalLayoutTweaks();
+    autoSaveLayoutData();
+});
+document.getElementById('global-height').addEventListener('input', () => {
     applyGlobalLayoutTweaks();
     autoSaveLayoutData();
 });
