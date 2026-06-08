@@ -357,6 +357,12 @@ function openRightPanel() {
             document.getElementById('line-top-curr').textContent = band.top;
             document.getElementById('line-bottom-orig').textContent = origBand ? origBand.bottom : band.bottom;
             document.getElementById('line-bottom-curr').textContent = band.bottom;
+            
+            // Calculate heights (Bottom - Top)
+            const origHeight = origBand ? (origBand.bottom - origBand.top) : (band.bottom - band.top);
+            const currHeight = band.bottom - band.top;
+            document.getElementById('line-height-orig').textContent = origHeight;
+            document.getElementById('line-height-curr').textContent = currHeight;
         }
 
         // Compare values
@@ -491,6 +497,8 @@ function clearRightPanel() {
     document.getElementById('mk-cx-curr').textContent = "-";
     document.getElementById('mk-cy-orig').textContent = "-";
     document.getElementById('mk-cy-curr').textContent = "-";
+    document.getElementById('line-height-orig').textContent = "-";
+    document.getElementById('line-height-curr').textContent = "-";
 
     const ids = ['save-hl-left', 'save-hl-right', 'save-mk-cx', 'save-mk-cy'];
     ids.forEach(id => {
