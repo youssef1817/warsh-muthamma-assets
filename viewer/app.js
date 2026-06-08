@@ -445,6 +445,59 @@ document.getElementById('mk-cy').addEventListener('input', (e) => {
     }
 });
 
+// Reset Button Listeners
+document.getElementById('reset-hl-left').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'highlight' && selectedItemOriginals) {
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        h.left = selectedItemOriginals.left;
+        document.getElementById('hl-left').value = h.left;
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+document.getElementById('reset-hl-right').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'highlight' && selectedItemOriginals) {
+        const h = currentAyahData.ayah_highlights[selectedItem.index];
+        h.right = selectedItemOriginals.right;
+        document.getElementById('hl-right').value = h.right;
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+document.getElementById('reset-mk-cx').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        m.center_x = selectedItemOriginals.center_x;
+        document.getElementById('mk-cx').value = m.center_x;
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+document.getElementById('reset-mk-cy').addEventListener('click', () => {
+    if (selectedItem && selectedItem.type === 'marker' && selectedItemOriginals) {
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        m.center_y = selectedItemOriginals.center_y;
+        document.getElementById('mk-cy').value = m.center_y;
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+
+document.getElementById('reset-global-y-offset').addEventListener('click', () => {
+    document.getElementById('global-y-offset').value = 0;
+    applyGlobalLayoutTweaks();
+    autoSaveLayoutData();
+});
+document.getElementById('reset-global-scale').addEventListener('click', () => {
+    document.getElementById('global-scale').value = 1.0;
+    applyGlobalLayoutTweaks();
+    autoSaveLayoutData();
+});
+
 // Save Actions
 document.getElementById('save-ayah-btn').addEventListener('click', () => {
     if (currentAyahData) {
@@ -490,7 +543,14 @@ document.getElementById('save-layout-btn').addEventListener('click', () => {
     if (currentLayoutData) {
         const pageStr = String(currentPage).padStart(3, '0');
         const path = `databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
-        saveToServer(path, currentLayoutData);
+        saveToServer(path, currentLayoutData, () => {
+            // Sync originalLineBands to current layout and reset inputs to baseline
+            if (currentLayoutData.lineBands) {
+                originalLineBands = JSON.parse(JSON.stringify(currentLayoutData.lineBands));
+            }
+            document.getElementById('global-y-offset').value = 0;
+            document.getElementById('global-scale').value = 1.0;
+        });
     }
 });
 
