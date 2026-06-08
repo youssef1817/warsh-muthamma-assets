@@ -68,6 +68,7 @@ body, html {
     transform: translate(-50%, -50%);
     pointer-events: auto;
     cursor: pointer;
+    z-index: 15;
 }
 .marker-box:hover {
     background-color: rgba(33, 150, 243, 0.6);
