@@ -53,6 +53,57 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    if (req.url === '/api/batch-pad-highlights' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const { padLeft, padRight } = JSON.parse(body);
+                const pagesDir = path.resolve(ROOT_DIR, 'databases', 'ayahinfo', 'warsh_muthamma', 'pages_json');
+                
+                if (!fs.existsSync(pagesDir)) {
+                    res.writeHead(404);
+                    return res.end(JSON.stringify({ error: 'pages_json directory not found' }));
+                }
+
+                const files = fs.readdirSync(pagesDir).filter(f => f.endsWith('.json'));
+                let modifiedCount = 0;
+
+                for (const file of files) {
+                    const filepath = path.join(pagesDir, file);
+                    let content = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+                    let changed = false;
+
+                    if (content.ayah_highlights && Array.isArray(content.ayah_highlights)) {
+                        content.ayah_highlights.forEach(h => {
+                            if (padLeft !== 0) {
+                                h.left = Math.max(0, h.left - padLeft);
+                                changed = true;
+                            }
+                            if (padRight !== 0) {
+                                h.right = Math.min(1, h.right + padRight);
+                                changed = true;
+                            }
+                        });
+                    }
+
+                    if (changed) {
+                        fs.writeFileSync(filepath, JSON.stringify(content, null, 2), 'utf8');
+                        modifiedCount++;
+                    }
+                }
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, filesModified: modifiedCount }));
+            } catch (err) {
+                console.error("Batch pad error:", err);
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            }
+        });
+        return;
+    }
+
     let reqUrl = req.url.split('?')[0]; 
     let filePath = path.join(ROOT_DIR, reqUrl);
     

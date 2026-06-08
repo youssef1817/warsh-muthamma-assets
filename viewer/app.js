@@ -166,13 +166,19 @@ function renderBoxes() {
 
     // Render Highlights
     if (currentAyahData.ayah_highlights) {
+        const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
+        const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+
         currentAyahData.ayah_highlights.forEach((h, index) => {
             const band = lineMap[h.line];
             if (band) {
                 const div = document.createElement('div');
                 div.className = 'highlight-box';
-                const leftPct = Math.min(h.left, h.right) * 100;
-                const rightPct = Math.max(h.left, h.right) * 100;
+                const actualLeft = Math.max(0, h.left - padLeft);
+                const actualRight = Math.min(1, h.right + padRight);
+
+                const leftPct = Math.min(actualLeft, actualRight) * 100;
+                const rightPct = Math.max(actualLeft, actualRight) * 100;
                 const widthPct = rightPct - leftPct;
 
                 div.style.top = band.top + '%';
@@ -865,6 +871,86 @@ DOM.jumpInput.addEventListener('change', () => {
 document.getElementById('refresh-btn').addEventListener('click', () => {
     const pageStr = String(currentPage).padStart(3, '0');
     DOM.img.src = `${IMAGE_BASE_PATH}${pageStr}.png?t=${new Date().getTime()}`;
+});
+
+// Batch Pad Highlights
+document.getElementById('global-pad-left').addEventListener('input', () => {
+    renderBoxes();
+});
+document.getElementById('global-pad-right').addEventListener('input', () => {
+    renderBoxes();
+});
+
+document.getElementById('save-ayah-pad-btn').addEventListener('click', () => {
+    if (!currentAyahData) return;
+    
+    const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
+    const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+    
+    if (padLeft !== 0 || padRight !== 0) {
+        if (currentAyahData.ayah_highlights) {
+            currentAyahData.ayah_highlights.forEach(h => {
+                h.left = Math.max(0, h.left - padLeft);
+                h.right = Math.min(1, h.right + padRight);
+            });
+        }
+    }
+    
+    autoSaveAyahData();
+    document.getElementById('global-pad-left').value = "0.00";
+    document.getElementById('global-pad-right').value = "0.00";
+    renderBoxes(); // re-render without visual padding since it's now permanent
+
+    const btn = document.getElementById('save-ayah-pad-btn');
+    const origText = btn.textContent;
+    btn.textContent = "تم الحفظ!";
+    setTimeout(() => {
+        btn.textContent = origText;
+    }, 1500);
+});
+
+document.getElementById('apply-pad-all-btn').addEventListener('click', async () => {
+    const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
+    const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+    
+    if (padLeft === 0 && padRight === 0) {
+        alert("يرجى إدخال قيمة التمديد أولاً.");
+        return;
+    }
+
+    const conf = confirm(`هل أنت متأكد من رغبتك في تطبيق تمديد يمين (${padRight}) ويسار (${padLeft}) على جميع ملفات الآيات (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
+    if (!conf) return;
+
+    try {
+        const btn = document.getElementById('apply-pad-all-btn');
+        btn.textContent = "جاري التطبيق...";
+        btn.disabled = true;
+
+        const res = await fetch('/api/batch-pad-highlights', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ padLeft, padRight })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            alert(`تم تطبيق التعديلات بنجاح على ${data.filesModified} صفحة.`);
+            // Reset the inputs
+            document.getElementById('global-pad-left').value = "0.00";
+            document.getElementById('global-pad-right').value = "0.00";
+            // Reload page to fetch updated data
+            updatePage(currentPage);
+        } else {
+            alert("حدث خطأ: " + (data.error || "غير معروف"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("حدث خطأ أثناء الاتصال بالخادم.");
+    } finally {
+        const btn = document.getElementById('apply-pad-all-btn');
+        btn.textContent = "تطبيق وحفظ في كل الصفحات";
+        btn.disabled = false;
+    }
 });
 
 // Help Modal
