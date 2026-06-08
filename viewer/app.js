@@ -13,12 +13,17 @@ let originalLineBands = null; // To compute offsets properly
 let selectedItem = null; // { type: 'highlight'|'marker', index: number }
 let selectedItemOriginals = null; // Storing original values for comparison
 let isDragging = false;
+let dragMode = 'move';
 let dragStartMouseX = 0;
 let dragStartMouseY = 0;
 let dragStartLeft = 0;
 let dragStartRight = 0;
 let dragStartCX = 0;
 let dragStartCY = 0;
+let dragStartLine = 0;
+let dragStartImageY = 0;
+let dragStartBandTop = 0;
+let dragStartBandBottom = 0;
 
 // Auto-save debounce timers
 let ayahSaveTimeout;
@@ -202,6 +207,30 @@ function renderBoxes() {
                 
                 if (selectedItem && selectedItem.type === 'highlight' && selectedItem.index === index) {
                     div.classList.add('selected-box');
+                    
+                    const edges = ['left', 'right', 'top', 'bottom'];
+                    edges.forEach(edge => {
+                        const handle = document.createElement('div');
+                        handle.className = `box-resize-handle ${edge}`;
+                        handle.addEventListener('mousedown', (e) => {
+                            if (e.button !== 0) return; // Only left click
+                            e.stopPropagation(); // prevent box mousedown
+                            selectItem('highlight', index);
+                            isDragging = true;
+                            dragMode = `resize-${edge}`;
+                            dragStartMouseX = e.clientX;
+                            dragStartMouseY = e.clientY;
+                            dragStartLeft = h.left;
+                            dragStartRight = h.right;
+                            
+                            const bandObj = currentLayoutData.lineBands.find(b => b.line === h.line);
+                            if (bandObj) {
+                                dragStartBandTop = bandObj.top;
+                                dragStartBandBottom = bandObj.bottom;
+                            }
+                        });
+                        div.appendChild(handle);
+                    });
                 }
 
                 div.addEventListener('mousedown', (e) => {
@@ -209,6 +238,7 @@ function renderBoxes() {
                     e.stopPropagation();
                     selectItem('highlight', index);
                     isDragging = true;
+                    dragMode = 'move';
                     dragStartMouseX = e.clientX;
                     dragStartMouseY = e.clientY;
                     dragStartLeft = h.left;
@@ -248,6 +278,8 @@ function renderBoxes() {
                     dragStartMouseY = e.clientY;
                     dragStartCX = m.center_x;
                     dragStartCY = m.center_y || 0.5;
+                    dragStartLine = m.line;
+                    dragStartImageY = getMarkerImageY(m);
                 });
                 DOM.overlay.appendChild(div);
             }
@@ -281,10 +313,28 @@ document.addEventListener('mousemove', (e) => {
     
     if (selectedItem.type === 'highlight') {
         const h = currentAyahData.ayah_highlights[selectedItem.index];
-        h.left = dragStartLeft + deltaX;
-        h.right = dragStartRight + deltaX;
+        if (dragMode === 'move') {
+            h.left = dragStartLeft + deltaX;
+            h.right = dragStartRight + deltaX;
+        } else if (dragMode === 'resize-left') {
+            h.left = dragStartLeft + deltaX;
+        } else if (dragMode === 'resize-right') {
+            h.right = dragStartRight + deltaX;
+        } else if (dragMode === 'resize-top' || dragMode === 'resize-bottom') {
+            const band = currentLayoutData.lineBands.find(b => b.line === h.line);
+            if (band) {
+                const deltaY = (e.clientY - dragStartMouseY) / imgRect.height * currentLayoutData.imageHeight;
+                if (dragMode === 'resize-top') {
+                    band.top = Math.round(dragStartBandTop + deltaY);
+                } else if (dragMode === 'resize-bottom') {
+                    band.bottom = Math.round(dragStartBandBottom + deltaY);
+                }
+            }
+        }
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
+        const oldLine = m.line;
+        const oldCenterX = m.center_x;
         
         // Keyboard modifier constraints
         const lockVertical = e.shiftKey && !e.ctrlKey; // Shift alone -> horizontal only
@@ -296,18 +346,18 @@ document.addEventListener('mousemove', (e) => {
             m.center_x = dragStartCX + deltaX;
         }
         
-        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
-        
-        const lineBand = currentLayoutData.lineBands.find(b => b.line === m.line);
-        if (lineBand) {
-            const bandHeightInPx = ((lineBand.bottom - lineBand.top) / currentLayoutData.imageHeight) * imgRect.height;
-            const deltaYBand = (e.clientY - dragStartMouseY) / bandHeightInPx;
-            if (lockVertical) {
-                m.center_y = dragStartCY;
-            } else {
-                m.center_y = dragStartCY + deltaYBand;
-            }
+        if (lockVertical) {
+            m.line = dragStartLine;
+            m.center_y = dragStartCY;
+        } else {
+            const deltaYImage = (e.clientY - dragStartMouseY) / imgRect.height * currentLayoutData.imageHeight;
+            setMarkerPositionFromImageY(m, dragStartImageY + deltaYImage);
         }
+
+        if (oldLine !== m.line) {
+            syncMarkerLineChange(m, oldLine, oldCenterX);
+        }
+        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
     }
     renderBoxes();
     openRightPanel(); // refresh inputs
@@ -315,8 +365,17 @@ document.addEventListener('mousemove', (e) => {
 
 document.addEventListener('mouseup', () => {
     if (isDragging) {
+        const wasMarkerPreview = selectedItem && selectedItem.type === 'marker';
         isDragging = false;
-        autoSaveAyahData();
+        if (wasMarkerPreview) {
+            // Marker dragging is a live preview only. Persist it explicitly with
+            // the small save button or the main ayah save button.
+        } else if (selectedItem && selectedItem.type === 'highlight' && (dragMode === 'resize-top' || dragMode === 'resize-bottom')) {
+            autoSaveLayoutData();
+        } else {
+            autoSaveAyahData();
+        }
+        dragMode = 'move';
     }
 });
 
@@ -437,6 +496,11 @@ function openRightPanel() {
         }
         if (document.activeElement !== document.getElementById('mk-line')) {
             document.getElementById('mk-line').value = m.line;
+        }
+        const mkLineInput = document.getElementById('mk-line');
+        if (currentLayoutData && currentLayoutData.lineBands) {
+            mkLineInput.min = 1;
+            mkLineInput.max = currentLayoutData.lineBands.length;
         }
 
         // Compare values
@@ -619,12 +683,54 @@ document.getElementById('mk-cy').addEventListener('input', (e) => {
 document.getElementById('mk-line').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
-        m.line = parseInt(e.target.value) || 1;
+        const oldLine = m.line;
+        const oldCenterX = m.center_x;
+        const maxLine = currentLayoutData && currentLayoutData.lineBands
+            ? currentLayoutData.lineBands.length
+            : 1;
+        m.line = Math.min(maxLine, Math.max(1, parseInt(e.target.value) || 1));
+        e.target.value = m.line;
+        if (oldLine !== m.line) {
+            syncMarkerLineChange(m, oldLine, oldCenterX);
+        }
+        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
         document.getElementById('meta-line').textContent = m.line;
         renderBoxes();
         openRightPanel();
     }
 });
+
+function getMarkerImageY(marker) {
+    if (!currentLayoutData || !currentLayoutData.lineBands) return 0;
+    const band = currentLayoutData.lineBands.find(b => b.line === marker.line);
+    if (!band) return 0;
+    const centerY = marker.center_y || 0.5;
+    return band.top + (centerY * (band.bottom - band.top));
+}
+
+function setMarkerPositionFromImageY(marker, imageY) {
+    const band = findLineBandForImageY(imageY);
+    if (!band) return;
+
+    marker.line = band.line;
+    const height = Math.max(1, band.bottom - band.top);
+    marker.center_y = Math.min(0.98, Math.max(0.02, (imageY - band.top) / height));
+}
+
+function findLineBandForImageY(imageY) {
+    if (!currentLayoutData || !currentLayoutData.lineBands || currentLayoutData.lineBands.length === 0) return null;
+
+    const containing = currentLayoutData.lineBands.find(b => imageY >= b.top && imageY <= b.bottom);
+    if (containing) return containing;
+
+    return currentLayoutData.lineBands
+        .slice()
+        .sort((a, b) => {
+            const distanceA = Math.min(Math.abs(imageY - a.top), Math.abs(imageY - a.bottom));
+            const distanceB = Math.min(Math.abs(imageY - b.top), Math.abs(imageY - b.bottom));
+            return distanceA - distanceB;
+        })[0];
+}
 
 // Sync Highlight With Marker
 function syncHighlightWithMarker(m) {
@@ -636,9 +742,9 @@ function syncHighlightWithMarker(m) {
     if (syncCheckbox && syncCheckbox.checked) {
         const currentHighlight = currentAyahData.ayah_highlights.find(h => 
             h.sura === m.sura && h.ayah === m.ayah && h.line === m.line
-        );
+        ) || createCurrentHighlightOnLine(m);
         if (currentHighlight) {
-            currentHighlight.left = m.center_x;
+            currentHighlight.left = clampHighlightBoundary(m.center_x, currentHighlight.right, 'left');
         }
     }
 
@@ -649,9 +755,107 @@ function syncHighlightWithMarker(m) {
     if (syncNextCheckbox && syncNextCheckbox.checked) {
         const nextHighlight = findNextHighlightOnLine(m) || createNextHighlightOnLine(m);
         if (nextHighlight) {
-            nextHighlight.right = m.center_x;
+            nextHighlight.right = clampHighlightBoundary(m.center_x, nextHighlight.left, 'right');
         }
     }
+}
+
+function syncMarkerLineChange(marker, oldLine, oldCenterX) {
+    if (!currentAyahData || !currentAyahData.ayah_highlights || oldLine === marker.line) return;
+
+    const syncCheckbox = document.getElementById('sync-marker-highlight');
+    const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
+
+    if (syncCheckbox && syncCheckbox.checked) {
+        removeMarkerBoundHighlight({
+            sura: marker.sura,
+            ayah: marker.ayah,
+            line: oldLine,
+            boundary: 'left',
+            centerX: oldCenterX,
+        });
+        createCurrentHighlightOnLine(marker);
+    }
+
+    if (syncNextCheckbox && syncNextCheckbox.checked) {
+        const oldNext = inferNextAyahIdentity(marker);
+        removeMarkerBoundHighlight({
+            sura: oldNext.sura,
+            ayah: oldNext.ayah,
+            line: oldLine,
+            boundary: 'right',
+            centerX: oldCenterX,
+        });
+        createNextHighlightOnLine(marker);
+    }
+}
+
+function removeMarkerBoundHighlight({ sura, ayah, line, boundary, centerX }) {
+    const highlights = currentAyahData.ayah_highlights;
+    for (let index = highlights.length - 1; index >= 0; index--) {
+        const h = highlights[index];
+        const isMatch =
+            h.sura === sura &&
+            h.ayah === ayah &&
+            h.line === line &&
+            (
+                h.source === 'manual_marker_sync' ||
+                Math.abs((boundary === 'left' ? h.left : h.right) - centerX) <= 0.05
+            );
+        if (isMatch) {
+            highlights.splice(index, 1);
+        }
+    }
+}
+
+function inferNextAyahIdentity(marker) {
+    const nextMarker = currentAyahData.ayah_markers
+        ? currentAyahData.ayah_markers
+            .filter(m =>
+                (m.sura === marker.sura && m.ayah === marker.ayah + 1) ||
+                (m.sura === marker.sura + 1 && m.ayah === 1)
+            )
+            .sort((a, b) => a.line - b.line || b.center_x - a.center_x)[0]
+        : null;
+
+    return {
+        sura: nextMarker ? nextMarker.sura : marker.sura,
+        ayah: nextMarker ? nextMarker.ayah : marker.ayah + 1
+    };
+}
+
+function clampHighlightBoundary(value, oppositeBoundary, side) {
+    const safeValue = Math.min(0.99, Math.max(0.01, value));
+    const safeOpposite = Number.isFinite(oppositeBoundary) ? oppositeBoundary : safeValue;
+    const minWidth = 0.006;
+
+    if (side === 'left') {
+        return Math.max(0.01, Math.min(safeValue, safeOpposite - minWidth));
+    }
+    return Math.min(0.99, Math.max(safeValue, safeOpposite + minWidth));
+}
+
+function createCurrentHighlightOnLine(marker) {
+    if (!currentAyahData || !currentAyahData.ayah_highlights) return null;
+
+    const existing = currentAyahData.ayah_highlights.find(h =>
+        h.sura === marker.sura && h.ayah === marker.ayah && h.line === marker.line
+    );
+    if (existing) return existing;
+
+    const highlight = {
+        page: currentPage,
+        line: marker.line,
+        sura: marker.sura,
+        ayah: marker.ayah,
+        left: marker.center_x,
+        right: 0.97,
+        confidence: 0.5,
+        source: 'manual_marker_sync'
+    };
+
+    currentAyahData.ayah_highlights.push(highlight);
+    return highlight;
 }
 
 function findNextHighlightOnLine(marker) {
@@ -659,17 +863,17 @@ function findNextHighlightOnLine(marker) {
 
     const sameLine = currentAyahData.ayah_highlights.filter(h => h.line === marker.line);
     if (sameLine.length === 0) return null;
+    const nextIdentity = inferNextAyahIdentity(marker);
 
     const logicalNext = sameLine.find(h =>
-        (h.sura === marker.sura && h.ayah === marker.ayah + 1) ||
-        (h.sura === marker.sura + 1 && h.ayah === 1)
+        h.sura === nextIdentity.sura && h.ayah === nextIdentity.ayah
     );
     if (logicalNext) return logicalNext;
 
     const markerX = marker.center_x;
     const leftSideCandidates = sameLine
         .filter(h => h.sura !== marker.sura || h.ayah !== marker.ayah)
-        .filter(h => Math.max(h.left, h.right) <= markerX + 0.08)
+        .filter(h => Math.max(h.left, h.right) <= markerX + 0.04)
         .sort((a, b) => Math.abs(Math.max(a.left, a.right) - markerX) - Math.abs(Math.max(b.left, b.right) - markerX));
 
     return leftSideCandidates[0] || null;
@@ -677,22 +881,26 @@ function findNextHighlightOnLine(marker) {
 
 function createNextHighlightOnLine(marker) {
     if (!currentAyahData || !currentAyahData.ayah_highlights) return null;
+    const nextIdentity = inferNextAyahIdentity(marker);
 
     const nextMarker = currentAyahData.ayah_markers
         ? currentAyahData.ayah_markers
             .filter(m => m.line === marker.line)
-            .filter(m =>
-                (m.sura === marker.sura && m.ayah === marker.ayah + 1) ||
-                (m.sura === marker.sura + 1 && m.ayah === 1)
-            )
-            .sort((a, b) => b.center_x - a.center_x)[0]
+            .filter(m => m.center_x < marker.center_x)
+            .filter(m => m.sura === nextIdentity.sura && m.ayah === nextIdentity.ayah)
+            .sort((a, b) => Math.abs(a.center_x - marker.center_x) - Math.abs(b.center_x - marker.center_x))[0]
         : null;
+
+    const hasVisibleSpaceForNextAyah = marker.center_x > 0.12;
+    if (!nextMarker && !hasVisibleSpaceForNextAyah) {
+        return null;
+    }
 
     const nextHighlight = {
         page: currentPage,
         line: marker.line,
-        sura: nextMarker ? nextMarker.sura : marker.sura,
-        ayah: nextMarker ? nextMarker.ayah : marker.ayah + 1,
+        sura: nextIdentity.sura,
+        ayah: nextIdentity.ayah,
         left: nextMarker ? nextMarker.center_x : 0.03,
         right: marker.center_x,
         confidence: 0.5,
@@ -994,12 +1202,15 @@ window.addEventListener('keydown', (e) => {
             }
         } else if (selectedItem.type === 'marker') {
             const m = currentAyahData.ayah_markers[selectedItem.index];
+            const oldLine = m.line;
+            const oldCenterX = m.center_x;
             if (e.shiftKey && !e.ctrlKey && !e.altKey) {
                 const step = 0.001;
                 if (e.key === 'ArrowLeft') { m.center_x -= step; updatedAyah = true; }
                 else if (e.key === 'ArrowRight') { m.center_x += step; updatedAyah = true; }
                 else if (e.key === 'ArrowUp') { m.center_y -= step; updatedAyah = true; }
                 else if (e.key === 'ArrowDown') { m.center_y += step; updatedAyah = true; }
+                normalizeMarkerLineAfterKeyboardMove(m, oldLine, oldCenterX);
                 if (updatedAyah && typeof syncHighlightWithMarker === 'function') {
                     syncHighlightWithMarker(m);
                 }
@@ -1030,6 +1241,24 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage + 1);
     else if (e.key === 'ArrowRight' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage - 1);
 });
+
+function normalizeMarkerLineAfterKeyboardMove(marker, oldLine, oldCenterX) {
+    if (!currentLayoutData || !currentLayoutData.lineBands) return;
+
+    while (marker.center_y < 0 && marker.line > 1) {
+        marker.line -= 1;
+        marker.center_y += 1;
+    }
+    while (marker.center_y > 1 && marker.line < currentLayoutData.lineBands.length) {
+        marker.line += 1;
+        marker.center_y -= 1;
+    }
+    marker.center_y = Math.min(0.98, Math.max(0.02, marker.center_y));
+
+    if (oldLine !== marker.line) {
+        syncMarkerLineChange(marker, oldLine, oldCenterX);
+    }
+}
 
 document.getElementById('prev-page-btn').addEventListener('click', () => {
     updatePage(currentPage - 1);
