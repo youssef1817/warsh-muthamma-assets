@@ -25,17 +25,11 @@ let ayahSaveTimeout;
 let layoutSaveTimeout;
 
 function autoSaveAyahData() {
-    clearTimeout(ayahSaveTimeout);
-    ayahSaveTimeout = setTimeout(() => {
-        document.getElementById('save-ayah-btn').click();
-    }, 800);
+    // Auto-save disabled as requested.
 }
 
 function autoSaveLayoutData() {
-    clearTimeout(layoutSaveTimeout);
-    layoutSaveTimeout = setTimeout(() => {
-        document.getElementById('save-layout-btn').click();
-    }, 800);
+    // Auto-save disabled as requested.
 }
 
 const DOM = {
@@ -105,6 +99,7 @@ function updatePage(page) {
     document.getElementById('global-y-offset').value = 0;
     document.getElementById('global-scale').value = 1.0;
     document.getElementById('global-height').value = "";
+    if (typeof updateLeftPanelSaveButtons === 'function') updateLeftPanelSaveButtons();
 
     if (overlayEnabled) {
         DOM.overlay.style.display = 'block';
@@ -319,8 +314,12 @@ function openRightPanel() {
         document.getElementById('marker-value-fields').style.display = 'none';
 
         // Input values
-        document.getElementById('hl-left').value = h.left;
-        document.getElementById('hl-right').value = h.right;
+        if (document.activeElement !== document.getElementById('hl-left')) {
+            document.getElementById('hl-left').value = h.left;
+        }
+        if (document.activeElement !== document.getElementById('hl-right')) {
+            document.getElementById('hl-right').value = h.right;
+        }
 
         // Compare values
         const origLeft = selectedItemOriginals ? selectedItemOriginals.left : h.left;
@@ -331,13 +330,34 @@ function openRightPanel() {
         document.getElementById('hl-right-curr').textContent = h.right.toFixed(4);
 
         // Update badge state
-        const isChanged = Math.abs(h.left - origLeft) > 0.00001 || Math.abs(h.right - origRight) > 0.00001;
+        const isLeftChanged = Math.abs(h.left - origLeft) > 0.00001;
+        const isRightChanged = Math.abs(h.right - origRight) > 0.00001;
+        const isChanged = isLeftChanged || isRightChanged;
+        
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
             badge.className = "badge badge-unsaved";
         } else {
             badge.textContent = "تم الحفظ ✓";
             badge.className = "badge badge-saved";
+        }
+
+        // Update inline save buttons
+        const btnSaveLeft = document.getElementById('save-hl-left');
+        const btnSaveRight = document.getElementById('save-hl-right');
+        if (isLeftChanged) {
+            btnSaveLeft.className = "save-inline-btn unsaved";
+            btnSaveLeft.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveLeft.className = "save-inline-btn saved";
+            btnSaveLeft.title = "تم الحفظ";
+        }
+        if (isRightChanged) {
+            btnSaveRight.className = "save-inline-btn unsaved";
+            btnSaveRight.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveRight.className = "save-inline-btn saved";
+            btnSaveRight.title = "تم الحفظ";
         }
 
     } else if (selectedItem.type === 'marker') {
@@ -352,8 +372,12 @@ function openRightPanel() {
         document.getElementById('marker-value-fields').style.display = 'flex';
 
         // Input values
-        document.getElementById('mk-cx').value = m.center_x;
-        document.getElementById('mk-cy').value = m.center_y || 0.5;
+        if (document.activeElement !== document.getElementById('mk-cx')) {
+            document.getElementById('mk-cx').value = m.center_x;
+        }
+        if (document.activeElement !== document.getElementById('mk-cy')) {
+            document.getElementById('mk-cy').value = m.center_y || 0.5;
+        }
 
         // Compare values
         const origCX = selectedItemOriginals ? selectedItemOriginals.center_x : m.center_x;
@@ -366,13 +390,34 @@ function openRightPanel() {
         document.getElementById('mk-cy-curr').textContent = currCY.toFixed(4);
 
         // Update badge state
-        const isChanged = Math.abs(m.center_x - origCX) > 0.00001 || Math.abs(currCY - origCY) > 0.00001;
+        const isCXChanged = Math.abs(m.center_x - origCX) > 0.00001;
+        const isCYChanged = Math.abs(currCY - origCY) > 0.00001;
+        const isChanged = isCXChanged || isCYChanged;
+
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
             badge.className = "badge badge-unsaved";
         } else {
             badge.textContent = "تم الحفظ ✓";
             badge.className = "badge badge-saved";
+        }
+
+        // Update inline save buttons
+        const btnSaveCX = document.getElementById('save-mk-cx');
+        const btnSaveCY = document.getElementById('save-mk-cy');
+        if (isCXChanged) {
+            btnSaveCX.className = "save-inline-btn unsaved";
+            btnSaveCX.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveCX.className = "save-inline-btn saved";
+            btnSaveCX.title = "تم الحفظ";
+        }
+        if (isCYChanged) {
+            btnSaveCY.className = "save-inline-btn unsaved";
+            btnSaveCY.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveCY.className = "save-inline-btn saved";
+            btnSaveCY.title = "تم الحفظ";
         }
     }
 }
@@ -409,6 +454,15 @@ function clearRightPanel() {
     document.getElementById('mk-cy-orig').textContent = "-";
     document.getElementById('mk-cy-curr').textContent = "-";
 
+    const ids = ['save-hl-left', 'save-hl-right', 'save-mk-cx', 'save-mk-cy'];
+    ids.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.className = "save-inline-btn saved";
+            btn.title = "لا يوجد اختيار";
+        }
+    });
+
     const btnSave = document.getElementById('save-ayah-btn');
     btnSave.disabled = true;
     btnSave.style.opacity = 0.5;
@@ -429,28 +483,28 @@ document.getElementById('hl-left').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'highlight') {
         currentAyahData.ayah_highlights[selectedItem.index].left = parseFloat(e.target.value) || 0;
         renderBoxes();
-        autoSaveAyahData();
+        openRightPanel();
     }
 });
 document.getElementById('hl-right').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'highlight') {
         currentAyahData.ayah_highlights[selectedItem.index].right = parseFloat(e.target.value) || 0;
         renderBoxes();
-        autoSaveAyahData();
+        openRightPanel();
     }
 });
 document.getElementById('mk-cx').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         currentAyahData.ayah_markers[selectedItem.index].center_x = parseFloat(e.target.value) || 0;
         renderBoxes();
-        autoSaveAyahData();
+        openRightPanel();
     }
 });
 document.getElementById('mk-cy').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         currentAyahData.ayah_markers[selectedItem.index].center_y = parseFloat(e.target.value) || 0;
         renderBoxes();
-        autoSaveAyahData();
+        openRightPanel();
     }
 });
 
@@ -509,7 +563,31 @@ document.getElementById('reset-global-scale').addEventListener('click', () => {
 document.getElementById('reset-global-height').addEventListener('click', () => {
     document.getElementById('global-height').value = "";
     applyGlobalLayoutTweaks();
-    autoSaveLayoutData();
+    updateLeftPanelSaveButtons();
+});
+
+// Inline Save Button Listeners
+document.getElementById('save-hl-left').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-hl-right').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-mk-cx').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-mk-cy').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+
+document.getElementById('save-global-y-offset').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
+});
+document.getElementById('save-global-scale').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
+});
+document.getElementById('save-global-height').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
 });
 
 // Save Actions
@@ -571,6 +649,7 @@ document.getElementById('save-layout-btn').addEventListener('click', () => {
             document.getElementById('global-y-offset').value = 0;
             document.getElementById('global-scale').value = 1.0;
             document.getElementById('global-height').value = "";
+            updateLeftPanelSaveButtons();
         });
     }
 });
@@ -596,17 +675,52 @@ function applyGlobalLayoutTweaks() {
     renderBoxes();
 }
 
+// Left Panel Save Buttons State Update
+function updateLeftPanelSaveButtons() {
+    const yOffset = parseInt(document.getElementById('global-y-offset').value) || 0;
+    const scale = parseFloat(document.getElementById('global-scale').value) || 1.0;
+    const height = document.getElementById('global-height').value;
+
+    const btnY = document.getElementById('save-global-y-offset');
+    const btnS = document.getElementById('save-global-scale');
+    const btnH = document.getElementById('save-global-height');
+
+    if (yOffset !== 0) {
+        btnY.className = "save-inline-btn unsaved";
+        btnY.title = "تغيير غير محفوظ - انقر للحفظ";
+    } else {
+        btnY.className = "save-inline-btn saved";
+        btnY.title = "تم الحفظ";
+    }
+
+    if (Math.abs(scale - 1.0) > 0.001) {
+        btnS.className = "save-inline-btn unsaved";
+        btnS.title = "تغيير غير محفوظ - انقر للحفظ";
+    } else {
+        btnS.className = "save-inline-btn saved";
+        btnS.title = "تم الحفظ";
+    }
+
+    if (height !== "" && height !== "0") {
+        btnH.className = "save-inline-btn unsaved";
+        btnH.title = "تغيير غير محفوظ - انقر للحفظ";
+    } else {
+        btnH.className = "save-inline-btn saved";
+        btnH.title = "تم الحفظ";
+    }
+}
+
 document.getElementById('global-y-offset').addEventListener('input', () => {
     applyGlobalLayoutTweaks();
-    autoSaveLayoutData();
+    updateLeftPanelSaveButtons();
 });
 document.getElementById('global-scale').addEventListener('input', () => {
     applyGlobalLayoutTweaks();
-    autoSaveLayoutData();
+    updateLeftPanelSaveButtons();
 });
 document.getElementById('global-height').addEventListener('input', () => {
     applyGlobalLayoutTweaks();
-    autoSaveLayoutData();
+    updateLeftPanelSaveButtons();
 });
 
 // Keyboard Navigation and Shortcuts

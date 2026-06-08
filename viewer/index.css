@@ -407,7 +407,7 @@ body, html {
 
 .input-with-reset input {
     width: 100% !important;
-    padding-left: 28px !important;
+    padding-left: 52px !important;
 }
 
 .input-with-reset .reset-inline-btn {
@@ -477,4 +477,49 @@ body, html {
 .resizer-handle:hover,
 .resizer-handle.resizing {
     background-color: rgba(76, 175, 80, 0.4);
+}
+
+.input-with-reset .save-inline-btn {
+    position: absolute;
+    left: 28px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    z-index: 5;
+}
+
+.input-with-reset .save-inline-btn.saved {
+    color: #4CAF50;
+}
+
+.input-with-reset .save-inline-btn.unsaved {
+    color: #FF9800;
+    animation: savePulse 1.5s infinite;
+}
+
+@keyframes savePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.input-with-reset .save-inline-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.input-with-reset .save-inline-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* Hide general save buttons as requested by the user */
+#save-layout-btn, #save-ayah-btn {
+    display: none !important;
 }
