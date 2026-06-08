@@ -730,6 +730,81 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
     document.getElementById('help-modal').style.display = 'none';
 });
 
+// Sidebar Resizing Logic
+(function() {
+    const leftPanel = document.getElementById('left-panel');
+    const rightPanel = document.getElementById('right-panel');
+    const leftResizer = document.getElementById('left-resizer');
+    const rightResizer = document.getElementById('right-resizer');
+    const imageContainer = document.getElementById('image-container');
+
+    let leftWidth = parseInt(localStorage.getItem('sidebar_left_width')) || 250;
+    let rightWidth = parseInt(localStorage.getItem('sidebar_right_width')) || 340;
+
+    leftWidth = Math.max(125, Math.min(375, leftWidth));
+    rightWidth = Math.max(170, Math.min(510, rightWidth));
+
+    function applySidebarWidths() {
+        leftPanel.style.width = leftWidth + 'px';
+        rightPanel.style.width = rightWidth + 'px';
+        imageContainer.style.marginLeft = leftWidth + 'px';
+        imageContainer.style.marginRight = rightWidth + 'px';
+        imageContainer.style.width = `calc(100% - ${leftWidth + rightWidth}px)`;
+    }
+
+    applySidebarWidths();
+
+    leftResizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.body.style.cursor = 'col-resize';
+        leftResizer.classList.add('resizing');
+        const startX = e.clientX;
+        const startWidth = leftWidth;
+
+        function onMouseMove(moveEvent) {
+            const deltaX = moveEvent.clientX - startX;
+            leftWidth = Math.max(125, Math.min(375, startWidth + deltaX));
+            applySidebarWidths();
+        }
+
+        function onMouseUp() {
+            document.body.style.cursor = '';
+            leftResizer.classList.remove('resizing');
+            localStorage.setItem('sidebar_left_width', leftWidth);
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    rightResizer.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.body.style.cursor = 'col-resize';
+        rightResizer.classList.add('resizing');
+        const startX = e.clientX;
+        const startWidth = rightWidth;
+
+        function onMouseMove(moveEvent) {
+            const deltaX = moveEvent.clientX - startX;
+            rightWidth = Math.max(170, Math.min(510, startWidth - deltaX));
+            applySidebarWidths();
+        }
+
+        function onMouseUp() {
+            document.body.style.cursor = '';
+            rightResizer.classList.remove('resizing');
+            localStorage.setItem('sidebar_right_width', rightWidth);
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+})();
+
 // Init
 updatePage(currentPage);
 clearRightPanel();

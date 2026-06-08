@@ -455,3 +455,26 @@ body, html {
     color: #888;
     font-family: monospace;
 }
+
+.resizer-handle {
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 250;
+    transition: background-color 0.2s ease;
+}
+
+.resizer-left {
+    right: 0;
+}
+
+.resizer-right {
+    left: 0;
+}
+
+.resizer-handle:hover,
+.resizer-handle.resizing {
+    background-color: rgba(76, 175, 80, 0.4);
+}
