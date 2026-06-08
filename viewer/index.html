@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>عارض مصحف ورش المثمن</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        #image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #image-wrapper {
+            position: relative;
+            display: inline-block;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            background-color: #fff;
+        }
+
+        #page-image {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            display: block;
+        }
+
+        #overlay-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+
+        .highlight-box {
+            position: absolute;
+            background-color: rgba(255, 152, 0, 0.25);
+            border: 1px solid rgba(255, 152, 0, 0.8);
+            box-sizing: border-box;
+            border-radius: 2px;
+        }
+
+        .marker-box {
+            position: absolute;
+            background-color: rgba(33, 150, 243, 0.3);
+            border: 1px solid rgba(33, 150, 243, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Floating Controls */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fff;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 100;
+        }
+
+        .controls:hover {
+            background: rgba(40, 40, 40, 0.9);
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        #page-label {
+            font-weight: 600;
+            font-size: 18px;
+            min-width: 60px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .jump-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            padding: 4px 8px;
+        }
+
+        #jump-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 50px;
+            text-align: center;
+            font-size: 16px;
+            outline: none;
+            -moz-appearance: textfield;
+            font-weight: bold;
+        }
+        
+        #jump-input::placeholder {
+            color: rgba(255,255,255,0.3);
+            font-weight: normal;
+        }
+
+        #jump-input::-webkit-outer-spin-button,
+        #jump-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: #4CAF50;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+        }
+        
+        .icon-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        #jump-btn svg {
+            /* Flip icon for RTL */
+            transform: scaleX(-1);
+        }
+
+        /* Hide controls when inactive */
+        body.idle .controls {
+            opacity: 0.15;
+            transform: translateY(10px);
+        }
+        body.idle .controls:hover {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="image-container">
+        <div id="image-wrapper">
+            <img id="page-image" src="" alt="صفحة المصحف">
+            <div id="overlay-container"></div>
+        </div>
+    </div>
+
+    <div class="controls" id="controls">
+        <div id="page-label">ص <span id="current-page-text">1</span></div>
+        <div class="jump-container">
+            <input type="number" id="jump-input" min="1" max="485" placeholder="رقم">
+            <button id="jump-btn" class="icon-btn" title="انتقال سريع">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                </svg>
+            </button>
+            <button id="refresh-btn" class="icon-btn" title="تحديث الصورة">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+            </button>
+            <button id="toggle-overlay-btn" class="icon-btn" title="إظهار/إخفاء بيانات الآيات">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_PAGES = 485;
+        const IMAGE_BASE_PATH = '../pages/warsh_muthamma_png/page';
+        
+        let currentPage = 1;
+        const imgElement = document.getElementById('page-image');
+        const pageText = document.getElementById('current-page-text');
+        const jumpInput = document.getElementById('jump-input');
+        const jumpBtn = document.getElementById('jump-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const overlayContainer = document.getElementById('overlay-container');
+        const toggleOverlayBtn = document.getElementById('toggle-overlay-btn');
+        const body = document.body;
+
+        let overlayEnabled = localStorage.getItem('warsh_muthamma_overlay') === 'true';
+
+        function applyOverlayState() {
+            overlayContainer.style.display = overlayEnabled ? 'block' : 'none';
+            toggleOverlayBtn.style.color = overlayEnabled ? '#FF9800' : '#4CAF50';
+        }
+        applyOverlayState();
+
+        toggleOverlayBtn.addEventListener('click', () => {
+            overlayEnabled = !overlayEnabled;
+            localStorage.setItem('warsh_muthamma_overlay', overlayEnabled);
+            applyOverlayState();
+            if (overlayEnabled) loadOverlayData(currentPage);
+        });
+
+        // Load saved page
+        const savedPage = localStorage.getItem('warsh_muthamma_last_page');
+        if (savedPage) {
+            let parsed = parseInt(savedPage);
+            if (!isNaN(parsed) && parsed >= 1 && parsed <= TOTAL_PAGES) {
+                currentPage = parsed;
+            }
+        }
+
+        function updatePage(page) {
+            if (page < 1) page = 1;
+            if (page > TOTAL_PAGES) page = TOTAL_PAGES;
+            currentPage = page;
+            
+            const pageStr = String(currentPage).padStart(3, '0');
+            imgElement.src = `${IMAGE_BASE_PATH}${pageStr}.png`;
+            pageText.textContent = currentPage;
+            jumpInput.value = ''; // clear input after jump
+            
+            // Save to memory
+            localStorage.setItem('warsh_muthamma_last_page', currentPage);
+            
+            if (overlayEnabled) {
+                loadOverlayData(currentPage);
+            }
+        }
+
+        async function loadOverlayData(page) {
+            overlayContainer.innerHTML = '';
+            if (!overlayEnabled) return;
+
+            const pageStr = String(page).padStart(3, '0');
+            const layoutUrl = `../databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
+            const ayahUrl = `../databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
+
+            try {
+                const [layoutRes, ayahRes] = await Promise.all([
+                    fetch(layoutUrl),
+                    fetch(ayahUrl)
+                ]);
+
+                if (!layoutRes.ok || !ayahRes.ok) throw new Error('Data not found');
+
+                const layoutData = await layoutRes.json();
+                const ayahData = await ayahRes.json();
+
+                const imgHeight = layoutData.imageHeight || 2000;
+                
+                const lineMap = {};
+                if (layoutData.lineBands) {
+                    layoutData.lineBands.forEach(b => {
+                        lineMap[b.line] = {
+                            top: b.top / imgHeight * 100,
+                            height: (b.bottom - b.top) / imgHeight * 100
+                        };
+                    });
+                }
+
+                if (ayahData.ayah_highlights) {
+                    ayahData.ayah_highlights.forEach(h => {
+                        const band = lineMap[h.line];
+                        if (band) {
+                            const div = document.createElement('div');
+                            div.className = 'highlight-box';
+                            const leftPct = Math.min(h.left, h.right) * 100;
+                            const rightPct = Math.max(h.left, h.right) * 100;
+                            const widthPct = rightPct - leftPct;
+
+                            div.style.top = band.top + '%';
+                            div.style.height = band.height + '%';
+                            div.style.left = leftPct + '%';
+                            div.style.width = widthPct + '%';
+                            div.title = `سورة ${h.sura} آية ${h.ayah}`;
+                            overlayContainer.appendChild(div);
+                        }
+                    });
+                }
+
+                if (ayahData.ayah_markers) {
+                    ayahData.ayah_markers.forEach(m => {
+                        const band = lineMap[m.line];
+                        if (band) {
+                            const div = document.createElement('div');
+                            div.className = 'marker-box';
+                            const cx = m.center_x * 100;
+                            const cy = band.top + ((m.center_y || 0.5) * band.height);
+
+                            div.style.left = cx + '%';
+                            div.style.top = cy + '%';
+                            div.style.width = '2.5%';
+                            div.style.height = '3.5%';
+                            div.title = `نهاية الآية ${m.ayah}`;
+                            overlayContainer.appendChild(div);
+                        }
+                    });
+                }
+
+            } catch (err) {
+                console.error("Could not load overlay data:", err);
+                if (window.location.protocol === 'file:') {
+                    alert("⚠️ تعذر جلب البيانات بسبب قيود الأمان في المتصفح (CORS).\n\nالمتصفح يمنع قراءة ملفات JSON عند فتح الصفحة مباشرة من مسار (file://).\nيرجى تشغيل خادم محلي (Local Server) لتعمل الميزة بنجاح.");
+                } else {
+                    alert("حدث خطأ أثناء جلب بيانات الآيات.");
+                }
+                overlayEnabled = false;
+                applyOverlayState();
+                localStorage.setItem('warsh_muthamma_overlay', overlayEnabled);
+            }
+        }
+
+        // Initial load
+        updatePage(currentPage);
+
+        // Keyboard Navigation
+        // Left Arrow = Next Page (Because Arabic is RTL, reading flows right to left, so left arrow moves forward)
+        // Right Arrow = Prev Page
+        window.addEventListener('keydown', (e) => {
+            // Ignore if typing in the jump input
+            if (document.activeElement === jumpInput) {
+                if (e.key === 'Enter') {
+                    jumpToInput();
+                }
+                return;
+            }
+
+            if (e.key === 'ArrowLeft') {
+                updatePage(currentPage + 1);
+            } else if (e.key === 'ArrowRight') {
+                updatePage(currentPage - 1);
+            }
+        });
+
+        // Jump button logic
+        function jumpToInput() {
+            const val = parseInt(jumpInput.value);
+            if (!isNaN(val) && val >= 1 && val <= TOTAL_PAGES) {
+                updatePage(val);
+                jumpInput.blur();
+            } else {
+                alert(`الرجاء إدخال رقم صحيح بين 1 و ${TOTAL_PAGES}`);
+            }
+        }
+
+        jumpBtn.addEventListener('click', jumpToInput);
+
+        refreshBtn.addEventListener('click', () => {
+            const pageStr = String(currentPage).padStart(3, '0');
+            imgElement.src = `${IMAGE_BASE_PATH}${pageStr}.png?t=${new Date().getTime()}`;
+        });
+
+        // Auto-hide controls when idle
+        let idleTimer;
+        function resetIdleTimer() {
+            body.classList.remove('idle');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                // Only hide if the input is not focused
+                if (document.activeElement !== jumpInput) {
+                    body.classList.add('idle');
+                }
+            }, 2500);
+        }
+
+        window.addEventListener('mousemove', resetIdleTimer);
+        window.addEventListener('keydown', resetIdleTimer);
+        window.addEventListener('touchstart', resetIdleTimer);
+        resetIdleTimer();
+
+    </script>
+</body>
+</html>
