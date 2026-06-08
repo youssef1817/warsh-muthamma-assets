@@ -20,8 +20,8 @@
         }
 
         #image-container {
-            margin-left: 280px; /* Offset by left sidebar */
-            width: calc(100% - 280px);
+            margin-left: 250px; /* Offset by left sidebar */
+            width: calc(100% - 250px);
             height: 100%;
             display: flex;
             justify-content: center;
@@ -31,8 +31,8 @@
 
         /* Adjust width when right panel is open */
         body:has(#right-panel.open) #image-container {
-            margin-right: 280px;
-            width: calc(100% - 560px);
+            margin-right: 250px;
+            width: calc(100% - 500px);
         }
 
         #image-wrapper {
@@ -87,22 +87,126 @@
         }
 
         .selected-box {
-            outline: 2px solid white;
-            outline-offset: 1px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            outline: 3px solid #FF2E93;
+            outline-offset: 2px;
+            box-shadow: 0 0 15px #FF2E93;
             z-index: 10;
+            animation: borderPulse 1.5s infinite;
+        }
+        @keyframes borderPulse {
+            0% { box-shadow: 0 0 8px #FF2E93; }
+            50% { box-shadow: 0 0 18px #FF2E93; }
+            100% { box-shadow: 0 0 8px #FF2E93; }
+        }
+
+        /* Metadata and Comparison UI in Right Panel */
+        .metadata-card {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 8px 10px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        .meta-label {
+            color: #aaa;
+        }
+        .meta-value {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            margin: 2px auto;
+            width: fit-content;
+            transition: all 0.3s ease;
+        }
+        .badge-saved {
+            background: rgba(76, 175, 80, 0.12);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .badge-unsaved {
+            background: rgba(244, 67, 54, 0.12);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            animation: badgePulse 1.5s infinite;
+        }
+        @keyframes badgePulse {
+            0% { opacity: 0.8; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        .values-section h4 {
+            margin: 8px 0 6px 0;
+            font-size: 0.85rem;
+            color: #4CAF50;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 3px;
+        }
+
+        .val-compare-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+        .compare-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .compare-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.06);
+            padding-bottom: 4px;
+            margin-bottom: 2px;
+        }
+        .val-orig {
+            color: #aaa;
+            font-family: monospace;
+        }
+        .val-curr {
+            color: #FF9800;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .success-glow {
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6) !important;
+            border-color: #4CAF50 !important;
         }
 
         /* Integrated Controls in Left Panel */
         .integrated-navigator {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
             background: rgba(0, 0, 0, 0.25);
-            padding: 14px;
-            border-radius: 12px;
+            padding: 8px 10px;
+            border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .page-row {
@@ -132,10 +236,10 @@
             background: rgba(0,0,0,0.4);
             border: 1px solid rgba(255,255,255,0.1);
             color: #fff;
-            padding: 8px;
+            padding: 6px;
             border-radius: 6px;
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             outline: none;
         }
@@ -173,7 +277,7 @@
         .divider {
             height: 1px;
             background: rgba(255,255,255,0.1);
-            margin: 10px 0;
+            margin: 6px 0;
         }
 
         .icon-btn {
@@ -199,18 +303,18 @@
             position: fixed;
             top: 0;
             height: 100vh;
-            width: 280px;
+            width: 250px;
             background: rgba(25, 25, 25, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
             box-sizing: border-box;
-            padding: 20px;
+            padding: 10px 12px;
             overflow-y: auto;
             z-index: 200;
             transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 8px;
         }
         #left-panel {
             left: 0;
@@ -227,27 +331,27 @@
         }
 
         .sidebar h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.2rem;
+            margin: 0 0 5px 0;
+            font-size: 1.05rem;
             color: #fff;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding-bottom: 5px;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
         }
         .control-group label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #ccc;
         }
         .control-group input[type="number"] {
             background: #333;
             border: 1px solid #555;
             color: #fff;
-            padding: 8px;
+            padding: 5px 6px;
             border-radius: 4px;
             outline: none;
             font-family: monospace;
@@ -263,11 +367,12 @@
             background: #4CAF50;
             color: #fff;
             border: none;
-            padding: 10px;
+            padding: 7px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 4px;
+            font-size: 0.85rem;
         }
         .btn:hover { background: #45a049; }
         .btn-danger { background: #f44336; }
@@ -343,31 +448,72 @@
     <!-- Right Panel: Box specific Controls -->
     <div id="right-panel" class="sidebar">
         <h3>تعديل العنصر</h3>
-        <p id="box-info" style="font-size: 0.85rem; color: #aaa;"></p>
+        
+        <!-- Metadata section -->
+        <div class="metadata-card">
+            <div class="meta-row"><span class="meta-label">النوع:</span> <span id="meta-type" class="meta-value">-</span></div>
+            <div class="meta-row"><span class="meta-label">السورة:</span> <span id="meta-sura" class="meta-value">-</span></div>
+            <div class="meta-row"><span class="meta-label">الآية:</span> <span id="meta-ayah" class="meta-value">-</span></div>
+            <div class="meta-row"><span class="meta-label">رقم السطر:</span> <span id="meta-line" class="meta-value">-</span></div>
+        </div>
 
-        <div id="highlight-controls" style="display: none; flex-direction: column; gap: 15px;">
-            <div class="control-group">
-                <label>البداية (Left):</label>
-                <input type="number" id="hl-left" step="0.001">
+        <!-- Save Status Badge -->
+        <div id="save-status-badge" class="badge badge-saved">تم الحفظ</div>
+
+        <!-- Values Table / Group -->
+        <div class="values-section">
+            <h4>القيم الجغرافية للمربع</h4>
+            
+            <div id="highlight-value-fields" style="display: none; flex-direction: column;">
+                <div class="val-compare-card" id="card-hl-left">
+                    <div class="compare-title">البداية الأفقية (Left)</div>
+                    <div class="compare-row">
+                        <div><span class="lbl">الأصلية:</span> <span id="hl-left-orig" class="val-orig">0.0000</span></div>
+                        <div><span class="lbl">الحالية:</span> <span id="hl-left-curr" class="val-curr">0.0000</span></div>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="hl-left" step="0.0001">
+                    </div>
+                </div>
+                
+                <div class="val-compare-card" id="card-hl-right">
+                    <div class="compare-title">النهاية الأفقية (Right)</div>
+                    <div class="compare-row">
+                        <div><span class="lbl">الأصلية:</span> <span id="hl-right-orig" class="val-orig">0.0000</span></div>
+                        <div><span class="lbl">الحالية:</span> <span id="hl-right-curr" class="val-curr">0.0000</span></div>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="hl-right" step="0.0001">
+                    </div>
+                </div>
             </div>
-            <div class="control-group">
-                <label>النهاية (Right):</label>
-                <input type="number" id="hl-right" step="0.001">
+
+            <div id="marker-value-fields" style="display: none; flex-direction: column;">
+                <div class="val-compare-card" id="card-mk-cx">
+                    <div class="compare-title">المركز الأفقي (Center X)</div>
+                    <div class="compare-row">
+                        <div><span class="lbl">الأصلية:</span> <span id="mk-cx-orig" class="val-orig">0.0000</span></div>
+                        <div><span class="lbl">الحالية:</span> <span id="mk-cx-curr" class="val-curr">0.0000</span></div>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="mk-cx" step="0.0001">
+                    </div>
+                </div>
+
+                <div class="val-compare-card" id="card-mk-cy">
+                    <div class="compare-title">المركز العمودي (Center Y)</div>
+                    <div class="compare-row">
+                        <div><span class="lbl">الأصلية:</span> <span id="mk-cy-orig" class="val-orig">0.0000</span></div>
+                        <div><span class="lbl">الحالية:</span> <span id="mk-cy-curr" class="val-curr">0.0000</span></div>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="mk-cy" step="0.0001">
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="marker-controls" style="display: none; flex-direction: column; gap: 15px;">
-            <div class="control-group">
-                <label>المركز الأفقي (Center X):</label>
-                <input type="number" id="mk-cx" step="0.001">
-            </div>
-            <div class="control-group">
-                <label>المركز العمودي (Center Y):</label>
-                <input type="number" id="mk-cy" step="0.001">
-            </div>
-        </div>
-
-        <button class="btn" id="save-ayah-btn">حفظ بيانات الآيات</button>
+        <button class="btn btn-save" id="save-ayah-btn" style="background: #FF9800; border-color: #e68a00; margin-top: 10px;">حفظ بيانات الآيات</button>
         <button class="btn btn-danger" id="close-right-panel">إغلاق اللوحة</button>
     </div>
 
@@ -409,6 +555,7 @@
 
         // Selection and Drag State
         let selectedItem = null; // { type: 'highlight'|'marker', index: number }
+        let selectedItemOriginals = null; // Storing original values for comparison
         let isDragging = false;
         let dragStartMouseX = 0;
         let dragStartMouseY = 0;
@@ -455,7 +602,7 @@
             setTimeout(() => DOM.toast.style.opacity = 0, 3000);
         }
 
-        async function saveToServer(filepath, content) {
+        async function saveToServer(filepath, content, onSuccessCallback) {
             try {
                 const res = await fetch('/api/save-json', {
                     method: 'POST',
@@ -464,6 +611,7 @@
                 });
                 if (!res.ok) throw new Error('Save failed');
                 showToast('تم الحفظ بنجاح');
+                if (onSuccessCallback) onSuccessCallback();
             } catch (err) {
                 console.error(err);
                 showToast('خطأ أثناء الحفظ! هل الخادم Node.js يعمل؟', true);
@@ -630,6 +778,16 @@
 
         // Selection Logic
         function selectItem(type, index) {
+            // Keep original values when first selected
+            if (!selectedItem || selectedItem.type !== type || selectedItem.index !== index) {
+                if (type === 'highlight') {
+                    const h = currentAyahData.ayah_highlights[index];
+                    selectedItemOriginals = { left: h.left, right: h.right };
+                } else if (type === 'marker') {
+                    const m = currentAyahData.ayah_markers[index];
+                    selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5 };
+                }
+            }
             selectedItem = { type, index };
             renderBoxes(); // Refresh to show selection outline
             openRightPanel();
@@ -672,22 +830,75 @@
             DOM.rightPanel.classList.add('open');
             if (!selectedItem || !currentAyahData) return;
 
+            const badge = document.getElementById('save-status-badge');
+            
             if (selectedItem.type === 'highlight') {
                 const h = currentAyahData.ayah_highlights[selectedItem.index];
-                DOM.boxInfo.textContent = `مربع سورة ${h.sura} آية ${h.ayah} (السطر ${h.line})`;
-                DOM.hlControls.style.display = 'flex';
-                DOM.mkControls.style.display = 'none';
                 
+                document.getElementById('meta-type').textContent = "تظليل آية";
+                document.getElementById('meta-sura').textContent = h.sura;
+                document.getElementById('meta-ayah').textContent = h.ayah;
+                document.getElementById('meta-line').textContent = h.line;
+
+                document.getElementById('highlight-value-fields').style.display = 'flex';
+                document.getElementById('marker-value-fields').style.display = 'none';
+
+                // Input values
                 document.getElementById('hl-left').value = h.left;
                 document.getElementById('hl-right').value = h.right;
+
+                // Compare values
+                const origLeft = selectedItemOriginals ? selectedItemOriginals.left : h.left;
+                const origRight = selectedItemOriginals ? selectedItemOriginals.right : h.right;
+                document.getElementById('hl-left-orig').textContent = origLeft.toFixed(4);
+                document.getElementById('hl-left-curr').textContent = h.left.toFixed(4);
+                document.getElementById('hl-right-orig').textContent = origRight.toFixed(4);
+                document.getElementById('hl-right-curr').textContent = h.right.toFixed(4);
+
+                // Update badge state
+                const isChanged = Math.abs(h.left - origLeft) > 0.00001 || Math.abs(h.right - origRight) > 0.00001;
+                if (isChanged) {
+                    badge.textContent = "غير محفوظ ⚠️";
+                    badge.className = "badge badge-unsaved";
+                } else {
+                    badge.textContent = "تم الحفظ ✓";
+                    badge.className = "badge badge-saved";
+                }
+
             } else if (selectedItem.type === 'marker') {
                 const m = currentAyahData.ayah_markers[selectedItem.index];
-                DOM.boxInfo.textContent = `علامة الآية ${m.ayah} سورة ${m.sura}`;
-                DOM.hlControls.style.display = 'none';
-                DOM.mkControls.style.display = 'flex';
                 
+                document.getElementById('meta-type').textContent = "علامة نهاية آية";
+                document.getElementById('meta-sura').textContent = m.sura;
+                document.getElementById('meta-ayah').textContent = m.ayah;
+                document.getElementById('meta-line').textContent = m.line;
+
+                document.getElementById('highlight-value-fields').style.display = 'none';
+                document.getElementById('marker-value-fields').style.display = 'flex';
+
+                // Input values
                 document.getElementById('mk-cx').value = m.center_x;
                 document.getElementById('mk-cy').value = m.center_y || 0.5;
+
+                // Compare values
+                const origCX = selectedItemOriginals ? selectedItemOriginals.center_x : m.center_x;
+                const origCY = selectedItemOriginals ? selectedItemOriginals.center_y : (m.center_y || 0.5);
+                const currCY = m.center_y || 0.5;
+
+                document.getElementById('mk-cx-orig').textContent = origCX.toFixed(4);
+                document.getElementById('mk-cx-curr').textContent = m.center_x.toFixed(4);
+                document.getElementById('mk-cy-orig').textContent = origCY.toFixed(4);
+                document.getElementById('mk-cy-curr').textContent = currCY.toFixed(4);
+
+                // Update badge state
+                const isChanged = Math.abs(m.center_x - origCX) > 0.00001 || Math.abs(currCY - origCY) > 0.00001;
+                if (isChanged) {
+                    badge.textContent = "غير محفوظ ⚠️";
+                    badge.className = "badge badge-unsaved";
+                } else {
+                    badge.textContent = "تم الحفظ ✓";
+                    badge.className = "badge badge-saved";
+                }
             }
         }
 
@@ -734,9 +945,41 @@
             if (currentAyahData) {
                 const pageStr = String(currentPage).padStart(3, '0');
                 const path = `databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
-                saveToServer(path, currentAyahData);
+                saveToServer(path, currentAyahData, () => {
+                    if (selectedItem) {
+                        if (selectedItem.type === 'highlight') {
+                            const h = currentAyahData.ayah_highlights[selectedItem.index];
+                            selectedItemOriginals = { left: h.left, right: h.right };
+                        } else if (selectedItem.type === 'marker') {
+                            const m = currentAyahData.ayah_markers[selectedItem.index];
+                            selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5 };
+                        }
+                        openRightPanel();
+                        flashSavedFeedback();
+                    }
+                });
             }
         });
+
+        function flashSavedFeedback() {
+            const badge = document.getElementById('save-status-badge');
+            const cards = document.querySelectorAll('.val-compare-card');
+            
+            badge.style.background = 'rgba(76, 175, 80, 0.4)';
+            badge.style.color = '#fff';
+            
+            cards.forEach(card => {
+                card.classList.add('success-glow');
+            });
+            
+            setTimeout(() => {
+                badge.style.background = '';
+                badge.style.color = '';
+                cards.forEach(card => {
+                    card.classList.remove('success-glow');
+                });
+            }, 1000);
+        }
 
         document.getElementById('save-layout-btn').addEventListener('click', () => {
             if (currentLayoutData) {
