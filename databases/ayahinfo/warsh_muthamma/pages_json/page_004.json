@@ -16,7 +16,7 @@
       "line": 2,
       "sura": 2,
       "ayah": 16,
-      "left": 0.1796,
+      "left": 0.1429999999999999,
       "right": 0.92,
       "confidence": 0.95,
       "source": "visual_valley"
@@ -27,7 +27,7 @@
       "sura": 2,
       "ayah": 17,
       "left": 0.08,
-      "right": 0.1796,
+      "right": 0.1429999999999999,
       "confidence": 0.95,
       "source": "visual_valley"
     },
@@ -268,7 +268,7 @@
       "sura": 2,
       "ayah": 16,
       "line": 2,
-      "center_x": 0.248,
+      "center_x": 0.1429999999999999,
       "center_y": 0.5
     },
     {

@@ -153,42 +153,50 @@
             </div>
 
             <div id="marker-value-fields" style="display: none;">
-                <div class="val-compare-card" id="card-mk-cx">
-                    <div class="compare-title">المركز الأفقي (Center X)</div>
-                    <div class="compare-row">
-                        <div><span class="lbl">الأصلية:</span> <span id="mk-cx-orig" class="val-orig">0.0000</span></div>
-                        <div><span class="lbl">الحالية:</span> <span id="mk-cx-curr" class="val-curr">0.0000</span></div>
+                <div style="display: flex; flex-direction: row; gap: 8px; width: 100%;">
+                    <div class="val-compare-card" id="card-mk-cx">
+                        <div class="compare-title">المركز الأفقي (Center X)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="mk-cx-orig" class="val-orig">0.0000</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="mk-cx-curr" class="val-curr">0.0000</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset">
+                                <input type="number" id="mk-cx" step="0.0001">
+                                <button class="reset-inline-btn" id="reset-mk-cx" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-mk-cx" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="control-group">
-                        <div class="input-with-reset">
-                            <input type="number" id="mk-cx" step="0.0001">
-                            <button class="reset-inline-btn" id="reset-mk-cx" title="إعادة تعيين">
-                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                            </button>
-                            <button class="save-inline-btn saved" id="save-mk-cx" title="تم الحفظ">
-                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                            </button>
+
+                    <div class="val-compare-card" id="card-mk-cy">
+                        <div class="compare-title">المركز العمودي (Center Y)</div>
+                        <div class="compare-row">
+                            <div><span class="lbl">الأصلية:</span> <span id="mk-cy-orig" class="val-orig">0.0000</span></div>
+                            <div><span class="lbl">الحالية:</span> <span id="mk-cy-curr" class="val-curr">0.0000</span></div>
+                        </div>
+                        <div class="control-group">
+                            <div class="input-with-reset">
+                                <input type="number" id="mk-cy" step="0.0001">
+                                <button class="reset-inline-btn" id="reset-mk-cy" title="إعادة تعيين">
+                                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                                </button>
+                                <button class="save-inline-btn saved" id="save-mk-cy" title="تم الحفظ">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="val-compare-card" id="card-mk-cy">
-                    <div class="compare-title">المركز العمودي (Center Y)</div>
-                    <div class="compare-row">
-                        <div><span class="lbl">الأصلية:</span> <span id="mk-cy-orig" class="val-orig">0.0000</span></div>
-                        <div><span class="lbl">الحالية:</span> <span id="mk-cy-curr" class="val-curr">0.0000</span></div>
-                    </div>
-                    <div class="control-group">
-                        <div class="input-with-reset">
-                            <input type="number" id="mk-cy" step="0.0001">
-                            <button class="reset-inline-btn" id="reset-mk-cy" title="إعادة تعيين">
-                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                            </button>
-                            <button class="save-inline-btn saved" id="save-mk-cy" title="تم الحفظ">
-                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                            </button>
-                        </div>
-                    </div>
+                <div class="val-compare-card" style="padding: 10px; flex: unset; margin-top: 4px;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#4CAF50; font-weight:bold;">
+                        <input type="checkbox" id="sync-marker-highlight" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
+                        <span>🔗 محاذاة نهاية التظليل تلقائياً مع الدائرة</span>
+                    </label>
                 </div>
             </div>
         </div>

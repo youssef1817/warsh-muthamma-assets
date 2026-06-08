@@ -357,8 +357,13 @@ body, html {
     pointer-events: none;
 }
 
-#highlight-value-fields, #marker-value-fields {
+#highlight-value-fields {
     flex-direction: row !important;
+    gap: 8px;
+}
+
+#marker-value-fields {
+    flex-direction: column !important;
     gap: 8px;
 }
 

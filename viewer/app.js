@@ -267,6 +267,7 @@ document.addEventListener('mousemove', (e) => {
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         m.center_x = dragStartCX + deltaX;
+        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
         
         const lineBand = currentLayoutData.lineBands.find(b => b.line === m.line);
         if (lineBand) {
@@ -495,7 +496,9 @@ document.getElementById('hl-right').addEventListener('input', (e) => {
 });
 document.getElementById('mk-cx').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
-        currentAyahData.ayah_markers[selectedItem.index].center_x = parseFloat(e.target.value) || 0;
+        const m = currentAyahData.ayah_markers[selectedItem.index];
+        m.center_x = parseFloat(e.target.value) || 0;
+        if (typeof syncHighlightWithMarker === 'function') syncHighlightWithMarker(m);
         renderBoxes();
         openRightPanel();
     }
@@ -507,6 +510,31 @@ document.getElementById('mk-cy').addEventListener('input', (e) => {
         openRightPanel();
     }
 });
+
+// Sync Highlight With Marker
+function syncHighlightWithMarker(m) {
+    const syncCheckbox = document.getElementById('sync-marker-highlight');
+    if (!syncCheckbox || !syncCheckbox.checked) return;
+    
+    // The text is RTL. The end of the ayah text is on the left side (h.left).
+    // 1. Sync the left boundary of the current ayah highlight on the same line
+    const currentHighlight = currentAyahData.ayah_highlights.find(h => 
+        h.sura === m.sura && h.ayah === m.ayah && h.line === m.line
+    );
+    if (currentHighlight) {
+        currentHighlight.left = m.center_x;
+    }
+
+    // 2. Sync the right boundary of the next ayah highlight on the same line
+    // Look for the highlight that immediately follows this one logically (usually m.ayah + 1)
+    const nextHighlight = currentAyahData.ayah_highlights.find(h => 
+        h.line === m.line && 
+        ((h.sura === m.sura && h.ayah === m.ayah + 1) || (h.sura === m.sura + 1 && h.ayah === 1))
+    );
+    if (nextHighlight) {
+        nextHighlight.right = m.center_x;
+    }
+}
 
 // Reset Button Listeners
 document.getElementById('reset-hl-left').addEventListener('click', () => {
@@ -790,6 +818,9 @@ window.addEventListener('keydown', (e) => {
                 else if (e.key === 'ArrowRight') { m.center_x += step; updatedAyah = true; }
                 else if (e.key === 'ArrowUp') { m.center_y -= step; updatedAyah = true; }
                 else if (e.key === 'ArrowDown') { m.center_y += step; updatedAyah = true; }
+                if (updatedAyah && typeof syncHighlightWithMarker === 'function') {
+                    syncHighlightWithMarker(m);
+                }
             }
         }
 
