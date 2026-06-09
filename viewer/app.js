@@ -577,6 +577,9 @@ function openRightPanel() {
         return;
     }
 
+    const adjSection = document.getElementById('ayah-adjustment-section');
+    if (adjSection) adjSection.style.display = 'block';
+
     const btnSave = document.getElementById('save-ayah-btn');
     btnSave.disabled = false;
     btnSave.style.opacity = 1;
@@ -836,6 +839,9 @@ function openRightPanel() {
 }
 
 function clearRightPanel() {
+    const adjSection = document.getElementById('ayah-adjustment-section');
+    if (adjSection) adjSection.style.display = 'none';
+
     document.getElementById('meta-type').textContent = "-";
     document.getElementById('meta-sura').value = "";
     document.getElementById('meta-ayah').value = "";
@@ -2263,6 +2269,82 @@ document.addEventListener('wheel', (e) => {
         }, 400);
     }
 }, { passive: false });
+
+// Ayah Offset Adjustment Logic
+function adjustSuraAyahNumbers(delta) {
+    if (!selectedItem || !currentAyahData) {
+        alert("يرجى اختيار تظليل آية أو علامة نهاية آية أولاً.");
+        return;
+    }
+
+    // 1. Determine Sura and start Ayah
+    let currentSura = 0;
+    let startAyah = 0;
+    const selectedIdx = selectedItem.index;
+
+    if (selectedItem.type === 'highlight') {
+        const h = currentAyahData.ayah_highlights[selectedIdx];
+        currentSura = h.sura;
+        startAyah = h.ayah;
+    } else if (selectedItem.type === 'marker') {
+        const m = currentAyahData.ayah_markers[selectedIdx];
+        currentSura = m.sura;
+        startAyah = m.ayah;
+    }
+
+    if (!currentSura) {
+        alert("لا يمكن تحديد السورة الحالية.");
+        return;
+    }
+
+    const scopeAll = document.getElementById('adj-scope-all').checked;
+
+    // Start Undo/Redo history transaction
+    beginHistoryTransaction(`shift sura ${currentSura} ayahs ${delta > 0 ? '+' : ''}${delta}`);
+
+    // 2. Adjust highlights
+    if (currentAyahData.ayah_highlights) {
+        currentAyahData.ayah_highlights.forEach((h) => {
+            if (h.sura === currentSura) {
+                if (scopeAll || h.ayah >= startAyah) {
+                    h.ayah = Math.max(1, h.ayah + delta);
+                    if (h.source !== 'manual_marker_sync' && !String(h.source || '').includes('renumbered')) {
+                        h.source = `${h.source || 'manual'}_renumbered`;
+                    }
+                }
+            }
+        });
+    }
+
+    // 3. Adjust markers
+    if (currentAyahData.ayah_markers) {
+        currentAyahData.ayah_markers.forEach((m) => {
+            if (m.sura === currentSura) {
+                if (scopeAll || m.ayah >= startAyah) {
+                    m.ayah = Math.max(1, m.ayah + delta);
+                }
+            }
+        });
+    }
+
+    // End history transaction
+    endHistoryTransaction();
+
+    // 4. Re-render and update UI
+    renderBoxes();
+    openRightPanel();
+    
+    // Automatically trigger save buttons update
+    if (typeof updateLeftPanelSaveButtons === 'function') {
+        updateLeftPanelSaveButtons();
+    }
+    
+    showToast(`تمت إزاحة آيات السورة ${currentSura} بـ ${delta > 0 ? '+' : ''}${delta}`);
+}
+
+// Attach listeners for adjustment buttons
+document.getElementById('btn-adj-ayah-minus').addEventListener('click', () => adjustSuraAyahNumbers(-1));
+document.getElementById('btn-adj-ayah-plus').addEventListener('click', () => adjustSuraAyahNumbers(1));
 
 // Init
 updatePage(currentPage);

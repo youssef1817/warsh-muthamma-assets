@@ -210,6 +210,26 @@
         <!-- Save Status Badge -->
         <div id="save-status-badge" class="badge badge-saved">تم الحفظ</div>
 
+        <!-- Ayah Offset Adjustment Tools -->
+        <div class="values-section" id="ayah-adjustment-section" style="margin-top: 15px; border-top: 1px dashed #444; padding-top: 12px; display: none;">
+            <h4 style="margin-bottom: 8px;">إزاحة أرقام آيات السورة الحالية في الصفحة</h4>
+            <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; justify-content: space-between;">
+                <div style="font-size: 0.75rem; color: #aaa;">إزاحة بـ:</div>
+                <div style="display: flex; gap: 4px;">
+                    <button class="action-btn" id="btn-adj-ayah-minus" style="padding: 4px 10px; font-size: 0.8rem; background-color: #d32f2f; min-width: 40px; border: none; border-radius: 4px; color: white; cursor: pointer;" title="طرح 1 من أرقام الآيات">-1</button>
+                    <button class="action-btn" id="btn-adj-ayah-plus" style="padding: 4px 10px; font-size: 0.8rem; background-color: #388e3c; min-width: 40px; border: none; border-radius: 4px; color: white; cursor: pointer;" title="إضافة 1 إلى أرقام الآيات">+1</button>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 10px; margin-top: 8px; align-items: center; justify-content: center;">
+                <label style="font-size: 0.75rem; color: #ccc; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <input type="radio" name="adj-scope" id="adj-scope-all" checked style="cursor: pointer;"> كل الصفحة
+                </label>
+                <label style="font-size: 0.75rem; color: #ccc; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                    <input type="radio" name="adj-scope" id="adj-scope-from" style="cursor: pointer;"> من العنصر فصاعداً
+                </label>
+            </div>
+        </div>
+
         <!-- Values Table / Group -->
         <div class="values-section">
             <h4>القيم الجغرافية للمربع</h4>
