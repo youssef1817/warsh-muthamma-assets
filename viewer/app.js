@@ -1,5 +1,8 @@
 const TOTAL_PAGES = 485;
 const IMAGE_BASE_PATH = '../pages/warsh_muthamma_png/page';
+const DEFAULT_LEFT_MARGIN = 0.03;
+const DEFAULT_RIGHT_MARGIN = 0.97;
+const HORIZONTAL_SNAP_THRESHOLD = 0.012;
 
 let currentPage = 1;
 let overlayEnabled = localStorage.getItem('warsh_muthamma_overlay') !== 'false'; // default true
@@ -414,6 +417,22 @@ function renderBoxes() {
                                 dragStartBandBottom = bandObj.bottom;
                             }
                         });
+                        handle.addEventListener('dblclick', (e) => {
+                            if (edge !== 'left' && edge !== 'right') return;
+                            e.preventDefault();
+                            e.stopPropagation();
+                            selectItem('highlight', index);
+                            pushUndoSnapshot(`snap ${edge} edge to margin`);
+                            if (edge === 'left') {
+                                h.left = DEFAULT_LEFT_MARGIN;
+                            } else {
+                                h.right = DEFAULT_RIGHT_MARGIN;
+                            }
+                            normalizeHighlightGeometry(h);
+                            renderBoxes();
+                            openRightPanel();
+                            autoSaveAyahData();
+                        });
                         div.appendChild(handle);
                     });
                 }
@@ -518,6 +537,7 @@ document.addEventListener('mousemove', (e) => {
                 }
             }
         }
+        applyHighlightMagneticSnap(h, selectedItem.index, dragMode);
         normalizeHighlightGeometry(h);
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
@@ -1116,6 +1136,69 @@ function shouldCreateNextHighlightOnMarkerMove() {
 function shouldRenumberFollowingHighlights() {
     const checkbox = document.getElementById('renumber-following-highlights');
     return Boolean(checkbox && checkbox.checked);
+}
+
+function shouldSnapHighlightEdges() {
+    const checkbox = document.getElementById('snap-highlight-edges');
+    return Boolean(checkbox && checkbox.checked);
+}
+
+function collectHorizontalSnapTargets(highlight, highlightIndex) {
+    const targets = [0, DEFAULT_LEFT_MARGIN, DEFAULT_RIGHT_MARGIN, 1];
+    if (!currentAyahData || !highlight) return targets;
+
+    if (Array.isArray(currentAyahData.ayah_markers)) {
+        currentAyahData.ayah_markers
+            .filter(m => m.line === highlight.line)
+            .forEach(m => targets.push(clampUnitValue(parseNumericInputValue(m.center_x))));
+    }
+
+    if (Array.isArray(currentAyahData.ayah_highlights)) {
+        currentAyahData.ayah_highlights.forEach((h, index) => {
+            if (index === highlightIndex || h.line !== highlight.line) return;
+            targets.push(clampUnitValue(parseNumericInputValue(h.left)));
+            targets.push(clampUnitValue(parseNumericInputValue(h.right)));
+        });
+    }
+
+    return [...new Set(targets.map(t => Number(t.toFixed(6))))];
+}
+
+function snapUnitValue(value, targets, threshold = HORIZONTAL_SNAP_THRESHOLD) {
+    let bestValue = value;
+    let bestDistance = threshold;
+    targets.forEach(target => {
+        const distance = Math.abs(value - target);
+        if (distance <= bestDistance) {
+            bestDistance = distance;
+            bestValue = target;
+        }
+    });
+    return bestValue;
+}
+
+function applyHighlightMagneticSnap(highlight, highlightIndex, mode) {
+    if (!shouldSnapHighlightEdges() || !highlight) return;
+
+    const targets = collectHorizontalSnapTargets(highlight, highlightIndex);
+    if (mode === 'resize-left') {
+        highlight.left = snapUnitValue(highlight.left, targets);
+    } else if (mode === 'resize-right') {
+        highlight.right = snapUnitValue(highlight.right, targets);
+    } else if (mode === 'move') {
+        const snappedLeft = snapUnitValue(highlight.left, targets);
+        const leftDelta = snappedLeft - highlight.left;
+        const snappedRight = snapUnitValue(highlight.right, targets);
+        const rightDelta = snappedRight - highlight.right;
+
+        if (Math.abs(leftDelta) > 0 && Math.abs(leftDelta) <= Math.abs(rightDelta || Infinity)) {
+            highlight.left += leftDelta;
+            highlight.right += leftDelta;
+        } else if (Math.abs(rightDelta) > 0) {
+            highlight.left += rightDelta;
+            highlight.right += rightDelta;
+        }
+    }
 }
 
 function compareHighlightsReadingOrder(a, b) {
@@ -2178,6 +2261,7 @@ const syncCheckbox = document.getElementById('sync-marker-highlight');
 const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
 const syncCreateNextCheckbox = document.getElementById('sync-create-next-highlight');
 const renumberFollowingCheckbox = document.getElementById('renumber-following-highlights');
+const snapHighlightEdgesCheckbox = document.getElementById('snap-highlight-edges');
 if (syncCheckbox) {
     syncCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_marker') === 'true';
     syncCheckbox.addEventListener('change', (e) => {
@@ -2200,6 +2284,12 @@ if (renumberFollowingCheckbox) {
     renumberFollowingCheckbox.checked = localStorage.getItem('warsh_muthamma_renumber_following') === 'true';
     renumberFollowingCheckbox.addEventListener('change', (e) => {
         localStorage.setItem('warsh_muthamma_renumber_following', e.target.checked);
+    });
+}
+if (snapHighlightEdgesCheckbox) {
+    snapHighlightEdgesCheckbox.checked = localStorage.getItem('warsh_muthamma_snap_edges') === 'true';
+    snapHighlightEdgesCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('warsh_muthamma_snap_edges', e.target.checked);
     });
 }
 
