@@ -70,6 +70,38 @@ function cloneData(value) {
     return value == null ? value : JSON.parse(JSON.stringify(value));
 }
 
+function parseNumericInputValue(value, fallback = 0) {
+    const normalized = String(value ?? '').trim().replace(/[،,]/g, '.');
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function clampUnitValue(value) {
+    return Math.min(1, Math.max(0, value));
+}
+
+function normalizeHighlightGeometry(highlight) {
+    if (!highlight) return;
+    highlight.left = clampUnitValue(parseNumericInputValue(highlight.left));
+    highlight.right = clampUnitValue(parseNumericInputValue(highlight.right));
+}
+
+function normalizeMarkerGeometry(marker) {
+    if (!marker) return;
+    marker.center_x = clampUnitValue(parseNumericInputValue(marker.center_x));
+    marker.center_y = clampUnitValue(parseNumericInputValue(marker.center_y, 0.5));
+}
+
+function normalizeAyahGeometry(data = currentAyahData) {
+    if (!data) return;
+    if (Array.isArray(data.ayah_highlights)) {
+        data.ayah_highlights.forEach(normalizeHighlightGeometry);
+    }
+    if (Array.isArray(data.ayah_markers)) {
+        data.ayah_markers.forEach(normalizeMarkerGeometry);
+    }
+}
+
 function readHistoryInputValues() {
     const ids = [
         'global-y-offset',
@@ -269,15 +301,20 @@ async function loadOverlayData(page) {
     resetHistory();
 
     const pageStr = String(page).padStart(3, '0');
-    const layoutUrl = `../databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json`;
-    const ayahUrl = `../databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
+    const cacheBust = Date.now();
+    const layoutUrl = `../databases/ayahinfo/warsh_muthamma/page_layout_json/page_${pageStr}.json?v=${cacheBust}`;
+    const ayahUrl = `../databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json?v=${cacheBust}`;
 
     try {
-        const [layoutRes, ayahRes] = await Promise.all([ fetch(layoutUrl), fetch(ayahUrl) ]);
+        const [layoutRes, ayahRes] = await Promise.all([
+            fetch(layoutUrl, { cache: 'no-store' }),
+            fetch(ayahUrl, { cache: 'no-store' })
+        ]);
         if (!layoutRes.ok || !ayahRes.ok) throw new Error('Data not found');
 
         currentLayoutData = await layoutRes.json();
         currentAyahData = await ayahRes.json();
+        normalizeAyahGeometry(currentAyahData);
         
         // Deep copy to store original lines for offset computing
         if (currentLayoutData.lineBands) {
@@ -331,8 +368,8 @@ function renderBoxes() {
 
     // Render Highlights
     if (currentAyahData.ayah_highlights) {
-        const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
-        const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+        const padLeft = parseNumericInputValue(document.getElementById('global-pad-left').value);
+        const padRight = parseNumericInputValue(document.getElementById('global-pad-right').value);
 
         currentAyahData.ayah_highlights.forEach((h, index) => {
             const band = lineMap[h.line];
@@ -481,6 +518,7 @@ document.addEventListener('mousemove', (e) => {
                 }
             }
         }
+        normalizeHighlightGeometry(h);
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         const oldLine = m.line;
@@ -493,7 +531,7 @@ document.addEventListener('mousemove', (e) => {
         if (lockHorizontal) {
             m.center_x = dragStartCX;
         } else {
-            m.center_x = dragStartCX + deltaX;
+            m.center_x = clampUnitValue(dragStartCX + deltaX);
         }
         
         if (lockVertical) {
@@ -503,6 +541,7 @@ document.addEventListener('mousemove', (e) => {
             const deltaYImage = (e.clientY - dragStartMouseY) / imgRect.height * currentLayoutData.imageHeight;
             setMarkerPositionFromImageY(m, dragStartImageY + deltaYImage);
         }
+        normalizeMarkerGeometry(m);
 
         if (oldLine !== m.line) {
             syncMarkerLineChange(m, oldLine, oldCenterX);
@@ -919,14 +958,14 @@ document.getElementById('meta-line').addEventListener('input', (e) => {
 
 document.getElementById('hl-left').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'highlight') {
-        currentAyahData.ayah_highlights[selectedItem.index].left = parseFloat(e.target.value) || 0;
+        currentAyahData.ayah_highlights[selectedItem.index].left = clampUnitValue(parseNumericInputValue(e.target.value));
         renderBoxes();
         openRightPanel();
     }
 });
 document.getElementById('hl-right').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'highlight') {
-        currentAyahData.ayah_highlights[selectedItem.index].right = parseFloat(e.target.value) || 0;
+        currentAyahData.ayah_highlights[selectedItem.index].right = clampUnitValue(parseNumericInputValue(e.target.value));
         renderBoxes();
         openRightPanel();
     }
@@ -963,7 +1002,7 @@ document.getElementById('hl-line-bottom').addEventListener('change', autoSaveLay
 document.getElementById('mk-cx').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
-        m.center_x = parseFloat(e.target.value) || 0;
+        m.center_x = clampUnitValue(parseNumericInputValue(e.target.value));
         if (typeof syncHighlightWithMarker === 'function') {
             syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
         }
@@ -973,7 +1012,7 @@ document.getElementById('mk-cx').addEventListener('input', (e) => {
 });
 document.getElementById('mk-cy').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'marker') {
-        currentAyahData.ayah_markers[selectedItem.index].center_y = parseFloat(e.target.value) || 0;
+        currentAyahData.ayah_markers[selectedItem.index].center_y = clampUnitValue(parseNumericInputValue(e.target.value));
         renderBoxes();
         openRightPanel();
     }
@@ -1530,6 +1569,7 @@ if (deleteHighlightBtn) deleteHighlightBtn.addEventListener('click', deleteSelec
 // Save Actions
 document.getElementById('save-ayah-btn').addEventListener('click', () => {
     if (currentAyahData) {
+        normalizeAyahGeometry(currentAyahData);
         const pageStr = String(currentPage).padStart(3, '0');
         const path = `databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
         saveToServer(path, currentAyahData, () => {
@@ -1606,6 +1646,7 @@ async function saveCurrentPageAll() {
 
     let ok = true;
     if (currentAyahData) {
+        normalizeAyahGeometry(currentAyahData);
         const ayahPath = `databases/ayahinfo/warsh_muthamma/pages_json/page_${pageStr}.json`;
         ok = await saveToServer(ayahPath, currentAyahData, syncSelectionOriginalsFromCurrent) && ok;
     }
@@ -1651,7 +1692,7 @@ document.getElementById('save-layout-btn').addEventListener('click', () => {
 function applyGlobalLayoutTweaks() {
     if (!originalLineBands || !currentLayoutData) return;
     const yOffset = parseInt(document.getElementById('global-y-offset').value) || 0;
-    const scale = parseFloat(document.getElementById('global-scale').value) || 1.0;
+    const scale = parseNumericInputValue(document.getElementById('global-scale').value, 1.0);
     const fixedHeight = parseInt(document.getElementById('global-height').value) || 0;
 
     currentLayoutData.lineBands = originalLineBands.map(orig => {
@@ -1671,7 +1712,7 @@ function applyGlobalLayoutTweaks() {
 // Left Panel Save Buttons State Update
 function updateLeftPanelSaveButtons() {
     const yOffset = parseInt(document.getElementById('global-y-offset').value) || 0;
-    const scale = parseFloat(document.getElementById('global-scale').value) || 1.0;
+    const scale = parseNumericInputValue(document.getElementById('global-scale').value, 1.0);
     const height = document.getElementById('global-height').value;
 
     const btnY = document.getElementById('save-global-y-offset');
@@ -1884,8 +1925,8 @@ document.getElementById('global-pad-right').addEventListener('input', () => {
 document.getElementById('save-ayah-pad-btn').addEventListener('click', () => {
     if (!currentAyahData) return;
     
-    const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
-    const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+    const padLeft = parseNumericInputValue(document.getElementById('global-pad-left').value);
+    const padRight = parseNumericInputValue(document.getElementById('global-pad-right').value);
     
     if (padLeft !== 0 || padRight !== 0) {
         pushUndoSnapshot('apply page ayah padding');
@@ -1911,8 +1952,8 @@ document.getElementById('save-ayah-pad-btn').addEventListener('click', () => {
 });
 
 document.getElementById('apply-pad-all-btn').addEventListener('click', async () => {
-    const padLeft = parseFloat(document.getElementById('global-pad-left').value) || 0;
-    const padRight = parseFloat(document.getElementById('global-pad-right').value) || 0;
+    const padLeft = parseNumericInputValue(document.getElementById('global-pad-left').value);
+    const padRight = parseNumericInputValue(document.getElementById('global-pad-right').value);
     
     if (padLeft === 0 && padRight === 0) {
         alert("يرجى إدخال قيمة التمديد أولاً.");
@@ -2168,7 +2209,7 @@ document.addEventListener('wheel', (e) => {
             target.focus();
         }
 
-        let val = parseFloat(target.value);
+        let val = parseNumericInputValue(target.value);
         if (isNaN(val)) {
             val = 0;
         }
@@ -2176,7 +2217,7 @@ document.addEventListener('wheel', (e) => {
         const stepAttr = target.getAttribute('step');
         let step = 1;
         if (stepAttr && stepAttr !== 'any') {
-            step = parseFloat(stepAttr);
+            step = parseNumericInputValue(stepAttr, 1);
         } else if (stepAttr === 'any') {
             step = 0.0001;
         }
@@ -2192,10 +2233,10 @@ document.addEventListener('wheel', (e) => {
         const minAttr = target.getAttribute('min');
         const maxAttr = target.getAttribute('max');
         if (minAttr !== null) {
-            val = Math.max(parseFloat(minAttr), val);
+            val = Math.max(parseNumericInputValue(minAttr), val);
         }
         if (maxAttr !== null) {
-            val = Math.min(parseFloat(maxAttr), val);
+            val = Math.min(parseNumericInputValue(maxAttr), val);
         }
 
         // Format to correct decimal places to prevent floating-point precision errors

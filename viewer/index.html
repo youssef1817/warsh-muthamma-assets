@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-width=1.0">
     <title>عارض ومحرر مصحف ورش المثمن</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index.css?v=20260609-debug">
 </head>
 <body>
 
@@ -224,7 +224,7 @@
                         </div>
                         <div class="control-group">
                             <div class="input-with-reset">
-                                <input type="number" id="hl-left" step="0.0001">
+                                <input type="number" id="hl-left" step="0.0001" min="0" max="1">
                                 <button class="reset-inline-btn" id="reset-hl-left" title="إعادة تعيين">
                                     <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                                 </button>
@@ -243,7 +243,7 @@
                         </div>
                         <div class="control-group">
                             <div class="input-with-reset">
-                                <input type="number" id="hl-right" step="0.0001">
+                                <input type="number" id="hl-right" step="0.0001" min="0" max="1">
                                 <button class="reset-inline-btn" id="reset-hl-right" title="إعادة تعيين">
                                     <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                                 </button>
@@ -309,7 +309,7 @@
                         </div>
                         <div class="control-group">
                             <div class="input-with-reset">
-                                <input type="number" id="mk-cx" step="0.0001">
+                                <input type="number" id="mk-cx" step="0.0001" min="0" max="1">
                                 <button class="reset-inline-btn" id="reset-mk-cx" title="إعادة تعيين">
                                     <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                                 </button>
@@ -328,7 +328,7 @@
                         </div>
                         <div class="control-group">
                             <div class="input-with-reset">
-                                <input type="number" id="mk-cy" step="0.0001">
+                                <input type="number" id="mk-cy" step="0.0001" min="0" max="1">
                                 <button class="reset-inline-btn" id="reset-mk-cy" title="إعادة تعيين">
                                     <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
                                 </button>
@@ -416,6 +416,6 @@
         <button class="btn" id="close-help-btn" style="width:100%;">إغلاق</button>
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=20260609-debug"></script>
 </body>
 </html>
