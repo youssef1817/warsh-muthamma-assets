@@ -542,6 +542,10 @@ function openRightPanel() {
     btnSave.disabled = false;
     btnSave.style.opacity = 1;
     btnSave.style.cursor = 'pointer';
+    const deleteHighlightBtn = document.getElementById('delete-highlight-btn');
+    if (deleteHighlightBtn) {
+        deleteHighlightBtn.disabled = selectedItem.type !== 'highlight';
+    }
 
     const badge = document.getElementById('save-status-badge');
     badge.style.background = "";
@@ -785,6 +789,9 @@ function clearRightPanel() {
     btnSave.disabled = true;
     btnSave.style.opacity = 0.5;
     btnSave.style.cursor = 'not-allowed';
+
+    const deleteHighlightBtn = document.getElementById('delete-highlight-btn');
+    if (deleteHighlightBtn) deleteHighlightBtn.disabled = true;
 }
 
 function closeRightPanel() {
@@ -943,6 +950,33 @@ function findLineBandForImageY(imageY) {
 function shouldCreateNextHighlightOnMarkerMove() {
     const checkbox = document.getElementById('sync-create-next-highlight');
     return Boolean(checkbox && checkbox.checked);
+}
+
+function shouldRenumberFollowingHighlights() {
+    const checkbox = document.getElementById('renumber-following-highlights');
+    return Boolean(checkbox && checkbox.checked);
+}
+
+function compareHighlightsReadingOrder(a, b) {
+    if (a.line !== b.line) return a.line - b.line;
+    const rightA = Math.max(a.left, a.right);
+    const rightB = Math.max(b.left, b.right);
+    if (Math.abs(rightA - rightB) > 0.000001) return rightB - rightA;
+    return Math.min(a.left, a.right) - Math.min(b.left, b.right);
+}
+
+function renumberHighlightsFromIndex(startIndex, delta, sura) {
+    if (!currentAyahData || !Array.isArray(currentAyahData.ayah_highlights)) return;
+    for (let index = startIndex; index < currentAyahData.ayah_highlights.length; index++) {
+        const h = currentAyahData.ayah_highlights[index];
+        if (h.sura !== sura) continue;
+        const nextAyah = h.ayah + delta;
+        if (nextAyah < 1) continue;
+        h.ayah = nextAyah;
+        if (h.source !== 'manual_marker_sync' && !String(h.source || '').includes('renumbered')) {
+            h.source = `${h.source || 'manual'}_renumbered`;
+        }
+    }
 }
 
 // Sync Highlight With Marker
@@ -1124,7 +1158,50 @@ function createNextHighlightOnLine(marker) {
     };
 
     currentAyahData.ayah_highlights.push(nextHighlight);
+    currentAyahData.ayah_highlights.sort(compareHighlightsReadingOrder);
+    const insertedIndex = currentAyahData.ayah_highlights.indexOf(nextHighlight);
+    if (shouldRenumberFollowingHighlights()) {
+        renumberHighlightsFromIndex(insertedIndex + 1, 1, nextHighlight.sura);
+    }
     return nextHighlight;
+}
+
+function deleteSelectedHighlight() {
+    if (!currentAyahData || !Array.isArray(currentAyahData.ayah_highlights)) return;
+    if (!selectedItem || selectedItem.type !== 'highlight') return;
+
+    const index = selectedItem.index;
+    const deleted = currentAyahData.ayah_highlights[index];
+    if (!deleted) return;
+
+    const shouldRenumber = shouldRenumberFollowingHighlights();
+    const confirmed = confirm(
+        shouldRenumber
+            ? 'سيتم حذف مربع التحديد وتخفيض أرقام مربعات نفس السورة التي بعده بواحد. هل تتابع؟'
+            : 'سيتم حذف مربع التحديد المحدد فقط. هل تتابع؟'
+    );
+    if (!confirmed) return;
+
+    pushUndoSnapshot('delete highlight');
+    currentAyahData.ayah_highlights.splice(index, 1);
+    if (shouldRenumber) {
+        renumberHighlightsFromIndex(index, -1, deleted.sura);
+    }
+
+    if (currentAyahData.ayah_highlights.length > 0) {
+        const nextIndex = Math.min(index, currentAyahData.ayah_highlights.length - 1);
+        selectedItem = { type: 'highlight', index: nextIndex };
+        const h = currentAyahData.ayah_highlights[nextIndex];
+        selectedItemOriginals = { left: h.left, right: h.right };
+    } else {
+        selectedItem = null;
+        selectedItemOriginals = null;
+    }
+
+    renderBoxes();
+    if (selectedItem) openRightPanel();
+    else clearRightPanel();
+    autoSaveAyahData();
 }
 
 // Reset Button Listeners
@@ -1272,6 +1349,8 @@ document.getElementById('save-global-height').addEventListener('click', () => {
 if (DOM.saveAllBtn) DOM.saveAllBtn.addEventListener('click', saveCurrentPageAll);
 if (DOM.undoBtn) DOM.undoBtn.addEventListener('click', undoLastChange);
 if (DOM.redoBtn) DOM.redoBtn.addEventListener('click', redoLastChange);
+const deleteHighlightBtn = document.getElementById('delete-highlight-btn');
+if (deleteHighlightBtn) deleteHighlightBtn.addEventListener('click', deleteSelectedHighlight);
 
 // Save Actions
 document.getElementById('save-ayah-btn').addEventListener('click', () => {
@@ -1876,6 +1955,7 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
 const syncCheckbox = document.getElementById('sync-marker-highlight');
 const syncNextCheckbox = document.getElementById('sync-next-ayah-highlight');
 const syncCreateNextCheckbox = document.getElementById('sync-create-next-highlight');
+const renumberFollowingCheckbox = document.getElementById('renumber-following-highlights');
 if (syncCheckbox) {
     syncCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_marker') === 'true';
     syncCheckbox.addEventListener('change', (e) => {
@@ -1892,6 +1972,12 @@ if (syncCreateNextCheckbox) {
     syncCreateNextCheckbox.checked = localStorage.getItem('warsh_muthamma_sync_create_next') === 'true';
     syncCreateNextCheckbox.addEventListener('change', (e) => {
         localStorage.setItem('warsh_muthamma_sync_create_next', e.target.checked);
+    });
+}
+if (renumberFollowingCheckbox) {
+    renumberFollowingCheckbox.checked = localStorage.getItem('warsh_muthamma_renumber_following') === 'true';
+    renumberFollowingCheckbox.addEventListener('change', (e) => {
+        localStorage.setItem('warsh_muthamma_renumber_following', e.target.checked);
     });
 }
 

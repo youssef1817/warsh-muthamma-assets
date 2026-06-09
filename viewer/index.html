@@ -317,6 +317,14 @@
             </div>
         </div>
 
+        <div class="val-compare-card numbering-actions-card">
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.85rem; color:#4CAF50; font-weight:bold;">
+                <input type="checkbox" id="renumber-following-highlights" style="width: 16px; height: 16px; accent-color: #FF9800; cursor: pointer;">
+                <span>تحديث أرقام مربعات التحديد التالية عند الإنشاء أو الحذف</span>
+            </label>
+            <button class="btn btn-danger" id="delete-highlight-btn" disabled>حذف مربع التحديد المحدد</button>
+        </div>
+
         <button class="btn btn-save" id="save-ayah-btn" style="background: #FF9800; border-color: #e68a00; margin-top: 10px;">حفظ بيانات الآيات</button>
         <button class="btn btn-danger" id="close-right-panel">إلغاء التحديد</button>
     </div>
@@ -336,6 +344,7 @@
             <li><b>Ctrl + S:</b> حفظ عام للصفحة الحالية، ويشمل بيانات الآيات وتخطيط الأسطر.</li>
             <li><b>Ctrl + Z:</b> التراجع عن آخر تعديل في الصفحة الحالية.</li>
             <li><b>Ctrl + Y / Ctrl + Shift + Z:</b> إرجاع آخر تعديل تم التراجع عنه.</li>
+            <li><b>تحديث أرقام اللاحقين:</b> عند إنشاء مربع يزيد أرقام مربعات نفس السورة التي بعده، وعند الحذف ينقصها بواحد.</li>
             <li><b>الأسهم يمين/يسار:</b> تقليب الصفحات (للسابق والتالي)</li>
             <li><b>الأسهم أعلى/أسفل:</b> الانتقال للمربع السابق/التالي</li>
             <li><b>Shift + أسهم يمين/يسار:</b> تحريك المربع أفقياً (يميناً ويساراً)</li>

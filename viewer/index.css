@@ -204,6 +204,21 @@ body, html {
     color: #FF9800;
 }
 
+.numbering-actions-card {
+    flex: unset;
+    gap: 8px;
+}
+
+.numbering-actions-card .btn {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.numbering-actions-card .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .integrated-navigator-row {
     display: flex;
     align-items: center;
