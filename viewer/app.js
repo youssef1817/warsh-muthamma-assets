@@ -1019,6 +1019,9 @@ attachInputHistory([
     'mk-cx',
     'mk-cy',
     'mk-line',
+    'meta-sura',
+    'meta-ayah',
+    'meta-line',
     'global-y-offset',
     'global-scale',
     'global-height',
@@ -2152,6 +2155,73 @@ if (renumberFollowingCheckbox) {
         localStorage.setItem('warsh_muthamma_renumber_following', e.target.checked);
     });
 }
+
+// Enable scroll adjustments on numeric inputs
+document.addEventListener('wheel', (e) => {
+    const target = e.target;
+    if (target && target.tagName === 'INPUT' && target.type === 'number') {
+        // Prevent default browser page scrolling
+        e.preventDefault();
+
+        // Focus the input to start history transaction if it has history tracking
+        if (document.activeElement !== target) {
+            target.focus();
+        }
+
+        let val = parseFloat(target.value);
+        if (isNaN(val)) {
+            val = 0;
+        }
+
+        const stepAttr = target.getAttribute('step');
+        let step = 1;
+        if (stepAttr && stepAttr !== 'any') {
+            step = parseFloat(stepAttr);
+        } else if (stepAttr === 'any') {
+            step = 0.0001;
+        }
+
+        // Adjust value based on scroll direction
+        if (e.deltaY < 0) {
+            val += step;
+        } else {
+            val -= step;
+        }
+
+        // Min/max constraints
+        const minAttr = target.getAttribute('min');
+        const maxAttr = target.getAttribute('max');
+        if (minAttr !== null) {
+            val = Math.max(parseFloat(minAttr), val);
+        }
+        if (maxAttr !== null) {
+            val = Math.min(parseFloat(maxAttr), val);
+        }
+
+        // Format to correct decimal places to prevent floating-point precision errors
+        let decimals = 0;
+        if (stepAttr && stepAttr.includes('.')) {
+            decimals = stepAttr.split('.')[1].length;
+        } else if (stepAttr === 'any') {
+            decimals = 4;
+        } else if (step < 1) {
+            decimals = -Math.floor(Math.log10(step));
+        }
+
+        target.value = val.toFixed(decimals);
+
+        // Dispatch input event to update model and preview immediately
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+
+        // Debounce the change event to commit history transaction after scrolling stops
+        if (target._scrollTimeout) {
+            clearTimeout(target._scrollTimeout);
+        }
+        target._scrollTimeout = setTimeout(() => {
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        }, 400);
+    }
+}, { passive: false });
 
 // Init
 updatePage(currentPage);
