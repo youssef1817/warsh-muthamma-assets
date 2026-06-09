@@ -556,9 +556,9 @@ function openRightPanel() {
         const h = currentAyahData.ayah_highlights[selectedItem.index];
         
         document.getElementById('meta-type').textContent = "تظليل آية";
-        document.getElementById('meta-sura').textContent = h.sura;
-        document.getElementById('meta-ayah').textContent = h.ayah;
-        document.getElementById('meta-line').textContent = h.line;
+        document.getElementById('meta-sura').value = h.sura;
+        document.getElementById('meta-ayah').value = h.ayah;
+        document.getElementById('meta-line').value = h.line;
 
         document.getElementById('highlight-value-fields').style.display = 'flex';
         document.getElementById('marker-value-fields').style.display = 'none';
@@ -659,9 +659,9 @@ function openRightPanel() {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         
         document.getElementById('meta-type').textContent = "علامة نهاية آية";
-        document.getElementById('meta-sura').textContent = m.sura;
-        document.getElementById('meta-ayah').textContent = m.ayah;
-        document.getElementById('meta-line').textContent = m.line;
+        document.getElementById('meta-sura').value = m.sura;
+        document.getElementById('meta-ayah').value = m.ayah;
+        document.getElementById('meta-line').value = m.line;
 
         document.getElementById('highlight-value-fields').style.display = 'none';
         document.getElementById('marker-value-fields').style.display = 'flex';
@@ -739,9 +739,9 @@ function openRightPanel() {
 
 function clearRightPanel() {
     document.getElementById('meta-type').textContent = "-";
-    document.getElementById('meta-sura').textContent = "-";
-    document.getElementById('meta-ayah').textContent = "-";
-    document.getElementById('meta-line').textContent = "-";
+    document.getElementById('meta-sura').value = "";
+    document.getElementById('meta-ayah').value = "";
+    document.getElementById('meta-line').value = "";
 
     const badge = document.getElementById('save-status-badge');
     badge.textContent = "لا يوجد اختيار";
@@ -803,6 +803,58 @@ function closeRightPanel() {
 
 document.getElementById('close-right-panel').addEventListener('click', closeRightPanel);
 DOM.img.addEventListener('click', closeRightPanel); // clicking image deselects
+
+// Meta inputs (Sura, Ayah, Line)
+document.getElementById('meta-sura').addEventListener('change', (e) => {
+    if (selectedItem) {
+        const val = parseInt(e.target.value) || 1;
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].sura = val;
+        } else {
+            currentAyahData.ayah_markers[selectedItem.index].sura = val;
+        }
+        renderBoxes();
+        autoSaveAyahData();
+        flashSavedFeedback();
+    }
+});
+document.getElementById('meta-ayah').addEventListener('change', (e) => {
+    if (selectedItem) {
+        const val = parseInt(e.target.value) || 1;
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].ayah = val;
+        } else {
+            currentAyahData.ayah_markers[selectedItem.index].ayah = val;
+        }
+        renderBoxes();
+        autoSaveAyahData();
+        flashSavedFeedback();
+    }
+});
+document.getElementById('meta-line').addEventListener('change', (e) => {
+    if (selectedItem) {
+        const val = parseInt(e.target.value) || 1;
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].line = val;
+        } else {
+            const m = currentAyahData.ayah_markers[selectedItem.index];
+            const oldLine = m.line;
+            const oldCenterX = m.center_x;
+            m.line = val;
+            if (oldLine !== m.line) {
+                syncMarkerLineChange(m, oldLine, oldCenterX);
+            }
+            if (typeof syncHighlightWithMarker === 'function') {
+                syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
+            }
+            document.getElementById('mk-line').value = m.line;
+        }
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+        flashSavedFeedback();
+    }
+});
 
 document.getElementById('hl-left').addEventListener('input', (e) => {
     if (selectedItem && selectedItem.type === 'highlight') {
