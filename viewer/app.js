@@ -443,10 +443,10 @@ function selectItem(type, index) {
     if (!selectedItem || selectedItem.type !== type || selectedItem.index !== index) {
         if (type === 'highlight') {
             const h = currentAyahData.ayah_highlights[index];
-            selectedItemOriginals = { left: h.left, right: h.right };
+            selectedItemOriginals = { left: h.left, right: h.right, sura: h.sura, ayah: h.ayah, line: h.line };
         } else if (type === 'marker') {
             const m = currentAyahData.ayah_markers[index];
-            selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
+            selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line, sura: m.sura, ayah: m.ayah };
         }
     }
     selectedItem = { type, index };
@@ -556,9 +556,9 @@ function openRightPanel() {
         const h = currentAyahData.ayah_highlights[selectedItem.index];
         
         document.getElementById('meta-type').textContent = "تظليل آية";
-        document.getElementById('meta-sura').value = h.sura;
-        document.getElementById('meta-ayah').value = h.ayah;
-        document.getElementById('meta-line').value = h.line;
+        if (document.activeElement !== document.getElementById('meta-sura')) document.getElementById('meta-sura').value = h.sura;
+        if (document.activeElement !== document.getElementById('meta-ayah')) document.getElementById('meta-ayah').value = h.ayah;
+        if (document.activeElement !== document.getElementById('meta-line')) document.getElementById('meta-line').value = h.line;
 
         document.getElementById('highlight-value-fields').style.display = 'flex';
         document.getElementById('marker-value-fields').style.display = 'none';
@@ -608,9 +608,24 @@ function openRightPanel() {
         document.getElementById('hl-right-curr').textContent = h.right.toFixed(4);
 
         // Update badge state
+        const origSura = selectedItemOriginals ? selectedItemOriginals.sura : h.sura;
+        const origAyah = selectedItemOriginals ? selectedItemOriginals.ayah : h.ayah;
+        const origLine = selectedItemOriginals ? selectedItemOriginals.line : h.line;
+        
+        document.getElementById('meta-sura-orig').textContent = origSura;
+        document.getElementById('meta-sura-curr').textContent = h.sura;
+        document.getElementById('meta-ayah-orig').textContent = origAyah;
+        document.getElementById('meta-ayah-curr').textContent = h.ayah;
+        document.getElementById('meta-line-orig').textContent = origLine;
+        document.getElementById('meta-line-curr').textContent = h.line;
+
+        const isSuraChanged = h.sura !== origSura;
+        const isAyahChanged = h.ayah !== origAyah;
+        const isLineChangedMeta = h.line !== origLine;
+
         const isLeftChanged = Math.abs(h.left - origLeft) > 0.00001;
         const isRightChanged = Math.abs(h.right - origRight) > 0.00001;
-        const isChanged = isLeftChanged || isRightChanged || isTopChanged || isBottomChanged;
+        const isChanged = isLeftChanged || isRightChanged || isTopChanged || isBottomChanged || isSuraChanged || isAyahChanged || isLineChangedMeta;
         
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
@@ -659,9 +674,9 @@ function openRightPanel() {
         const m = currentAyahData.ayah_markers[selectedItem.index];
         
         document.getElementById('meta-type').textContent = "علامة نهاية آية";
-        document.getElementById('meta-sura').value = m.sura;
-        document.getElementById('meta-ayah').value = m.ayah;
-        document.getElementById('meta-line').value = m.line;
+        if (document.activeElement !== document.getElementById('meta-sura')) document.getElementById('meta-sura').value = m.sura;
+        if (document.activeElement !== document.getElementById('meta-ayah')) document.getElementById('meta-ayah').value = m.ayah;
+        if (document.activeElement !== document.getElementById('meta-line')) document.getElementById('meta-line').value = m.line;
 
         document.getElementById('highlight-value-fields').style.display = 'none';
         document.getElementById('marker-value-fields').style.display = 'flex';
@@ -695,11 +710,24 @@ function openRightPanel() {
         document.getElementById('mk-line-orig').textContent = origLine;
         document.getElementById('mk-line-curr').textContent = m.line;
 
+        const origSura = selectedItemOriginals ? selectedItemOriginals.sura : m.sura;
+        const origAyah = selectedItemOriginals ? selectedItemOriginals.ayah : m.ayah;
+
+        document.getElementById('meta-sura-orig').textContent = origSura;
+        document.getElementById('meta-sura-curr').textContent = m.sura;
+        document.getElementById('meta-ayah-orig').textContent = origAyah;
+        document.getElementById('meta-ayah-curr').textContent = m.ayah;
+        document.getElementById('meta-line-orig').textContent = origLine;
+        document.getElementById('meta-line-curr').textContent = m.line;
+
+        const isSuraChanged = m.sura !== origSura;
+        const isAyahChanged = m.ayah !== origAyah;
+
         // Update badge state
         const isCXChanged = Math.abs(m.center_x - origCX) > 0.00001;
         const isCYChanged = Math.abs(currCY - origCY) > 0.00001;
         const isLineChanged = m.line !== origLine;
-        const isChanged = isCXChanged || isCYChanged || isLineChanged;
+        const isChanged = isCXChanged || isCYChanged || isLineChanged || isSuraChanged || isAyahChanged;
 
         if (isChanged) {
             badge.textContent = "غير محفوظ ⚠️";
@@ -733,6 +761,37 @@ function openRightPanel() {
         } else {
             btnSaveLine.className = "save-inline-btn saved";
             btnSaveLine.title = "تم الحفظ";
+        }
+
+        // Meta fields
+        const isSuraChangedMeta = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights[selectedItem.index].sura !== (selectedItemOriginals ? selectedItemOriginals.sura : currentAyahData.ayah_highlights[selectedItem.index].sura) : m.sura !== (selectedItemOriginals ? selectedItemOriginals.sura : m.sura);
+        const isAyahChangedMeta = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights[selectedItem.index].ayah !== (selectedItemOriginals ? selectedItemOriginals.ayah : currentAyahData.ayah_highlights[selectedItem.index].ayah) : m.ayah !== (selectedItemOriginals ? selectedItemOriginals.ayah : m.ayah);
+        const isLineChangedMeta = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights[selectedItem.index].line !== (selectedItemOriginals ? selectedItemOriginals.line : currentAyahData.ayah_highlights[selectedItem.index].line) : m.line !== (selectedItemOriginals ? selectedItemOriginals.line : m.line);
+
+        const btnSaveMetaSura = document.getElementById('save-meta-sura');
+        const btnSaveMetaAyah = document.getElementById('save-meta-ayah');
+        const btnSaveMetaLine = document.getElementById('save-meta-line');
+
+        if (isSuraChangedMeta) {
+            btnSaveMetaSura.className = "save-inline-btn unsaved";
+            btnSaveMetaSura.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveMetaSura.className = "save-inline-btn saved";
+            btnSaveMetaSura.title = "تم الحفظ";
+        }
+        if (isAyahChangedMeta) {
+            btnSaveMetaAyah.className = "save-inline-btn unsaved";
+            btnSaveMetaAyah.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveMetaAyah.className = "save-inline-btn saved";
+            btnSaveMetaAyah.title = "تم الحفظ";
+        }
+        if (isLineChangedMeta) {
+            btnSaveMetaLine.className = "save-inline-btn unsaved";
+            btnSaveMetaLine.title = "تغيير غير محفوظ - انقر للحفظ";
+        } else {
+            btnSaveMetaLine.className = "save-inline-btn saved";
+            btnSaveMetaLine.title = "تم الحفظ";
         }
     }
 }
@@ -773,10 +832,16 @@ function clearRightPanel() {
     document.getElementById('mk-cy-curr').textContent = "-";
     document.getElementById('mk-line-orig').textContent = "-";
     document.getElementById('mk-line-curr').textContent = "-";
+    document.getElementById('meta-sura-orig').textContent = "-";
+    document.getElementById('meta-sura-curr').textContent = "-";
+    document.getElementById('meta-ayah-orig').textContent = "-";
+    document.getElementById('meta-ayah-curr').textContent = "-";
+    document.getElementById('meta-line-orig').textContent = "-";
+    document.getElementById('meta-line-curr').textContent = "-";
     document.getElementById('line-height-orig').textContent = "-";
     document.getElementById('line-height-curr').textContent = "-";
 
-    const ids = ['save-hl-left', 'save-hl-right', 'save-hl-line-top', 'save-hl-line-bottom', 'save-mk-cx', 'save-mk-cy', 'save-mk-line'];
+    const ids = ['save-hl-left', 'save-hl-right', 'save-hl-line-top', 'save-hl-line-bottom', 'save-mk-cx', 'save-mk-cy', 'save-mk-line', 'save-meta-sura', 'save-meta-ayah', 'save-meta-line'];
     ids.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
@@ -805,7 +870,7 @@ document.getElementById('close-right-panel').addEventListener('click', closeRigh
 DOM.img.addEventListener('click', closeRightPanel); // clicking image deselects
 
 // Meta inputs (Sura, Ayah, Line)
-document.getElementById('meta-sura').addEventListener('change', (e) => {
+document.getElementById('meta-sura').addEventListener('input', (e) => {
     if (selectedItem) {
         const val = parseInt(e.target.value) || 1;
         if (selectedItem.type === 'highlight') {
@@ -814,11 +879,10 @@ document.getElementById('meta-sura').addEventListener('change', (e) => {
             currentAyahData.ayah_markers[selectedItem.index].sura = val;
         }
         renderBoxes();
-        autoSaveAyahData();
-        flashSavedFeedback();
+        openRightPanel();
     }
 });
-document.getElementById('meta-ayah').addEventListener('change', (e) => {
+document.getElementById('meta-ayah').addEventListener('input', (e) => {
     if (selectedItem) {
         const val = parseInt(e.target.value) || 1;
         if (selectedItem.type === 'highlight') {
@@ -827,11 +891,10 @@ document.getElementById('meta-ayah').addEventListener('change', (e) => {
             currentAyahData.ayah_markers[selectedItem.index].ayah = val;
         }
         renderBoxes();
-        autoSaveAyahData();
-        flashSavedFeedback();
+        openRightPanel();
     }
 });
-document.getElementById('meta-line').addEventListener('change', (e) => {
+document.getElementById('meta-line').addEventListener('input', (e) => {
     if (selectedItem) {
         const val = parseInt(e.target.value) || 1;
         if (selectedItem.type === 'highlight') {
@@ -851,8 +914,6 @@ document.getElementById('meta-line').addEventListener('change', (e) => {
         }
         renderBoxes();
         openRightPanel();
-        autoSaveAyahData();
-        flashSavedFeedback();
     }
 });
 
@@ -1315,6 +1376,56 @@ document.getElementById('reset-mk-line').addEventListener('click', () => {
     }
 });
 
+document.getElementById('reset-meta-sura').addEventListener('click', () => {
+    if (selectedItem && selectedItemOriginals) {
+        pushUndoSnapshot('reset meta sura');
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].sura = selectedItemOriginals.sura;
+        } else {
+            currentAyahData.ayah_markers[selectedItem.index].sura = selectedItemOriginals.sura;
+        }
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+document.getElementById('reset-meta-ayah').addEventListener('click', () => {
+    if (selectedItem && selectedItemOriginals) {
+        pushUndoSnapshot('reset meta ayah');
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].ayah = selectedItemOriginals.ayah;
+        } else {
+            currentAyahData.ayah_markers[selectedItem.index].ayah = selectedItemOriginals.ayah;
+        }
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+document.getElementById('reset-meta-line').addEventListener('click', () => {
+    if (selectedItem && selectedItemOriginals) {
+        pushUndoSnapshot('reset meta line');
+        if (selectedItem.type === 'highlight') {
+            currentAyahData.ayah_highlights[selectedItem.index].line = selectedItemOriginals.line;
+        } else {
+            const m = currentAyahData.ayah_markers[selectedItem.index];
+            const oldLine = m.line;
+            const oldCenterX = m.center_x;
+            m.line = selectedItemOriginals.line;
+            if (oldLine !== m.line) {
+                syncMarkerLineChange(m, oldLine, oldCenterX);
+            }
+            if (typeof syncHighlightWithMarker === 'function') {
+                syncHighlightWithMarker(m, { allowCreateNext: shouldCreateNextHighlightOnMarkerMove() });
+            }
+            document.getElementById('mk-line').value = m.line;
+        }
+        renderBoxes();
+        openRightPanel();
+        autoSaveAyahData();
+    }
+});
+
 document.getElementById('reset-hl-line-top').addEventListener('click', () => {
     if (selectedItem && selectedItem.type === 'highlight' && originalLineBands) {
         pushUndoSnapshot('reset line top');
@@ -1387,6 +1498,15 @@ document.getElementById('save-mk-cy').addEventListener('click', () => {
 document.getElementById('save-mk-line').addEventListener('click', () => {
     document.getElementById('save-ayah-btn').click();
 });
+document.getElementById('save-meta-sura').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-meta-ayah').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
+document.getElementById('save-meta-line').addEventListener('click', () => {
+    document.getElementById('save-ayah-btn').click();
+});
 
 document.getElementById('save-global-y-offset').addEventListener('click', () => {
     document.getElementById('save-layout-btn').click();
@@ -1413,10 +1533,10 @@ document.getElementById('save-ayah-btn').addEventListener('click', () => {
             if (selectedItem) {
                 if (selectedItem.type === 'highlight') {
                     const h = currentAyahData.ayah_highlights[selectedItem.index];
-                    selectedItemOriginals = { left: h.left, right: h.right };
+                    selectedItemOriginals = { left: h.left, right: h.right, sura: h.sura, ayah: h.ayah, line: h.line };
                 } else if (selectedItem.type === 'marker') {
                     const m = currentAyahData.ayah_markers[selectedItem.index];
-                    selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
+                    selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line, sura: m.sura, ayah: m.ayah };
                 }
                 openRightPanel();
                 flashSavedFeedback();
@@ -1449,10 +1569,10 @@ function syncSelectionOriginalsFromCurrent() {
     if (!selectedItem || !currentAyahData) return;
     if (selectedItem.type === 'highlight') {
         const h = currentAyahData.ayah_highlights[selectedItem.index];
-        if (h) selectedItemOriginals = { left: h.left, right: h.right };
+        if (h) selectedItemOriginals = { left: h.left, right: h.right, sura: h.sura, ayah: h.ayah, line: h.line };
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
-        if (m) selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line };
+        if (m) selectedItemOriginals = { center_x: m.center_x, center_y: m.center_y || 0.5, line: m.line, sura: m.sura, ayah: m.ayah };
     }
 }
 

@@ -141,11 +141,70 @@
         <h3>تعديل العنصر</h3>
         
         <!-- Metadata section -->
-        <div class="metadata-card">
-            <div class="meta-row"><span class="meta-label">النوع:</span> <span id="meta-type" class="meta-value">-</span></div>
-            <div class="meta-row"><span class="meta-label">السورة:</span> <input type="number" id="meta-sura" class="meta-input" min="1" max="114" placeholder="-"></div>
-            <div class="meta-row"><span class="meta-label">الآية:</span> <input type="number" id="meta-ayah" class="meta-input" min="1" placeholder="-"></div>
-            <div class="meta-row"><span class="meta-label">رقم السطر:</span> <input type="number" id="meta-line" class="meta-input" min="1" placeholder="-"></div>
+        <div class="metadata-card" style="padding: 6px; gap: 4px;">
+            <div class="meta-row" style="margin-bottom: 2px; padding: 0 4px;"><span class="meta-label">النوع:</span> <span id="meta-type" class="meta-value">-</span></div>
+            
+            <div style="display: flex; gap: 4px;">
+                <!-- Sura -->
+                <div class="val-compare-card" id="card-meta-sura" style="flex: 1; padding: 4px; margin-bottom: 0;">
+                    <div class="compare-title" style="font-size: 0.75rem;">السورة</div>
+                    <div class="compare-row" style="flex-direction: row; justify-content: space-between; font-size: 0.7rem; padding-bottom: 2px; margin-bottom: 2px;">
+                        <div><span class="lbl">أصل:</span> <span id="meta-sura-orig" class="val-orig">-</span></div>
+                        <div><span class="lbl">حالي:</span> <span id="meta-sura-curr" class="val-curr">-</span></div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-with-reset">
+                            <input type="number" id="meta-sura" min="1" max="114" style="text-align: center; padding-left: 40px !important;">
+                            <button class="reset-inline-btn" id="reset-meta-sura" title="إعادة تعيين">
+                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                            </button>
+                            <button class="save-inline-btn saved" id="save-meta-sura" title="تم الحفظ" style="left: 20px;">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ayah -->
+                <div class="val-compare-card" id="card-meta-ayah" style="flex: 1; padding: 4px; margin-bottom: 0;">
+                    <div class="compare-title" style="font-size: 0.75rem;">الآية</div>
+                    <div class="compare-row" style="flex-direction: row; justify-content: space-between; font-size: 0.7rem; padding-bottom: 2px; margin-bottom: 2px;">
+                        <div><span class="lbl">أصل:</span> <span id="meta-ayah-orig" class="val-orig">-</span></div>
+                        <div><span class="lbl">حالي:</span> <span id="meta-ayah-curr" class="val-curr">-</span></div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-with-reset">
+                            <input type="number" id="meta-ayah" min="1" style="text-align: center; padding-left: 40px !important;">
+                            <button class="reset-inline-btn" id="reset-meta-ayah" title="إعادة تعيين">
+                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                            </button>
+                            <button class="save-inline-btn saved" id="save-meta-ayah" title="تم الحفظ" style="left: 20px;">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line -->
+                <div class="val-compare-card" id="card-meta-line" style="flex: 1; padding: 4px; margin-bottom: 0;">
+                    <div class="compare-title" style="font-size: 0.75rem;">السطر</div>
+                    <div class="compare-row" style="flex-direction: row; justify-content: space-between; font-size: 0.7rem; padding-bottom: 2px; margin-bottom: 2px;">
+                        <div><span class="lbl">أصل:</span> <span id="meta-line-orig" class="val-orig">-</span></div>
+                        <div><span class="lbl">حالي:</span> <span id="meta-line-curr" class="val-curr">-</span></div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-with-reset">
+                            <input type="number" id="meta-line" min="1" style="text-align: center; padding-left: 40px !important;">
+                            <button class="reset-inline-btn" id="reset-meta-line" title="إعادة تعيين">
+                                <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                            </button>
+                            <button class="save-inline-btn saved" id="save-meta-line" title="تم الحفظ" style="left: 20px;">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Save Status Badge -->
