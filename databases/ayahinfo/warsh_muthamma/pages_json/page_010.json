@@ -16,8 +16,8 @@
       "line": 2,
       "sura": 2,
       "ayah": 67,
-      "left": 0.034514115582351054,
-      "right": 0.9700000000000001,
+      "left": 0.03,
+      "right": 0.97,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
     },
@@ -26,7 +26,7 @@
       "line": 3,
       "sura": 2,
       "ayah": 68,
-      "left": 0.03387899132556656,
+      "left": 0.03,
       "right": 0.9700000000000001,
       "confidence": 0.95,
       "source": "visual_valley_renumbered"
@@ -36,7 +36,7 @@
       "line": 4,
       "sura": 2,
       "ayah": 68,
-      "left": 0.03573595263534652,
+      "left": 0.03,
       "right": 0.9700000000000001,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
@@ -56,7 +56,7 @@
       "line": 6,
       "sura": 2,
       "ayah": 69,
-      "left": 0.03483312152807642,
+      "left": 0.03,
       "right": 0.9700000000000001,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
@@ -126,7 +126,7 @@
       "line": 11,
       "sura": 2,
       "ayah": 72,
-      "left": 0.03596179514575775,
+      "left": 0.03,
       "right": 0.97,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
@@ -186,7 +186,7 @@
       "line": 16,
       "sura": 2,
       "ayah": 74,
-      "left": 0.03525451612809271,
+      "left": 0.03,
       "right": 0.9725119198908518,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
@@ -196,8 +196,8 @@
       "line": 17,
       "sura": 2,
       "ayah": 75,
-      "left": 0.035826670888973455,
-      "right": 0.9646648757432157,
+      "left": 0.03,
+      "right": 0.97,
       "confidence": 0.5,
       "source": "manual_marker_sync"
     },
@@ -207,7 +207,7 @@
       "sura": 2,
       "ayah": 75,
       "left": 0.03,
-      "right": 0.9700000000000001,
+      "right": 0.97,
       "confidence": 0.85,
       "source": "text_proportional_renumbered"
     }
