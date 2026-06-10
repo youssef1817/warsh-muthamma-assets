@@ -1747,18 +1747,17 @@ function createNextHighlightOnLine(marker) {
             .sort((a, b) => Math.abs(a.center_x - marker.center_x) - Math.abs(b.center_x - marker.center_x))[0]
         : null;
 
-    const hasVisibleSpaceForNextAyah = marker.center_x > 0.12;
+    const hasVisibleSpaceForNextAyah = marker.center_x > (DEFAULT_LEFT_MARGIN + 0.02);
     if (!nextMarker && !hasVisibleSpaceForNextAyah) {
         return null;
     }
-    const conservativeLeft = Math.max(0.03, marker.center_x - 0.12);
 
     const nextHighlight = {
         page: currentPage,
         line: marker.line,
         sura: nextIdentity.sura,
         ayah: nextIdentity.ayah,
-        left: nextMarker ? nextMarker.center_x : conservativeLeft,
+        left: nextMarker ? nextMarker.center_x : DEFAULT_LEFT_MARGIN,
         right: marker.center_x,
         confidence: 0.5,
         source: 'manual_marker_sync'
