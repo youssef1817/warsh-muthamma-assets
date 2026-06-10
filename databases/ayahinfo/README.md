@@ -77,7 +77,7 @@
 مثال ضبط الصفحة الأولى:
 
 ```powershell
-scripts\sync_warsh_muthamma_ayahinfo.cmd -1
+tools\sync_warsh_muthamma_ayahinfo.cmd -1
 ```
 
 يشغّل السكربت حقن الصفحة المعدلة فقط داخل قاعدة SQLite، ثم ينسخ `ayahinfo.db` إلى نسخة ويندوز للتجربة السريعة. بعده استخدم Hot Reload، وإن بقيت SQLite القديمة مفتوحة فاستعمل Hot Restart.
