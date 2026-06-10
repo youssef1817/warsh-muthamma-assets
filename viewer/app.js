@@ -2093,7 +2093,7 @@ document.getElementById('global-height').addEventListener('input', () => {
 window.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
     const cmd = e.ctrlKey || e.metaKey;
-    if (cmd && !e.altKey && key === 's') {
+    if (e.shiftKey && !cmd && !e.altKey && key === 's') {
         e.preventDefault();
         saveCurrentPageAll();
         return;
