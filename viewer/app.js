@@ -2352,10 +2352,19 @@ window.addEventListener('keydown', (e) => {
             }
             
             if (e.shiftKey && !e.ctrlKey && !e.altKey) {
-                // Horizontal Move
+                // Move Highlight
                 const step = 0.001;
                 if (e.key === 'ArrowLeft') { h.left -= step; h.right -= step; updatedAyah = true; }
                 else if (e.key === 'ArrowRight') { h.left += step; h.right += step; updatedAyah = true; }
+                else if (e.key === 'ArrowUp') { 
+                    h.line = Math.max(1, h.line - 1); 
+                    updatedAyah = true; 
+                }
+                else if (e.key === 'ArrowDown') { 
+                    const maxLine = currentLayoutData && currentLayoutData.lineBands ? currentLayoutData.lineBands.length : 15;
+                    h.line = Math.min(maxLine, h.line + 1); 
+                    updatedAyah = true; 
+                }
             } else if (e.ctrlKey && e.shiftKey) {
                 // Vertical Resizing of LineBand
                 const step = 1;
