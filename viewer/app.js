@@ -2001,33 +2001,62 @@ window.addEventListener('keydown', (e) => {
     }
 
     // Box shortcuts
-    if (selectedItem && (e.key.startsWith('Arrow'))) {
+    if (selectedItem) {
         
-        if (e.key === 'ArrowUp' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-            const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
-            let newIndex = selectedItem.index - 1;
-            if (newIndex < 0) newIndex = arr.length - 1;
-            selectItem(selectedItem.type, newIndex);
-            e.preventDefault();
-            return;
-        }
-        if (e.key === 'ArrowDown' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-            const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
-            let newIndex = selectedItem.index + 1;
-            if (newIndex >= arr.length) newIndex = 0;
-            selectItem(selectedItem.type, newIndex);
-            e.preventDefault();
-            return;
+        if (e.key.startsWith('Arrow')) {
+            if (e.key === 'ArrowUp' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
+                let newIndex = selectedItem.index - 1;
+                if (newIndex < 0) newIndex = arr.length - 1;
+                selectItem(selectedItem.type, newIndex);
+                e.preventDefault();
+                return;
+            }
+            if (e.key === 'ArrowDown' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                const arr = selectedItem.type === 'highlight' ? currentAyahData.ayah_highlights : currentAyahData.ayah_markers;
+                let newIndex = selectedItem.index + 1;
+                if (newIndex >= arr.length) newIndex = 0;
+                selectItem(selectedItem.type, newIndex);
+                e.preventDefault();
+                return;
+            }
         }
 
         let updatedAyah = false;
         let updatedLayout = false;
-        const shouldCaptureHistory = e.shiftKey || e.ctrlKey || e.altKey;
+        const isEditingKey = e.key === 'Delete' || e.key === 'Backspace' || e.key.toLowerCase() === 'd' || e.key === '+' || e.key === '=' || e.key === '-' || e.key === '_' || e.key === ' ';
+        const shouldCaptureHistory = e.shiftKey || e.ctrlKey || e.altKey || isEditingKey;
+        
         if (shouldCaptureHistory) pushUndoSnapshot('keyboard edit');
 
         if (selectedItem.type === 'highlight') {
             const h = currentAyahData.ayah_highlights[selectedItem.index];
             const lineBand = currentLayoutData.lineBands.find(b => b.line === h.line);
+            
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                currentAyahData.ayah_highlights.splice(selectedItem.index, 1);
+                selectedItem = null;
+                updatedAyah = true;
+                e.preventDefault();
+            } else if ((e.key.toLowerCase() === 'd') && (e.ctrlKey || e.metaKey)) {
+                const newH = JSON.parse(JSON.stringify(h));
+                currentAyahData.ayah_highlights.splice(selectedItem.index + 1, 0, newH);
+                selectItem('highlight', selectedItem.index + 1);
+                updatedAyah = true;
+                e.preventDefault();
+            } else if (e.key === '+' || e.key === '=') {
+                h.ayah++;
+                updatedAyah = true;
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '_') {
+                h.ayah = Math.max(1, h.ayah - 1);
+                updatedAyah = true;
+                e.preventDefault();
+            } else if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+                if (e.key === 'ArrowRight') { h.right = DEFAULT_RIGHT_MARGIN; updatedAyah = true; e.preventDefault(); }
+                else if (e.key === 'ArrowLeft') { h.left = DEFAULT_LEFT_MARGIN; updatedAyah = true; e.preventDefault(); }
+                else if (e.key === ' ') { h.left = DEFAULT_LEFT_MARGIN; h.right = DEFAULT_RIGHT_MARGIN; updatedAyah = true; e.preventDefault(); }
+            }
             
             if (e.shiftKey && !e.ctrlKey && !e.altKey) {
                 // Horizontal Move
