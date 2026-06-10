@@ -662,3 +662,60 @@ body, html {
 .box-resize-handle.bottom {
     bottom: -4px; left: calc(50% - 12px); height: 8px; width: 24px; cursor: ns-resize;
 }
+
+/* Custom Modal System */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.custom-modal {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 24px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    color: #eee;
+    text-align: center;
+    animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.custom-modal h3 {
+    margin-top: 0;
+    color: #FF9800;
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+}
+
+.custom-modal p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    white-space: pre-wrap;
+}
+
+.custom-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.custom-modal-actions button {
+    padding: 10px 24px;
+    font-size: 1rem;
+    min-width: 100px;
+    border-radius: 6px;
+}

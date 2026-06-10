@@ -41,3 +41,25 @@ node tools/06_rebuild_ayahinfo.js
 - `databases/ayahinfo/warsh_muthamma/pages_json/`
 - `databases/ayahinfo/warsh_muthamma/quran.ar.warsh_muthamma.db`
 - `databases/ayahinfo/warsh_muthamma/ayahinfo_muthamma.zip`
+
+## خط المزامنة المباشرة للتعديلات (Sync Scripts)
+
+هذه السكربتات قمنا بإضافتها لتسريع وتسهيل عملية اختبار التعديلات المرئية. وظيفتها الرئيسية هي بناء قاعدة البيانات `SQLite` ونقلها مباشرة إلى مسارات نظامك المحلي (ويندوز، أندرويد عبر ADB) لتجربة التعديلات الحية فوراً ودون الحاجة لنسخ الملفات يدوياً.
+
+- **`sync_warsh_muthamma_ayahinfo.cmd`** (لمستخدمي ويندوز).
+- **`sync_warsh_muthamma_ayahinfo.sh`** (لمستخدمي لينكس/ماك).
+
+### الاستعمال:
+
+**1. مزامنة شاملة لجميع الصفحات:**
+يبني القاعدة من جديد لجميع الصفحات ويقوم بنقلها مباشرة لهاتفك (عبر ADB) وتطبيق سطح المكتب.
+```text
+tools\sync_warsh_muthamma_ayahinfo.cmd
+```
+
+**2. مزامنة صفحة واحدة فقط (سريعة جداً):**
+إذا كنت تعدل صفحة محددة (مثل الصفحة 27) وتريد رؤية النتيجة فوراً:
+```text
+tools\sync_warsh_muthamma_ayahinfo.cmd -27
+```
+هذا الأمر سيقوم بضخ (Inject) بيانات الصفحة 27 فقط داخل قاعدة البيانات الحالية، ثم يرسلها للأجهزة المتصلة في ثانية واحدة.

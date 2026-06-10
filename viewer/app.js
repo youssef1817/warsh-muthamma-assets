@@ -69,6 +69,55 @@ function showToast(msg, isError = false) {
     setTimeout(() => DOM.toast.style.opacity = 0, 3000);
 }
 
+function appAlert(message, title = "تنبيه") {
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('custom-modal-overlay');
+        const titleEl = document.getElementById('custom-modal-title');
+        const messageEl = document.getElementById('custom-modal-message');
+        const okBtn = document.getElementById('custom-modal-ok');
+        const cancelBtn = document.getElementById('custom-modal-cancel');
+        if (!overlay) { alert(message); resolve(true); return; }
+        
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        cancelBtn.style.display = 'none';
+        overlay.style.display = 'flex';
+        
+        const cleanup = () => {
+            overlay.style.display = 'none';
+            okBtn.removeEventListener('click', onOk);
+        };
+        const onOk = () => { cleanup(); resolve(true); };
+        okBtn.addEventListener('click', onOk);
+    });
+}
+
+function appConfirm(message, title = "تأكيد") {
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('custom-modal-overlay');
+        const titleEl = document.getElementById('custom-modal-title');
+        const messageEl = document.getElementById('custom-modal-message');
+        const okBtn = document.getElementById('custom-modal-ok');
+        const cancelBtn = document.getElementById('custom-modal-cancel');
+        if (!overlay) { resolve(confirm(message)); return; }
+        
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        cancelBtn.style.display = 'inline-block';
+        overlay.style.display = 'flex';
+        
+        const cleanup = () => {
+            overlay.style.display = 'none';
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+        };
+        const onOk = () => { cleanup(); resolve(true); };
+        const onCancel = () => { cleanup(); resolve(false); };
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+    });
+}
+
 function cloneData(value) {
     return value == null ? value : JSON.parse(JSON.stringify(value));
 }
@@ -1724,7 +1773,7 @@ function createNextHighlightOnLine(marker) {
     return nextHighlight;
 }
 
-function deleteSelectedHighlight() {
+async function deleteSelectedHighlight() {
     if (!currentAyahData || !Array.isArray(currentAyahData.ayah_highlights)) return;
     if (!selectedItem || selectedItem.type !== 'highlight') return;
 
@@ -1733,7 +1782,7 @@ function deleteSelectedHighlight() {
     if (!deleted) return;
 
     const shouldRenumber = shouldRenumberFollowingHighlights();
-    const confirmed = confirm(
+    const confirmed = await appConfirm(
         shouldRenumber
             ? 'سيتم حذف مربع التحديد وتخفيض أرقام مربعات نفس السورة التي بعده بواحد. هل تتابع؟'
             : 'سيتم حذف مربع التحديد المحدد فقط. هل تتابع؟'
@@ -2488,11 +2537,11 @@ document.getElementById('apply-pad-all-btn').addEventListener('click', async () 
     const padRight = parseNumericInputValue(document.getElementById('global-pad-right').value);
     
     if (padLeft === 0 && padRight === 0) {
-        alert("يرجى إدخال قيمة التمديد أولاً.");
+        appAlert("يرجى إدخال قيمة التمديد أولاً.");
         return;
     }
 
-    const conf = confirm(`هل أنت متأكد من رغبتك في تطبيق تمديد يمين (${padRight}) ويسار (${padLeft}) على جميع ملفات الآيات (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
+    const conf = await appConfirm(`هل أنت متأكد من رغبتك في تطبيق تمديد يمين (${padRight}) ويسار (${padLeft}) على جميع ملفات الآيات (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
     if (!conf) return;
 
     try {
@@ -2508,18 +2557,21 @@ document.getElementById('apply-pad-all-btn').addEventListener('click', async () 
         const data = await res.json();
         
         if (data.success) {
-            alert(`تم تطبيق التعديلات بنجاح على ${data.filesModified} صفحة.`);
+            appAlert(`تم تطبيق الإعدادات بنجاح على ${data.filesModified} صفحة.`, "نجاح");
             // Reset the inputs
-            document.getElementById('global-pad-left').value = "0.00";
-            document.getElementById('global-pad-right').value = "0.00";
+            document.getElementById('global-pad-left').value = 0;
+            document.getElementById('global-pad-right').value = 0;
+            document.getElementById('apply-pad-all-btn').classList.remove('unsaved');
+            document.getElementById('apply-pad-all-btn').classList.add('saved');
+            
             // Reload page to fetch updated data
             updatePage(currentPage);
         } else {
-            alert("حدث خطأ: " + (data.error || "غير معروف"));
+            appAlert("حدث خطأ: " + (data.error || "خطأ مجهول"), "خطأ");
         }
     } catch (e) {
         console.error(e);
-        alert("حدث خطأ أثناء الاتصال بالخادم.");
+        appAlert("حدث خطأ أثناء الاتصال بالخادم.", "خطأ");
     } finally {
         const btn = document.getElementById('apply-pad-all-btn');
         btn.textContent = "تطبيق وحفظ في كل الصفحات";
@@ -2577,11 +2629,12 @@ document.getElementById('apply-first-last-all-btn').addEventListener('click', as
     const padLastBottom = parseInt(document.getElementById('global-last-line-pad').value) || 0;
     
     if (padFirstTop === 0 && padLastBottom === 0) {
-        alert("يرجى إدخال قيمة تمديد السطر الأول أو الأخير أولاً.");
+        appAlert("يرجى إدخال قيمة تمديد السطر الأول أو الأخير أولاً.");
         return;
     }
 
-    const conf = confirm(`هل أنت متأكد من رغبتك في تطبيق تمديد السطر الأول للأعلى (${padFirstTop}px) وتمديد السطر الأخير للأسفل (${padLastBottom}px) على جميع ملفات التخطيط (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
+    const conf = await appConfirm(`هل أنت متأكد من رغبتك في تطبيق تمديد إضافي للسطر الأول (${padFirstTop}px) 
+وتمديد إضافي للسطر الأخير (${padLastBottom}px) على جميع ملفات التخطيط (485 صفحة)؟\nهذا الإجراء لا يمكن التراجع عنه بسهولة.`);
     if (!conf) return;
 
     try {
@@ -2597,18 +2650,18 @@ document.getElementById('apply-first-last-all-btn').addEventListener('click', as
         const data = await res.json();
         
         if (data.success) {
-            alert(`تم تطبيق التعديلات بنجاح على ${data.filesModified} صفحة تخطيط.`);
+            appAlert(`تم تطبيق التعديلات بنجاح على ${data.filesModified} صفحة تخطيط.`, "نجاح");
             // Reset the inputs
             document.getElementById('global-first-line-pad').value = 0;
             document.getElementById('global-last-line-pad').value = 0;
             // Reload page to fetch updated data
             updatePage(currentPage);
         } else {
-            alert("حدث خطأ: " + (data.error || "غير معروف"));
+            appAlert("حدث خطأ: " + (data.error || "غير معروف"), "خطأ");
         }
     } catch (e) {
         console.error(e);
-        alert("حدث خطأ أثناء الاتصال بالخادم.");
+        appAlert("حدث خطأ أثناء الاتصال بالخادم.", "خطأ");
     } finally {
         const btn = document.getElementById('apply-first-last-all-btn');
         btn.textContent = "تطبيق وحفظ في كل الصفحات";
@@ -2806,7 +2859,7 @@ document.addEventListener('wheel', (e) => {
 // Ayah Offset Adjustment Logic
 function adjustSuraAyahNumbers(delta) {
     if (!selectedItem || !currentAyahData) {
-        alert("يرجى اختيار تظليل آية أو علامة نهاية آية أولاً.");
+        appAlert("يرجى تحديد عنصر أولاً أو التأكد من تحميل الصفحة.");
         return;
     }
 
@@ -2826,7 +2879,7 @@ function adjustSuraAyahNumbers(delta) {
     }
 
     if (!currentSura) {
-        alert("لا يمكن تحديد السورة الحالية.");
+        appAlert("لم يتم العثور على السورة للعنصر.");
         return;
     }
 
