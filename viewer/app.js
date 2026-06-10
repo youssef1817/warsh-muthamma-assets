@@ -488,6 +488,66 @@ function renderBoxes() {
                         autoSaveAyahData();
                     });
 
+                    const btnMinus = document.createElement('button');
+                    btnMinus.innerHTML = '-';
+                    btnMinus.title = 'إنقاص رقم الآية';
+                    btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnMinus.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('decrement ayah number');
+                        h.ayah = Math.max(1, h.ayah - 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnPlus = document.createElement('button');
+                    btnPlus.innerHTML = '+';
+                    btnPlus.title = 'زيادة رقم الآية';
+                    btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnPlus.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('increment ayah number');
+                        h.ayah++;
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnDup = document.createElement('button');
+                    btnDup.innerHTML = '⧉';
+                    btnDup.title = 'تكرار المربع';
+                    btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDup.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('duplicate highlight box');
+                        const newH = JSON.parse(JSON.stringify(h));
+                        currentAyahData.ayah_highlights.splice(index + 1, 0, newH);
+                        selectItem('highlight', index + 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnDel = document.createElement('button');
+                    btnDel.innerHTML = '🗑';
+                    btnDel.title = 'حذف المربع';
+                    btnDel.style.color = '#ff5252';
+                    btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDel.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('delete highlight box');
+                        currentAyahData.ayah_highlights.splice(index, 1);
+                        selectedItem = null;
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    toolbar.appendChild(btnDel);
+                    toolbar.appendChild(btnDup);
+                    toolbar.appendChild(btnMinus);
+                    toolbar.appendChild(btnPlus);
                     toolbar.appendChild(btnRight);
                     toolbar.appendChild(btnFull);
                     toolbar.appendChild(btnLeft);
