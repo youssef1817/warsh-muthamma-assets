@@ -113,6 +113,43 @@ body, html {
     100% { box-shadow: 0 0 8px #FF2E93; }
 }
 
+.box-toolbar {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 4px;
+    display: flex;
+    gap: 6px;
+    padding: 4px 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    z-index: 1000;
+    pointer-events: auto;
+    cursor: default;
+}
+
+.box-toolbar button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.box-toolbar button:hover {
+    background: rgba(255, 152, 0, 0.85);
+    border-color: #FF9800;
+    color: #000;
+}
+
 /* Metadata and Comparison UI in Right Panel */
 .metadata-card {
     background: rgba(0,0,0,0.35);

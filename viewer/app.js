@@ -440,6 +440,58 @@ function renderBoxes() {
                         });
                         div.appendChild(handle);
                     });
+                    
+                    // Add alignment toolbar
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'box-toolbar';
+                    
+                    const btnRight = document.createElement('button');
+                    btnRight.innerHTML = '⭲';
+                    btnRight.title = 'تمديد للحد الأيمن';
+                    btnRight.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnRight.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('snap right edge to margin');
+                        h.right = DEFAULT_RIGHT_MARGIN;
+                        normalizeHighlightGeometry(h);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnFull = document.createElement('button');
+                    btnFull.innerHTML = '⭤';
+                    btnFull.title = 'تمديد للحدين الأيمن والأيسر';
+                    btnFull.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnFull.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('snap both edges to margins');
+                        h.left = DEFAULT_LEFT_MARGIN;
+                        h.right = DEFAULT_RIGHT_MARGIN;
+                        normalizeHighlightGeometry(h);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnLeft = document.createElement('button');
+                    btnLeft.innerHTML = '⭰';
+                    btnLeft.title = 'تمديد للحد الأيسر';
+                    btnLeft.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLeft.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('snap left edge to margin');
+                        h.left = DEFAULT_LEFT_MARGIN;
+                        normalizeHighlightGeometry(h);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    toolbar.appendChild(btnRight);
+                    toolbar.appendChild(btnFull);
+                    toolbar.appendChild(btnLeft);
+                    div.appendChild(toolbar);
                 }
 
                 div.addEventListener('mousedown', (e) => {
