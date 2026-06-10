@@ -2989,3 +2989,56 @@ progressBtn.addEventListener('click', () => {
 closeProgressBtn.addEventListener('click', () => {
     progressModal.style.display = 'none';
 });
+
+// ==========================================
+// Sync and Export Logic
+// ==========================================
+const syncWindowsCb = document.getElementById('sync-windows');
+const syncAndroidCb = document.getElementById('sync-android');
+const syncCurrentPageBtn = document.getElementById('sync-current-page-btn');
+const syncAllPagesBtn = document.getElementById('sync-all-pages-btn');
+
+async function performSync(page) {
+    const skipWindows = !syncWindowsCb.checked;
+    const skipAndroid = !syncAndroidCb.checked;
+    
+    showToast('جاري المزامنة، يرجى الانتظار...');
+    
+    try {
+        const res = await fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ page, skipWindows, skipAndroid })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            appAlert(`تمت عملية المزامنة بنجاح!\n\nتفاصيل المخرجات:\n${data.output}`, "نجاح المزامنة");
+            if (page !== 'all') {
+                loadProgress(); // To refresh if modal is open or for future
+            }
+        } else {
+            appAlert(`فشلت المزامنة!\n\nالخطأ:\n${data.error || data.output}`, "خطأ في المزامنة");
+        }
+    } catch (err) {
+        console.error("Sync error:", err);
+        appAlert("حدث خطأ أثناء الاتصال بالخادم لإجراء المزامنة.", "خطأ");
+    }
+}
+
+syncCurrentPageBtn.addEventListener('click', () => {
+    appConfirm(`هل أنت متأكد من رغبتك في مزامنة الصفحة ${currentPage} وإرسالها إلى الأجهزة المحددة؟`, async (confirmed) => {
+        if (confirmed) {
+            await performSync(currentPage);
+        }
+    });
+});
+
+syncAllPagesBtn.addEventListener('click', () => {
+    appConfirm(`تنبيه: هذه العملية ستقوم بإعادة بناء قاعدة البيانات لجميع الصفحات الـ 485 وتصديرها.\nقد تستغرق هذه العملية عدة ثوانٍ.\n\nهل أنت متأكد؟`, async (confirmed) => {
+        if (confirmed) {
+            await performSync('all');
+        }
+    });
+});

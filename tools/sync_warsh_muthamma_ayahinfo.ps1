@@ -1,6 +1,10 @@
 [CmdletBinding(PositionalBinding = $false)]
 param(
   [int]$Page = 0,
+  
+  [switch]$All,
+  [switch]$SkipWindows,
+  [switch]$SkipAndroid,
 
   [Parameter(ValueFromRemainingArguments = $true)]
   [string[]]$Rest
@@ -110,7 +114,9 @@ function Invoke-AdbSync($SourceDb) {
   Write-Warn 'Android run-as copy failed. The installed app is probably not debug, or the package id differs.'
 }
 
-if ($Page -ge 1 -and $Page -le 485) {
+if ($All) {
+  $page = 0
+} elseif ($Page -ge 1 -and $Page -le 485) {
   $page = $Page
 } else {
   $page = Resolve-PageNumber $Rest
@@ -121,26 +127,39 @@ $sourceDb = Join-Path $dbDir 'quran.ar.warsh_muthamma.db'
 $pagesJsonDir = Join-Path $dbDir 'pages_json'
 $layoutJsonDir = Join-Path $dbDir 'page_layout_json'
 $nodeHelper = Join-Path $PSScriptRoot 'sync_warsh_muthamma_ayahinfo_page.js'
+$rebuildHelper = Join-Path $PSScriptRoot '06_rebuild_ayahinfo.js'
 
 if (-not (Test-Path -LiteralPath $sourceDb)) {
   throw "Source database was not found: $sourceDb"
 }
 
-Write-Info "Injecting page $page into the repository SQLite database..."
-$jsonResult = & node "$nodeHelper" --page "$page" --db "$sourceDb" --pages-dir "$pagesJsonDir" --layout-dir "$layoutJsonDir"
-if ($LASTEXITCODE -ne 0) {
-  throw 'Failed to inject the page into SQLite.'
+if ($All) {
+  Write-Info "Rebuilding all pages into the repository SQLite database..."
+  & node "$rebuildHelper"
+  if ($LASTEXITCODE -ne 0) {
+    throw 'Failed to rebuild all pages into SQLite.'
+  }
+} else {
+  Write-Info "Injecting page $page into the repository SQLite database..."
+  $jsonResult = & node "$nodeHelper" --page "$page" --db "$sourceDb" --pages-dir "$pagesJsonDir" --layout-dir "$layoutJsonDir"
+  if ($LASTEXITCODE -ne 0) {
+    throw 'Failed to inject the page into SQLite.'
+  }
+  Write-Ok $jsonResult
 }
-Write-Ok $jsonResult
 
-$windowsRoot = Resolve-WindowsQuranDataRoot
-$windowsAyahInfoDir = Join-Path $windowsRoot 'databases\ayahinfo\warsh_muthamma'
-New-Item -ItemType Directory -Path $windowsAyahInfoDir -Force | Out-Null
-$windowsDb = Join-Path $windowsAyahInfoDir 'ayahinfo.db'
-Copy-Item -LiteralPath $sourceDb -Destination $windowsDb -Force
-Write-Ok "Windows ayahinfo.db was replaced: $windowsDb"
+if (-not $SkipWindows) {
+  $windowsRoot = Resolve-WindowsQuranDataRoot
+  $windowsAyahInfoDir = Join-Path $windowsRoot 'databases\ayahinfo\warsh_muthamma'
+  New-Item -ItemType Directory -Path $windowsAyahInfoDir -Force | Out-Null
+  $windowsDb = Join-Path $windowsAyahInfoDir 'ayahinfo.db'
+  Copy-Item -LiteralPath $sourceDb -Destination $windowsDb -Force
+  Write-Ok "Windows ayahinfo.db was replaced: $windowsDb"
+}
 
-Invoke-AdbSync $sourceDb
+if (-not $SkipAndroid) {
+  Invoke-AdbSync $sourceDb
+}
 
 Write-Host ''
 Write-Ok 'Done. Run Hot Reload/Restart as needed, then reopen the page to see the edit.'

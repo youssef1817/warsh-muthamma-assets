@@ -141,6 +141,22 @@
         
         <button class="btn btn-save" id="save-first-last-page-btn" style="background: #FF9800; border-color: #e68a00; margin-bottom: 5px;">حفظ التعديل في هذه الصفحة</button>
         <button class="btn btn-danger" id="apply-first-last-all-btn" style="background: #e91e63; border-color: #c2185b;">تطبيق وحفظ في كل الصفحات</button>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #444;">
+        <h3>المزامنة والتصدير</h3>
+        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">نقل التعديلات من المحرر إلى قواعد البيانات الفعلية للتطبيقات.</p>
+        
+        <div class="control-group" style="align-items: center; margin-bottom: 6px;">
+            <input type="checkbox" id="sync-windows" checked style="width: auto; margin-left: 8px;">
+            <label for="sync-windows" style="margin-bottom: 0;">تحديث التطبيق في الويندوز</label>
+        </div>
+        <div class="control-group" style="align-items: center; margin-bottom: 12px;">
+            <input type="checkbox" id="sync-android" checked style="width: auto; margin-left: 8px;">
+            <label for="sync-android" style="margin-bottom: 0;">تحديث التطبيق في الهاتف (ADB)</label>
+        </div>
+        
+        <button class="btn btn-save" id="sync-current-page-btn" style="background: #2196F3; border-color: #1976D2; margin-bottom: 5px;">مزامنة الصفحة الحالية</button>
+        <button class="btn btn-danger" id="sync-all-pages-btn" style="background: #673AB7; border-color: #512DA8;">إعادة بناء ومزامنة كل الصفحات</button>
     </div>
 
     <!-- Right Panel: Box specific Controls -->

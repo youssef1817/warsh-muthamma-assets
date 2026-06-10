@@ -211,6 +211,45 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    if (req.url === '/api/sync' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const { page, skipWindows, skipAndroid } = JSON.parse(body);
+                const { spawn } = require('child_process');
+                
+                const psScript = path.resolve(ROOT_DIR, 'tools', 'sync_warsh_muthamma_ayahinfo.ps1');
+                const args = ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', psScript];
+                
+                if (page === 'all') {
+                    args.push('-All');
+                } else {
+                    args.push('-Page', String(page));
+                }
+                
+                if (skipWindows) args.push('-SkipWindows');
+                if (skipAndroid) args.push('-SkipAndroid');
+                
+                const process = spawn('powershell', args);
+                
+                let output = '';
+                process.stdout.on('data', data => { output += data.toString(); });
+                process.stderr.on('data', data => { output += data.toString(); });
+                
+                process.on('close', code => {
+                    res.writeHead(code === 0 ? 200 : 500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: code === 0, output, code }));
+                });
+            } catch (err) {
+                console.error("POST sync error:", err);
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            }
+        });
+        return;
+    }
+
     let reqUrl = req.url.split('?')[0]; 
     let filePath = path.join(ROOT_DIR, reqUrl);
     
