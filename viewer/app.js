@@ -447,7 +447,7 @@ function renderBoxes() {
                     
                     const btnRight = document.createElement('button');
                     btnRight.innerHTML = '⭲';
-                    btnRight.title = 'تمديد للحد الأيمن';
+                    btnRight.title = 'تمديد للحد الأيمن (Ctrl + سهم يمين)';
                     btnRight.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnRight.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -461,7 +461,7 @@ function renderBoxes() {
 
                     const btnFull = document.createElement('button');
                     btnFull.innerHTML = '⭤';
-                    btnFull.title = 'تمديد للحدين الأيمن والأيسر';
+                    btnFull.title = 'تمديد للحدين الأيمن والأيسر (Ctrl + مسافة)';
                     btnFull.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnFull.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -476,7 +476,7 @@ function renderBoxes() {
 
                     const btnLeft = document.createElement('button');
                     btnLeft.innerHTML = '⭰';
-                    btnLeft.title = 'تمديد للحد الأيسر';
+                    btnLeft.title = 'تمديد للحد الأيسر (Ctrl + سهم يسار)';
                     btnLeft.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLeft.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -490,7 +490,7 @@ function renderBoxes() {
 
                     const btnMinus = document.createElement('button');
                     btnMinus.innerHTML = '-';
-                    btnMinus.title = 'إنقاص رقم الآية';
+                    btnMinus.title = 'إنقاص رقم الآية (-)';
                     btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnMinus.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -503,7 +503,7 @@ function renderBoxes() {
 
                     const btnPlus = document.createElement('button');
                     btnPlus.innerHTML = '+';
-                    btnPlus.title = 'زيادة رقم الآية';
+                    btnPlus.title = 'زيادة رقم الآية (+)';
                     btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnPlus.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -516,7 +516,7 @@ function renderBoxes() {
 
                     const btnDup = document.createElement('button');
                     btnDup.innerHTML = '⧉';
-                    btnDup.title = 'تكرار المربع';
+                    btnDup.title = 'تكرار المربع (Shift+D)';
                     btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDup.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -531,7 +531,7 @@ function renderBoxes() {
 
                     const btnDel = document.createElement('button');
                     btnDel.innerHTML = '🗑';
-                    btnDel.title = 'حذف المربع';
+                    btnDel.title = 'حذف المربع (Delete)';
                     btnDel.style.color = '#ff5252';
                     btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDel.addEventListener('click', (e) => {
@@ -628,7 +628,7 @@ function renderBoxes() {
 
                     const btnMinus = document.createElement('button');
                     btnMinus.innerHTML = '-';
-                    btnMinus.title = 'إنقاص رقم الآية';
+                    btnMinus.title = 'إنقاص رقم الآية (-)';
                     btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnMinus.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -641,7 +641,7 @@ function renderBoxes() {
 
                     const btnPlus = document.createElement('button');
                     btnPlus.innerHTML = '+';
-                    btnPlus.title = 'زيادة رقم الآية';
+                    btnPlus.title = 'زيادة رقم الآية (+)';
                     btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnPlus.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -654,7 +654,7 @@ function renderBoxes() {
 
                     const btnDup = document.createElement('button');
                     btnDup.innerHTML = '⧉';
-                    btnDup.title = 'تكرار الدائرة';
+                    btnDup.title = 'تكرار الدائرة (Shift+D)';
                     btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDup.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -669,7 +669,7 @@ function renderBoxes() {
 
                     const btnDel = document.createElement('button');
                     btnDel.innerHTML = '🗑';
-                    btnDel.title = 'حذف الدائرة';
+                    btnDel.title = 'حذف الدائرة (Delete)';
                     btnDel.style.color = '#ff5252';
                     btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDel.addEventListener('click', (e) => {
