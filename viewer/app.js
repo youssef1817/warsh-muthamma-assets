@@ -2345,6 +2345,24 @@ window.addEventListener('keydown', (e) => {
                 h.ayah = Math.max(1, h.ayah - 1);
                 updatedAyah = true;
                 e.preventDefault();
+            } else if (e.key.toLowerCase() === 'f' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                const nextLine = h.line + 1;
+                if (currentLayoutData && currentLayoutData.lineBands && nextLine <= currentLayoutData.lineBands.length) {
+                    const newH = {
+                        page: currentPage,
+                        line: nextLine,
+                        sura: h.sura,
+                        ayah: h.ayah,
+                        left: DEFAULT_LEFT_MARGIN,
+                        right: DEFAULT_RIGHT_MARGIN,
+                        confidence: 0.8,
+                        source: 'manual_fill'
+                    };
+                    currentAyahData.ayah_highlights.push(newH);
+                    selectItem('highlight', currentAyahData.ayah_highlights.length - 1);
+                    updatedAyah = true;
+                    e.preventDefault();
+                }
             } else if (e.ctrlKey && !e.shiftKey && !e.altKey) {
                 if (e.key === 'ArrowRight') { h.right = DEFAULT_RIGHT_MARGIN; updatedAyah = true; e.preventDefault(); }
                 else if (e.key === 'ArrowLeft') { h.left = DEFAULT_LEFT_MARGIN; updatedAyah = true; e.preventDefault(); }
@@ -2403,6 +2421,25 @@ window.addEventListener('keydown', (e) => {
                 m.ayah = Math.max(1, m.ayah - 1);
                 updatedAyah = true;
                 e.preventDefault();
+            } else if (e.key.toLowerCase() === 'f' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                const nextLine = m.line + 1;
+                if (currentLayoutData && currentLayoutData.lineBands && nextLine <= currentLayoutData.lineBands.length) {
+                    const nextIdentity = inferNextAyahIdentity(m);
+                    const newH = {
+                        page: currentPage,
+                        line: nextLine,
+                        sura: nextIdentity.sura,
+                        ayah: nextIdentity.ayah,
+                        left: DEFAULT_LEFT_MARGIN,
+                        right: DEFAULT_RIGHT_MARGIN,
+                        confidence: 0.8,
+                        source: 'manual_fill'
+                    };
+                    currentAyahData.ayah_highlights.push(newH);
+                    selectItem('highlight', currentAyahData.ayah_highlights.length - 1);
+                    updatedAyah = true;
+                    e.preventDefault();
+                }
             }
 
             if (e.shiftKey && !e.ctrlKey && !e.altKey) {
