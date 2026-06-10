@@ -231,20 +231,28 @@ const server = http.createServer((req, res) => {
                 if (skipWindows) args.push('-SkipWindows');
                 if (skipAndroid) args.push('-SkipAndroid');
                 
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Transfer-Encoding': 'chunked',
+                    'Cache-Control': 'no-cache'
+                });
+
                 const process = spawn('powershell', args);
                 
-                let output = '';
-                process.stdout.on('data', data => { output += data.toString(); });
-                process.stderr.on('data', data => { output += data.toString(); });
+                process.stdout.on('data', data => { res.write(data.toString()); });
+                process.stderr.on('data', data => { res.write(data.toString()); });
                 
                 process.on('close', code => {
-                    res.writeHead(code === 0 ? 200 : 500, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: code === 0, output, code }));
+                    res.end(`\n\n[PROCESS_EXIT_CODE:${code}]`);
                 });
             } catch (err) {
                 console.error("POST sync error:", err);
-                res.writeHead(500);
-                res.end(JSON.stringify({ error: err.message }));
+                if (!res.headersSent) {
+                    res.writeHead(500);
+                    res.end(JSON.stringify({ error: err.message }));
+                } else {
+                    res.end(`\n\n[ERROR: ${err.message}]`);
+                }
             }
         });
         return;

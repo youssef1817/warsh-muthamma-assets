@@ -535,6 +535,37 @@
         </div>
     </div>
 
+    <!-- Sync Modal -->
+    <div id="sync-modal-overlay" class="modal-overlay">
+        <div class="modal" style="width: 80%; max-width: 600px; display: flex; flex-direction: column;">
+            <h2 id="sync-modal-title" style="margin-bottom: 15px;">تأكيد المزامنة</h2>
+            <p id="sync-modal-message" style="margin-bottom: 15px; font-size: 0.95rem;">هل أنت متأكد من رغبتك في المزامنة؟</p>
+            
+            <!-- Terminal Output Area -->
+            <div id="sync-terminal-output" style="
+                flex: 1;
+                background: #1e1e1e;
+                color: #00ff00;
+                font-family: monospace;
+                padding: 10px;
+                border-radius: 4px;
+                overflow-y: auto;
+                height: 250px;
+                display: none;
+                text-align: right;
+                direction: rtl;
+                white-space: pre-wrap;
+                margin-bottom: 15px;
+                border: 1px solid #333;
+            "></div>
+
+            <div class="modal-buttons" style="display: flex; gap: 10px; justify-content: center;">
+                <button id="sync-modal-start" class="btn btn-save" style="background: #4CAF50;">بدأ</button>
+                <button id="sync-modal-cancel" class="btn btn-danger">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js?v=20260609-debug"></script>
 </body>
 </html>

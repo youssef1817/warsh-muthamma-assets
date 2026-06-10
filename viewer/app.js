@@ -2998,47 +2998,117 @@ const syncAndroidCb = document.getElementById('sync-android');
 const syncCurrentPageBtn = document.getElementById('sync-current-page-btn');
 const syncAllPagesBtn = document.getElementById('sync-all-pages-btn');
 
-async function performSync(page) {
+const syncModalOverlay = document.getElementById('sync-modal-overlay');
+const syncModalTitle = document.getElementById('sync-modal-title');
+const syncModalMessage = document.getElementById('sync-modal-message');
+const syncTerminalOutput = document.getElementById('sync-terminal-output');
+const syncModalStartBtn = document.getElementById('sync-modal-start');
+const syncModalCancelBtn = document.getElementById('sync-modal-cancel');
+
+let currentSyncAbortController = null;
+
+function translateSyncOutput(text) {
+    if (!text) return "";
+    return text
+        .replace(/Rebuilding AyahInfo database for Page (.+)\.\.\./g, 'جاري بناء قاعدة بيانات الصفحة $1...')
+        .replace(/Rebuilding AyahInfo database for ALL pages\.\.\./g, 'جاري بناء قاعدة بيانات جميع الصفحات (485 صفحة)...')
+        .replace(/Database generated at: (.+)/g, 'تم إنشاء القاعدة في:\n$1')
+        .replace(/Found Android devices:/g, 'تم العثور على أجهزة أندرويد متصلة:')
+        .replace(/Syncing to Windows \((.+)\)\.\.\./g, 'جاري المزامنة مع ويندوز...')
+        .replace(/Syncing to Android \((.+)\)\.\.\./g, 'جاري المزامنة مع أندرويد...')
+        .replace(/Sync completed successfully!/g, '✅ اكتملت المزامنة بنجاح!')
+        .replace(/Skipping Windows sync\.\.\./g, '⚠️ تم تخطي المزامنة مع ويندوز.')
+        .replace(/Skipping Android sync\.\.\./g, '⚠️ تم تخطي المزامنة مع أندرويد.')
+        .replace(/No Android devices found/g, '❌ لم يتم العثور على أجهزة أندرويد متصلة.')
+        .replace(/Failed to copy to Windows/g, '❌ فشل النسخ إلى ويندوز')
+        .replace(/Failed to push to Android/g, '❌ فشل النقل إلى أندرويد')
+        .replace(/\[PROCESS_EXIT_CODE:(.+)\]/g, '\n[انتهت العملية برموز الخروج: $1]')
+        .replace(/\[ERROR: (.+)\]/g, '\n[خطأ: $1]');
+}
+
+function openSyncModal(page) {
+    const isAll = (page === 'all');
+    syncModalTitle.textContent = isAll ? "مزامنة جميع الصفحات" : "مزامنة الصفحة الحالية";
+    syncModalMessage.textContent = isAll 
+        ? "تنبيه: هذه العملية ستقوم بإعادة بناء قاعدة البيانات لجميع الصفحات الـ 485 وتصديرها.\nقد تستغرق هذه العملية عدة ثوانٍ. هل أنت متأكد؟"
+        : `هل أنت متأكد من رغبتك في مزامنة الصفحة ${currentPage} وإرسالها إلى الأجهزة المحددة؟`;
+    
+    syncTerminalOutput.style.display = 'none';
+    syncTerminalOutput.textContent = '';
+    
+    syncModalStartBtn.textContent = 'بدأ';
+    syncModalStartBtn.style.display = 'inline-block';
+    syncModalStartBtn.disabled = false;
+    syncModalCancelBtn.textContent = 'إلغاء';
+    
+    syncModalOverlay.style.display = 'flex';
+    
     const skipWindows = !syncWindowsCb.checked;
     const skipAndroid = !syncAndroidCb.checked;
     
-    showToast('جاري المزامنة، يرجى الانتظار...');
-    
-    try {
-        const res = await fetch('/api/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ page, skipWindows, skipAndroid })
-        });
+    syncModalStartBtn.onclick = async () => {
+        syncModalStartBtn.disabled = true;
+        syncTerminalOutput.style.display = 'block';
+        syncTerminalOutput.textContent = 'جاري الاتصال بالسيرفر...\n';
         
-        const data = await res.json();
+        currentSyncAbortController = new AbortController();
         
-        if (data.success) {
-            appAlert(`تمت عملية المزامنة بنجاح!\n\nتفاصيل المخرجات:\n${data.output}`, "نجاح المزامنة");
-            if (page !== 'all') {
-                loadProgress(); // To refresh if modal is open or for future
+        try {
+            const res = await fetch('/api/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page, skipWindows, skipAndroid }),
+                signal: currentSyncAbortController.signal
+            });
+            
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let processExitCode = null;
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                const translatedChunk = translateSyncOutput(chunk);
+                syncTerminalOutput.textContent += translatedChunk;
+                syncTerminalOutput.scrollTop = syncTerminalOutput.scrollHeight;
+                
+                const match = chunk.match(/\[PROCESS_EXIT_CODE:(\d+)\]/);
+                if (match) {
+                    processExitCode = match[1];
+                }
             }
-        } else {
-            appAlert(`فشلت المزامنة!\n\nالخطأ:\n${data.error || data.output}`, "خطأ في المزامنة");
+            
+            if (processExitCode === '0' && page !== 'all') {
+                loadProgress();
+            }
+            
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                syncTerminalOutput.textContent += '\nتم الإلغاء.\n';
+            } else {
+                syncTerminalOutput.textContent += `\nخطأ: ${err.message}\n`;
+            }
+        } finally {
+            syncModalStartBtn.style.display = 'none';
+            syncModalCancelBtn.textContent = 'إغلاق';
+            currentSyncAbortController = null;
         }
-    } catch (err) {
-        console.error("Sync error:", err);
-        appAlert("حدث خطأ أثناء الاتصال بالخادم لإجراء المزامنة.", "خطأ");
-    }
+    };
+    
+    syncModalCancelBtn.onclick = () => {
+        if (currentSyncAbortController) {
+            currentSyncAbortController.abort();
+        }
+        syncModalOverlay.style.display = 'none';
+    };
 }
 
 syncCurrentPageBtn.addEventListener('click', () => {
-    appConfirm(`هل أنت متأكد من رغبتك في مزامنة الصفحة ${currentPage} وإرسالها إلى الأجهزة المحددة؟`, async (confirmed) => {
-        if (confirmed) {
-            await performSync(currentPage);
-        }
-    });
+    openSyncModal(currentPage);
 });
 
 syncAllPagesBtn.addEventListener('click', () => {
-    appConfirm(`تنبيه: هذه العملية ستقوم بإعادة بناء قاعدة البيانات لجميع الصفحات الـ 485 وتصديرها.\nقد تستغرق هذه العملية عدة ثوانٍ.\n\nهل أنت متأكد؟`, async (confirmed) => {
-        if (confirmed) {
-            await performSync('all');
-        }
-    });
+    openSyncModal('all');
 });
