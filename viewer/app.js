@@ -780,10 +780,17 @@ document.addEventListener('mousemove', (e) => {
             const band = currentLayoutData.lineBands.find(b => b.line === h.line);
             if (band) {
                 const deltaY = (e.clientY - dragStartMouseY) / imgRect.height * currentLayoutData.imageHeight;
+                const bandIndex = currentLayoutData.lineBands.indexOf(band);
                 if (dragMode === 'resize-top') {
-                    band.top = Math.round(dragStartBandTop + deltaY);
+                    const newTop = Math.round(dragStartBandTop + deltaY);
+                    const shiftDelta = newTop - band.top;
+                    band.top = newTop;
+                    shiftPrecedingLines(bandIndex, shiftDelta);
                 } else if (dragMode === 'resize-bottom') {
-                    band.bottom = Math.round(dragStartBandBottom + deltaY);
+                    const newBottom = Math.round(dragStartBandBottom + deltaY);
+                    const shiftDelta = newBottom - band.bottom;
+                    band.bottom = newBottom;
+                    shiftFollowingLines(bandIndex, shiftDelta);
                 }
             }
         }
@@ -2247,14 +2254,15 @@ window.addEventListener('keydown', (e) => {
             } else if (e.ctrlKey && e.shiftKey) {
                 // Vertical Resizing of LineBand
                 const step = 1;
+                const bandIndex = currentLayoutData.lineBands.indexOf(lineBand);
                 if (!e.altKey) {
                     // Expand
-                    if (e.key === 'ArrowUp') { lineBand.top -= step; updatedLayout = true; }
-                    else if (e.key === 'ArrowDown') { lineBand.bottom += step; updatedLayout = true; }
+                    if (e.key === 'ArrowUp') { lineBand.top -= step; shiftPrecedingLines(bandIndex, -step); updatedLayout = true; }
+                    else if (e.key === 'ArrowDown') { lineBand.bottom += step; shiftFollowingLines(bandIndex, step); updatedLayout = true; }
                 } else {
                     // Shrink
-                    if (e.key === 'ArrowUp') { lineBand.bottom -= step; updatedLayout = true; }
-                    else if (e.key === 'ArrowDown') { lineBand.top += step; updatedLayout = true; }
+                    if (e.key === 'ArrowUp') { lineBand.bottom -= step; shiftFollowingLines(bandIndex, -step); updatedLayout = true; }
+                    else if (e.key === 'ArrowDown') { lineBand.top += step; shiftPrecedingLines(bandIndex, step); updatedLayout = true; }
                 }
             }
         } else if (selectedItem.type === 'marker') {
@@ -2320,6 +2328,30 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage + 1);
     else if (e.key === 'ArrowRight' && !e.shiftKey && !e.ctrlKey) updatePage(currentPage - 1);
 });
+
+function shiftFollowingLines(bandIndex, shiftDelta) {
+    if (shiftDelta === 0) return;
+    const shiftFollowing = document.getElementById('shift-following-lines') && document.getElementById('shift-following-lines').checked;
+    if (shiftFollowing && currentLayoutData && currentLayoutData.lineBands && bandIndex >= 0) {
+        for (let i = bandIndex + 1; i < currentLayoutData.lineBands.length; i++) {
+            currentLayoutData.lineBands[i].top += shiftDelta;
+            currentLayoutData.lineBands[i].bottom += shiftDelta;
+            currentLayoutData.lineBands[i].center = Math.round((currentLayoutData.lineBands[i].top + currentLayoutData.lineBands[i].bottom) / 2);
+        }
+    }
+}
+
+function shiftPrecedingLines(bandIndex, shiftDelta) {
+    if (shiftDelta === 0) return;
+    const shiftFollowing = document.getElementById('shift-following-lines') && document.getElementById('shift-following-lines').checked;
+    if (shiftFollowing && currentLayoutData && currentLayoutData.lineBands && bandIndex >= 0) {
+        for (let i = 0; i < bandIndex; i++) {
+            currentLayoutData.lineBands[i].top += shiftDelta;
+            currentLayoutData.lineBands[i].bottom += shiftDelta;
+            currentLayoutData.lineBands[i].center = Math.round((currentLayoutData.lineBands[i].top + currentLayoutData.lineBands[i].bottom) / 2);
+        }
+    }
+}
 
 function normalizeMarkerLineAfterKeyboardMove(marker, oldLine, oldCenterX) {
     if (!currentLayoutData || !currentLayoutData.lineBands) return;
