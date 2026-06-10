@@ -594,6 +594,71 @@ function renderBoxes() {
                 
                 if (selectedItem && selectedItem.type === 'marker' && selectedItem.index === index) {
                     div.classList.add('selected-box');
+                    
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'box-toolbar';
+
+                    const btnMinus = document.createElement('button');
+                    btnMinus.innerHTML = '-';
+                    btnMinus.title = 'إنقاص رقم الآية';
+                    btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnMinus.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('decrement ayah number');
+                        m.ayah = Math.max(1, m.ayah - 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnPlus = document.createElement('button');
+                    btnPlus.innerHTML = '+';
+                    btnPlus.title = 'زيادة رقم الآية';
+                    btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnPlus.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('increment ayah number');
+                        m.ayah++;
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnDup = document.createElement('button');
+                    btnDup.innerHTML = '⧉';
+                    btnDup.title = 'تكرار الدائرة';
+                    btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDup.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('duplicate marker');
+                        const newM = JSON.parse(JSON.stringify(m));
+                        currentAyahData.ayah_markers.splice(index + 1, 0, newM);
+                        selectItem('marker', index + 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnDel = document.createElement('button');
+                    btnDel.innerHTML = '🗑';
+                    btnDel.title = 'حذف الدائرة';
+                    btnDel.style.color = '#ff5252';
+                    btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDel.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('delete marker');
+                        currentAyahData.ayah_markers.splice(index, 1);
+                        selectedItem = null;
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    toolbar.appendChild(btnDel);
+                    toolbar.appendChild(btnDup);
+                    toolbar.appendChild(btnMinus);
+                    toolbar.appendChild(btnPlus);
+                    div.appendChild(toolbar);
                 }
 
                 div.addEventListener('mousedown', (e) => {
@@ -2038,7 +2103,7 @@ window.addEventListener('keydown', (e) => {
                 selectedItem = null;
                 updatedAyah = true;
                 e.preventDefault();
-            } else if ((e.key.toLowerCase() === 'd') && (e.ctrlKey || e.metaKey)) {
+            } else if ((e.key.toLowerCase() === 'd') && e.shiftKey && !e.ctrlKey && !e.altKey) {
                 const newH = JSON.parse(JSON.stringify(h));
                 currentAyahData.ayah_highlights.splice(selectedItem.index + 1, 0, newH);
                 selectItem('highlight', selectedItem.index + 1);
@@ -2080,6 +2145,28 @@ window.addEventListener('keydown', (e) => {
             const m = currentAyahData.ayah_markers[selectedItem.index];
             const oldLine = m.line;
             const oldCenterX = m.center_x;
+
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                currentAyahData.ayah_markers.splice(selectedItem.index, 1);
+                selectedItem = null;
+                updatedAyah = true;
+                e.preventDefault();
+            } else if ((e.key.toLowerCase() === 'd') && e.shiftKey && !e.ctrlKey && !e.altKey) {
+                const newM = JSON.parse(JSON.stringify(m));
+                currentAyahData.ayah_markers.splice(selectedItem.index + 1, 0, newM);
+                selectItem('marker', selectedItem.index + 1);
+                updatedAyah = true;
+                e.preventDefault();
+            } else if (e.key === '+' || e.key === '=') {
+                m.ayah++;
+                updatedAyah = true;
+                e.preventDefault();
+            } else if (e.key === '-' || e.key === '_') {
+                m.ayah = Math.max(1, m.ayah - 1);
+                updatedAyah = true;
+                e.preventDefault();
+            }
+
             if (e.shiftKey && !e.ctrlKey && !e.altKey) {
                 const step = 0.001;
                 if (e.key === 'ArrowLeft') { m.center_x -= step; updatedAyah = true; }
