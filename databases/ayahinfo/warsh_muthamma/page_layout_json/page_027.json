@@ -13,7 +13,7 @@
     {
       "line": 1,
       "top": 50,
-      "bottom": 247,
+      "bottom": 134,
       "center": 149
     },
     {
@@ -111,6 +111,12 @@
       "top": 1852,
       "bottom": 1967,
       "center": 1910
+    },
+    {
+      "line": 18,
+      "top": 1967,
+      "bottom": 2082,
+      "center": 2025
     }
   ],
   "nonAyahZones": [],

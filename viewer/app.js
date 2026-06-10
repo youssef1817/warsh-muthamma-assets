@@ -284,6 +284,7 @@ function updatePage(page) {
     document.getElementById('global-y-offset').value = 0;
     document.getElementById('global-scale').value = 1.0;
     document.getElementById('global-height').value = "";
+    document.getElementById('lines-count-input').value = 15;
     if (typeof updateLeftPanelSaveButtons === 'function') updateLeftPanelSaveButtons();
 
     if (overlayEnabled) {
@@ -325,11 +326,17 @@ async function loadOverlayData(page) {
             if (originalLineBands.length > 0) {
                 const avgHeight = Math.round(originalLineBands.reduce((sum, b) => sum + (b.bottom - b.top), 0) / originalLineBands.length);
                 document.getElementById('global-height-orig').textContent = `الأصلية: ~${avgHeight}`;
+                document.getElementById('page-lines-count-orig').textContent = `الأصلية: ${originalLineBands.length}`;
+                document.getElementById('lines-count-input').value = originalLineBands.length;
             } else {
                 document.getElementById('global-height-orig').textContent = `الأصلية: -`;
+                document.getElementById('page-lines-count-orig').textContent = `الأصلية: -`;
+                document.getElementById('lines-count-input').value = 15;
             }
         } else {
             document.getElementById('global-height-orig').textContent = `الأصلية: -`;
+            document.getElementById('page-lines-count-orig').textContent = `الأصلية: -`;
+            document.getElementById('lines-count-input').value = 15;
         }
 
         renderBoxes();
@@ -2088,6 +2095,59 @@ document.getElementById('global-height').addEventListener('input', () => {
     applyGlobalLayoutTweaks();
     updateLeftPanelSaveButtons();
 });
+
+document.getElementById('reset-lines-count').addEventListener('click', () => {
+    pushUndoSnapshot('reset lines count');
+    if (originalLineBands && originalLineBands.length > 0) {
+        document.getElementById('lines-count-input').value = originalLineBands.length;
+        updateLineBandsCount(originalLineBands.length);
+        autoSaveLayoutData();
+    }
+});
+
+document.getElementById('save-lines-count').addEventListener('click', () => {
+    document.getElementById('save-layout-btn').click();
+});
+
+document.getElementById('lines-count-input').addEventListener('change', (e) => {
+    const newCount = parseInt(e.target.value);
+    if (!isNaN(newCount) && newCount > 0) {
+        pushUndoSnapshot('change lines count');
+        updateLineBandsCount(newCount);
+        autoSaveLayoutData();
+    }
+});
+
+function updateLineBandsCount(newCount) {
+    if (!currentLayoutData.lineBands) {
+        currentLayoutData.lineBands = [];
+    }
+    const bands = currentLayoutData.lineBands;
+    if (newCount > bands.length) {
+        const lastLine = bands.length > 0 ? bands[bands.length - 1] : { top: 0, bottom: 50 };
+        const h = lastLine.bottom - lastLine.top;
+        for (let i = bands.length; i < newCount; i++) {
+            const top = bands[i - 1] ? bands[i - 1].bottom : 0;
+            const bottom = top + h;
+            bands.push({
+                line: i + 1,
+                top: top,
+                bottom: bottom,
+                center: Math.round((top + bottom) / 2)
+            });
+        }
+    } else if (newCount < bands.length) {
+        bands.splice(newCount);
+    }
+    
+    originalLineBands = JSON.parse(JSON.stringify(bands));
+    
+    const btnL = document.getElementById('save-lines-count');
+    btnL.className = "save-inline-btn unsaved";
+    btnL.title = "تغيير غير محفوظ - انقر للحفظ";
+    
+    renderBoxes();
+}
 
 // Keyboard Navigation and Shortcuts
 window.addEventListener('keydown', (e) => {

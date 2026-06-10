@@ -45,6 +45,22 @@
         
         <div class="control-group">
             <div class="field-header">
+                <label>عدد أسطر الصفحة:</label>
+                <span class="left-orig-val" id="page-lines-count-orig">الأصلية: 15</span>
+            </div>
+            <div class="input-with-reset">
+                <input type="number" id="lines-count-input" value="15" min="1" max="30" step="1">
+                <button class="reset-inline-btn" id="reset-lines-count" title="إعادة تعيين">
+                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                </button>
+                <button class="save-inline-btn saved" id="save-lines-count" title="تم الحفظ">
+                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="field-header">
                 <label>إزاحة عمودية (Y Offset):</label>
                 <span class="left-orig-val" id="global-y-offset-orig">الأصلية: 0</span>
             </div>
