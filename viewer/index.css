@@ -174,11 +174,11 @@ body, html {
 .metadata-card {
     background: rgba(0,0,0,0.35);
     border: 1px solid rgba(255,255,255,0.06);
-    padding: 8px 10px;
+    padding: 4px 6px;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
 }
 .meta-row {
     display: flex;
@@ -260,11 +260,11 @@ body, html {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 6px;
-    padding: 6px 8px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 5px;
+    gap: 2px;
+    margin-bottom: 3px;
     transition: all 0.3s ease;
 }
 .compare-title {
@@ -386,7 +386,7 @@ body, html {
 .divider {
     height: 1px;
     background: rgba(255,255,255,0.1);
-    margin: 6px 0;
+    margin: 3px 0;
 }
 
 .icon-btn {
@@ -394,7 +394,7 @@ body, html {
     border: none;
     color: #4CAF50;
     cursor: pointer;
-    padding: 6px;
+    padding: 4px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -414,7 +414,7 @@ body, html {
     background: transparent;
     transform: none;
 }
-.icon-btn svg { width: 22px; height: 22px; fill: currentColor; }
+.icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
 /* Sidebars */
 .sidebar {
@@ -426,13 +426,13 @@ body, html {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
-    padding: 10px 12px;
+    padding: 6px 8px;
     overflow-y: auto;
     z-index: 200;
     transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
 }
 #left-panel {
     left: 0;
@@ -447,11 +447,11 @@ body, html {
 }
 
 .sidebar h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.05rem;
+    margin: 0 0 2px 0;
+    font-size: 0.95rem;
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.15);
-    padding-bottom: 5px;
+    padding-bottom: 3px;
 }
 
 .control-group {
@@ -467,7 +467,7 @@ body, html {
     background: #333;
     border: 1px solid #555;
     color: #fff;
-    padding: 5px 6px;
+    padding: 3px 6px;
     border-radius: 4px;
     outline: none;
     font-family: monospace;
@@ -483,11 +483,11 @@ body, html {
     background: #4CAF50;
     color: #fff;
     border: none;
-    padding: 7px;
+    padding: 4px 6px;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
-    margin-top: 4px;
+    margin-top: 2px;
     font-size: 0.85rem;
 }
 .btn:hover { background: #45a049; }
