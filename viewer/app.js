@@ -391,6 +391,11 @@ function renderBoxes() {
                 div.style.left = leftPct + '%';
                 div.style.width = widthPct + '%';
                 div.title = `سورة ${h.sura} آية ${h.ayah}`;
+
+                const label = document.createElement('span');
+                label.className = 'ayah-label';
+                label.textContent = h.ayah;
+                div.appendChild(label);
                 
                 if (selectedItem && selectedItem.type === 'highlight' && selectedItem.index === index) {
                     div.classList.add('selected-box');
@@ -469,6 +474,11 @@ function renderBoxes() {
                 div.style.width = '2.5%';
                 div.style.aspectRatio = '1 / 1';
                 div.title = `نهاية الآية ${m.ayah}`;
+                
+                const label = document.createElement('span');
+                label.className = 'ayah-label marker-label';
+                label.textContent = m.ayah;
+                div.appendChild(label);
                 
                 if (selectedItem && selectedItem.type === 'marker' && selectedItem.index === index) {
                     div.classList.add('selected-box');
