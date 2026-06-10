@@ -91,7 +91,10 @@ body, html {
     left: auto;
     transform: translateY(-50%);
     margin-right: 6px;
-    color: rgba(33, 150, 243, 0.9);
+    color: rgba(33, 150, 243, 1); /* Made it solid blue for better contrast against white bg */
+    background-color: rgba(255, 255, 255, 0.75);
+    padding: 1px 4px;
+    border-radius: 4px;
 }
 
 .selected-box {
