@@ -237,13 +237,23 @@ const server = http.createServer((req, res) => {
                     'Cache-Control': 'no-cache'
                 });
 
-                const process = spawn('powershell', args);
+                const syncProcess = spawn('powershell', args);
                 
-                process.stdout.on('data', data => { res.write(data.toString()); });
-                process.stderr.on('data', data => { res.write(data.toString()); });
+                req.on('close', () => {
+                    syncProcess.kill();
+                });
+
+                syncProcess.stdout.on('data', data => { 
+                    if (!res.writableEnded && !res.destroyed) res.write(data.toString()); 
+                });
+                syncProcess.stderr.on('data', data => { 
+                    if (!res.writableEnded && !res.destroyed) res.write(data.toString()); 
+                });
                 
-                process.on('close', code => {
-                    res.end(`\n\n[PROCESS_EXIT_CODE:${code}]`);
+                syncProcess.on('close', code => {
+                    if (!res.writableEnded && !res.destroyed) {
+                        res.end(`\n\n[PROCESS_EXIT_CODE:${code}]`);
+                    }
                 });
             } catch (err) {
                 console.error("POST sync error:", err);
