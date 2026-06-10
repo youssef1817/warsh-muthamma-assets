@@ -161,3 +161,19 @@ console.log(
     nonAyahZones: (layoutData.nonAyahZones || []).length,
   })
 );
+
+// Update progress.json
+const progressPath = path.join(path.dirname(args.db), 'progress.json');
+try {
+  let progress = [];
+  if (fs.existsSync(progressPath)) {
+    progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+  }
+  if (!progress.includes(args.page)) {
+    progress.push(args.page);
+    progress.sort((a, b) => a - b);
+    fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2));
+  }
+} catch (e) {
+  console.error('Warning: could not update progress.json', e);
+}

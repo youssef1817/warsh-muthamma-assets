@@ -2935,3 +2935,57 @@ document.getElementById('btn-adj-ayah-plus').addEventListener('click', () => adj
 // Init
 updatePage(currentPage);
 clearRightPanel();
+
+// ==========================================
+// Progress Tracker Logic
+// ==========================================
+const progressModal = document.getElementById('progress-modal-overlay');
+const progressGrid = document.getElementById('progress-grid');
+const progressBtn = document.getElementById('progress-btn');
+const closeProgressBtn = document.getElementById('close-progress-btn');
+
+async function loadProgress() {
+    try {
+        const res = await fetch('/api/progress');
+        const data = await res.json();
+        renderProgressGrid(data.progress || []);
+    } catch (err) {
+        console.error("Failed to load progress", err);
+        appAlert("حدث خطأ أثناء تحميل بيانات الإنجاز.", "خطأ");
+    }
+}
+
+function renderProgressGrid(completedPages) {
+    progressGrid.innerHTML = '';
+    for (let i = 1; i <= TOTAL_PAGES; i++) {
+        const isCompleted = completedPages.includes(i);
+        const card = document.createElement('div');
+        card.className = `progress-card ${isCompleted ? 'completed' : ''}`;
+        card.textContent = i;
+        card.onclick = async () => {
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none';
+            try {
+                const res = await fetch('/api/progress/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page: i })
+                });
+                const data = await res.json();
+                renderProgressGrid(data.progress || []);
+            } catch (err) {
+                console.error("Failed to toggle progress", err);
+            }
+        };
+        progressGrid.appendChild(card);
+    }
+}
+
+progressBtn.addEventListener('click', () => {
+    progressModal.style.display = 'flex';
+    loadProgress();
+});
+
+closeProgressBtn.addEventListener('click', () => {
+    progressModal.style.display = 'none';
+});

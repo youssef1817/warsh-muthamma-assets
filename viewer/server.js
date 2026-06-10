@@ -162,6 +162,55 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    if (req.url === '/api/progress' && req.method === 'GET') {
+        try {
+            const progressPath = path.resolve(ROOT_DIR, 'databases', 'ayahinfo', 'warsh_muthamma', 'progress.json');
+            let progress = [];
+            if (fs.existsSync(progressPath)) {
+                progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ progress }));
+        } catch (err) {
+            console.error("GET progress error:", err);
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    if (req.url === '/api/progress/toggle' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const { page } = JSON.parse(body);
+                const progressPath = path.resolve(ROOT_DIR, 'databases', 'ayahinfo', 'warsh_muthamma', 'progress.json');
+                let progress = [];
+                if (fs.existsSync(progressPath)) {
+                    progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+                }
+                
+                const index = progress.indexOf(page);
+                if (index !== -1) {
+                    progress.splice(index, 1);
+                } else {
+                    progress.push(page);
+                    progress.sort((a, b) => a - b);
+                }
+                
+                fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2), 'utf8');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ progress }));
+            } catch (err) {
+                console.error("POST progress toggle error:", err);
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: err.message }));
+            }
+        });
+        return;
+    }
+
     let reqUrl = req.url.split('?')[0]; 
     let filePath = path.join(ROOT_DIR, reqUrl);
     

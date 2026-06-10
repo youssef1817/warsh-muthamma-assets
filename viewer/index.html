@@ -36,6 +36,9 @@
             <button id="help-btn" class="icon-btn" title="مساعدة واختصارات">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
             </button>
+            <button id="progress-btn" class="icon-btn" title="تتبع الإنجاز">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </button>
         </div>
 
         <div class="divider"></div>
@@ -476,6 +479,20 @@
             <div class="custom-modal-actions">
                 <button id="custom-modal-cancel" class="btn" style="display: none; background: #f44336; border-color: #d32f2f;">إلغاء</button>
                 <button id="custom-modal-ok" class="btn btn-save" style="background: #4CAF50; border-color: #388E3C;">موافق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Modal -->
+    <div id="progress-modal-overlay" class="custom-modal-overlay" style="display: none;">
+        <div class="custom-modal" style="width: 650px; max-width: 95%;">
+            <h3 style="margin-bottom: 8px;">تتبع الإنجاز</h3>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">الصفحات الخضراء تم إنجازها ومزامنتها. اضغط على أي صفحة لتغيير حالتها يدوياً.</p>
+            <div id="progress-grid" class="progress-grid">
+                <!-- Generated dynamically -->
+            </div>
+            <div class="custom-modal-actions" style="margin-top: 20px;">
+                <button id="close-progress-btn" class="btn">إغلاق</button>
             </div>
         </div>
     </div>
