@@ -544,8 +544,36 @@ function renderBoxes() {
                         autoSaveAyahData();
                     });
 
+                    const btnLineUp = document.createElement('button');
+                    btnLineUp.innerHTML = '↑';
+                    btnLineUp.title = 'نقل للسطر السابق (لأعلى)';
+                    btnLineUp.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineUp.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('move highlight to previous line');
+                        h.line = Math.max(1, h.line - 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnLineDown = document.createElement('button');
+                    btnLineDown.innerHTML = '↓';
+                    btnLineDown.title = 'نقل للسطر التالي (لأسفل)';
+                    btnLineDown.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineDown.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('move highlight to next line');
+                        h.line = Math.min(currentLayoutData.lineBands.length, h.line + 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
                     toolbar.appendChild(btnDel);
                     toolbar.appendChild(btnDup);
+                    toolbar.appendChild(btnLineUp);
+                    toolbar.appendChild(btnLineDown);
                     toolbar.appendChild(btnMinus);
                     toolbar.appendChild(btnPlus);
                     toolbar.appendChild(btnRight);
@@ -654,8 +682,36 @@ function renderBoxes() {
                         autoSaveAyahData();
                     });
 
+                    const btnLineUp = document.createElement('button');
+                    btnLineUp.innerHTML = '↑';
+                    btnLineUp.title = 'نقل للسطر السابق (لأعلى)';
+                    btnLineUp.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineUp.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('move marker to previous line');
+                        m.line = Math.max(1, m.line - 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
+                    const btnLineDown = document.createElement('button');
+                    btnLineDown.innerHTML = '↓';
+                    btnLineDown.title = 'نقل للسطر التالي (لأسفل)';
+                    btnLineDown.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineDown.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        pushUndoSnapshot('move marker to next line');
+                        m.line = Math.min(currentLayoutData.lineBands.length, m.line + 1);
+                        renderBoxes();
+                        openRightPanel();
+                        autoSaveAyahData();
+                    });
+
                     toolbar.appendChild(btnDel);
                     toolbar.appendChild(btnDup);
+                    toolbar.appendChild(btnLineUp);
+                    toolbar.appendChild(btnLineDown);
                     toolbar.appendChild(btnMinus);
                     toolbar.appendChild(btnPlus);
                     div.appendChild(toolbar);
