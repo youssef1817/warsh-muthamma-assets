@@ -236,11 +236,12 @@ const server = http.createServer((req, res) => {
                     'Transfer-Encoding': 'chunked',
                     'Cache-Control': 'no-cache'
                 });
-
                 const syncProcess = spawn('powershell', args);
                 
-                req.on('close', () => {
-                    syncProcess.kill();
+                res.on('close', () => {
+                    if (!res.writableEnded && syncProcess) {
+                        syncProcess.kill();
+                    }
                 });
 
                 syncProcess.stdout.on('data', data => { 
