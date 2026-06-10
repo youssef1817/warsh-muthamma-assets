@@ -781,20 +781,77 @@ document.addEventListener('mousemove', (e) => {
             if (band) {
                 const deltaY = (e.clientY - dragStartMouseY) / imgRect.height * currentLayoutData.imageHeight;
                 const bandIndex = currentLayoutData.lineBands.indexOf(band);
+                const shiftFollowing = document.getElementById('shift-following-lines') && document.getElementById('shift-following-lines').checked;
+                const preventOverlap = document.getElementById('prevent-overlap') && document.getElementById('prevent-overlap').checked;
+                const snapEnabled = shouldSnapHighlightEdges();
+                
                 if (dragMode === 'resize-top') {
-                    const newTop = Math.round(dragStartBandTop + deltaY);
+                    let newTop = Math.round(dragStartBandTop + deltaY);
+                    if (!shiftFollowing) {
+                        const prevBand = currentLayoutData.lineBands[bandIndex - 1];
+                        if (prevBand) {
+                            if (snapEnabled && Math.abs(newTop - prevBand.bottom) <= 15) newTop = prevBand.bottom;
+                            if (preventOverlap && newTop < prevBand.bottom) newTop = prevBand.bottom;
+                        }
+                    }
+                    if (preventOverlap && newTop >= band.bottom - 5) newTop = band.bottom - 5;
+                    
                     const shiftDelta = newTop - band.top;
                     band.top = newTop;
-                    shiftPrecedingLines(bandIndex, shiftDelta);
+                    if (shiftFollowing) shiftPrecedingLines(bandIndex, shiftDelta);
                 } else if (dragMode === 'resize-bottom') {
-                    const newBottom = Math.round(dragStartBandBottom + deltaY);
+                    let newBottom = Math.round(dragStartBandBottom + deltaY);
+                    if (!shiftFollowing) {
+                        const nextBand = currentLayoutData.lineBands[bandIndex + 1];
+                        if (nextBand) {
+                            if (snapEnabled && Math.abs(newBottom - nextBand.top) <= 15) newBottom = nextBand.top;
+                            if (preventOverlap && newBottom > nextBand.top) newBottom = nextBand.top;
+                        }
+                    }
+                    if (preventOverlap && newBottom <= band.top + 5) newBottom = band.top + 5;
+                    
                     const shiftDelta = newBottom - band.bottom;
                     band.bottom = newBottom;
-                    shiftFollowingLines(bandIndex, shiftDelta);
+                    if (shiftFollowing) shiftFollowingLines(bandIndex, shiftDelta);
                 }
             }
         }
         applyHighlightMagneticSnap(h, selectedItem.index, dragMode);
+        
+        const preventOverlap = document.getElementById('prevent-overlap') && document.getElementById('prevent-overlap').checked;
+        if (preventOverlap && (dragMode === 'resize-left' || dragMode === 'resize-right' || dragMode === 'move')) {
+            if (dragMode === 'move') {
+                const adjacentLeft = currentAyahData.ayah_highlights.filter(oh => oh.line === h.line && oh.right <= dragStartLeft + 0.0001 && oh !== h);
+                const adjacentRight = currentAyahData.ayah_highlights.filter(oh => oh.line === h.line && oh.left >= dragStartRight - 0.0001 && oh !== h);
+                const maxLeftBound = adjacentLeft.length > 0 ? Math.max(...adjacentLeft.map(oh => oh.right)) : 0;
+                const minRightBound = adjacentRight.length > 0 ? Math.min(...adjacentRight.map(oh => oh.left)) : 1;
+                
+                let width = h.right - h.left;
+                if (h.left < maxLeftBound) {
+                    h.left = maxLeftBound;
+                    h.right = h.left + width;
+                }
+                if (h.right > minRightBound) {
+                    h.right = minRightBound;
+                    h.left = h.right - width;
+                }
+            } else if (dragMode === 'resize-left') {
+                const adjacentHighlights = currentAyahData.ayah_highlights.filter(oh => oh.line === h.line && oh.right <= dragStartLeft + 0.0001 && oh !== h);
+                if (adjacentHighlights.length > 0) {
+                    const maxRight = Math.max(...adjacentHighlights.map(oh => oh.right));
+                    if (h.left < maxRight) h.left = maxRight;
+                }
+                if (h.left > h.right - 0.002) h.left = h.right - 0.002;
+            } else if (dragMode === 'resize-right') {
+                const adjacentHighlights = currentAyahData.ayah_highlights.filter(oh => oh.line === h.line && oh.left >= dragStartRight - 0.0001 && oh !== h);
+                if (adjacentHighlights.length > 0) {
+                    const minLeft = Math.min(...adjacentHighlights.map(oh => oh.left));
+                    if (h.right > minLeft) h.right = minLeft;
+                }
+                if (h.right < h.left + 0.002) h.right = h.left + 0.002;
+            }
+        }
+        
         normalizeHighlightGeometry(h);
     } else if (selectedItem.type === 'marker') {
         const m = currentAyahData.ayah_markers[selectedItem.index];
