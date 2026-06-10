@@ -12,6 +12,26 @@ body, html {
     color: #eee;
 }
 
+/* Custom Scrollbar for all scrollable elements */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 #image-container {
     margin-left: 250px; /* Offset by left sidebar */
     margin-right: 340px; /* Offset by right sidebar */
