@@ -46,65 +46,71 @@
         <h3>التحكم في الأسطر (الصفحة)</h3>
         <p style="font-size: 0.85rem; color: #aaa;">تعديل هذه القيم يزيح جميع الأسطر في الصفحة ويحفظها مباشرة.</p>
         
-        <div class="control-group">
-            <div class="field-header">
-                <label>عدد أسطر الصفحة:</label>
-                <span class="left-orig-val" id="page-lines-count-orig">الأصلية: 15</span>
+        <div style="display: flex; gap: 8px;">
+            <div class="control-group" style="flex: 1;">
+                <div class="field-header">
+                    <label style="font-size: 0.75rem;">الأسطر:</label>
+                    <span class="left-orig-val" id="page-lines-count-orig" style="font-size: 0.65rem;">الأصلية: 15</span>
+                </div>
+                <div class="input-with-reset">
+                    <input type="number" id="lines-count-input" value="15" min="1" max="30" step="1" style="padding: 4px;">
+                    <button class="reset-inline-btn" id="reset-lines-count" title="إعادة تعيين">
+                        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                    </button>
+                    <button class="save-inline-btn saved" id="save-lines-count" title="تم الحفظ">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="input-with-reset">
-                <input type="number" id="lines-count-input" value="15" min="1" max="30" step="1">
-                <button class="reset-inline-btn" id="reset-lines-count" title="إعادة تعيين">
-                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                </button>
-                <button class="save-inline-btn saved" id="save-lines-count" title="تم الحفظ">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                </button>
+
+            <div class="control-group" style="flex: 1;">
+                <div class="field-header">
+                    <label style="font-size: 0.75rem;">إزاحة Y:</label>
+                    <span class="left-orig-val" id="global-y-offset-orig" style="font-size: 0.65rem;">الأصلية: 0</span>
+                </div>
+                <div class="input-with-reset">
+                    <input type="number" id="global-y-offset" value="0" step="1" style="padding: 4px;">
+                    <button class="reset-inline-btn" id="reset-global-y-offset" title="إعادة تعيين">
+                        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                    </button>
+                    <button class="save-inline-btn saved" id="save-global-y-offset" title="تم الحفظ">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="control-group">
-            <div class="field-header">
-                <label>إزاحة عمودية (Y Offset):</label>
-                <span class="left-orig-val" id="global-y-offset-orig">الأصلية: 0</span>
+        <div style="display: flex; gap: 8px;">
+            <div class="control-group" style="flex: 1;">
+                <div class="field-header">
+                    <label style="font-size: 0.75rem;">تكبير:</label>
+                    <span class="left-orig-val" id="global-scale-orig" style="font-size: 0.65rem;">الأصلية: 1.00</span>
+                </div>
+                <div class="input-with-reset">
+                    <input type="number" id="global-scale" value="1.0" step="0.01" style="padding: 4px;">
+                    <button class="reset-inline-btn" id="reset-global-scale" title="إعادة تعيين">
+                        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                    </button>
+                    <button class="save-inline-btn saved" id="save-global-scale" title="تم الحفظ">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    </button>
+                </div>
             </div>
-            <div class="input-with-reset">
-                <input type="number" id="global-y-offset" value="0" step="1">
-                <button class="reset-inline-btn" id="reset-global-y-offset" title="إعادة تعيين">
-                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                </button>
-                <button class="save-inline-btn saved" id="save-global-y-offset" title="تم الحفظ">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                </button>
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="field-header">
-                <label>تكبير/تصغير الارتفاع (Scale):</label>
-                <span class="left-orig-val" id="global-scale-orig">الأصلية: 1.00</span>
-            </div>
-            <div class="input-with-reset">
-                <input type="number" id="global-scale" value="1.0" step="0.01">
-                <button class="reset-inline-btn" id="reset-global-scale" title="إعادة تعيين">
-                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                </button>
-                <button class="save-inline-btn saved" id="save-global-scale" title="تم الحفظ">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                </button>
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="field-header">
-                <label>ارتفاع موحد (Base Height):</label>
-                <span class="left-orig-val" id="global-height-orig">الأصلية: -</span>
-            </div>
-            <div class="input-with-reset">
-                <input type="number" id="global-height" placeholder="افتراضي (متغير)..." min="0" step="1">
-                <button class="reset-inline-btn" id="reset-global-height" title="إعادة تعيين">
-                    <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
-                </button>
-                <button class="save-inline-btn saved" id="save-global-height" title="تم الحفظ">
-                    <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-                </button>
+            
+            <div class="control-group" style="flex: 1;">
+                <div class="field-header">
+                    <label style="font-size: 0.75rem;">الارتفاع:</label>
+                    <span class="left-orig-val" id="global-height-orig" style="font-size: 0.65rem;">الأصلية: -</span>
+                </div>
+                <div class="input-with-reset">
+                    <input type="number" id="global-height" placeholder="متغير" min="0" step="1" style="padding: 4px; font-size: 0.75rem;">
+                    <button class="reset-inline-btn" id="reset-global-height" title="إعادة تعيين">
+                        <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>
+                    </button>
+                    <button class="save-inline-btn saved" id="save-global-height" title="تم الحفظ">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
         
