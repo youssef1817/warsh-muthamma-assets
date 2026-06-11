@@ -3000,6 +3000,8 @@ async function loadProgress() {
     }
 }
 
+let lastClickedProgressPage = null;
+
 function renderProgressGrid(completedPages) {
     progressGrid.innerHTML = '';
     for (let i = 1; i <= TOTAL_PAGES; i++) {
@@ -3007,19 +3009,52 @@ function renderProgressGrid(completedPages) {
         const card = document.createElement('div');
         card.className = `progress-card ${isCompleted ? 'completed' : ''}`;
         card.textContent = i;
-        card.onclick = async () => {
-            card.style.opacity = '0.5';
-            card.style.pointerEvents = 'none';
-            try {
-                const res = await fetch('/api/progress/toggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ page: i })
+        card.onclick = async (e) => {
+            if (e.shiftKey && lastClickedProgressPage !== null && lastClickedProgressPage !== i) {
+                const start = Math.min(lastClickedProgressPage, i);
+                const end = Math.max(lastClickedProgressPage, i);
+                const pagesToToggle = [];
+                for (let p = start; p <= end; p++) {
+                    pagesToToggle.push(p);
+                }
+                
+                const forceState = !isCompleted; // Force all to the new state of the clicked page
+                pagesToToggle.forEach(p => {
+                    const el = progressGrid.children[p - 1];
+                    if (el) {
+                        el.style.opacity = '0.5';
+                        el.style.pointerEvents = 'none';
+                    }
                 });
-                const data = await res.json();
-                renderProgressGrid(data.progress || []);
-            } catch (err) {
-                console.error("Failed to toggle progress", err);
+                
+                lastClickedProgressPage = i;
+                
+                try {
+                    const res = await fetch('/api/progress/toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pages: pagesToToggle, forceState })
+                    });
+                    const data = await res.json();
+                    renderProgressGrid(data.progress || []);
+                } catch (err) {
+                    console.error("Failed to batch toggle progress", err);
+                }
+            } else {
+                lastClickedProgressPage = i;
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+                try {
+                    const res = await fetch('/api/progress/toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ page: i })
+                    });
+                    const data = await res.json();
+                    renderProgressGrid(data.progress || []);
+                } catch (err) {
+                    console.error("Failed to toggle progress", err);
+                }
             }
         };
         progressGrid.appendChild(card);

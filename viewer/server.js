@@ -184,24 +184,41 @@ const server = http.createServer((req, res) => {
         req.on('data', chunk => { body += chunk.toString(); });
         req.on('end', () => {
             try {
-                const { page } = JSON.parse(body);
+                const data = JSON.parse(body);
                 const progressPath = path.resolve(ROOT_DIR, 'databases', 'ayahinfo', 'warsh_muthamma', 'progress.json');
                 let progress = [];
                 if (fs.existsSync(progressPath)) {
                     progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
                 }
                 
-                const index = progress.indexOf(page);
-                if (index !== -1) {
-                    progress.splice(index, 1);
-                } else {
-                    progress.push(page);
+                if (data.pages && Array.isArray(data.pages)) {
+                    const forceState = data.forceState;
+                    data.pages.forEach(p => {
+                        const index = progress.indexOf(p);
+                        if (forceState === true && index === -1) {
+                            progress.push(p);
+                        } else if (forceState === false && index !== -1) {
+                            progress.splice(index, 1);
+                        } else if (forceState === undefined) {
+                            if (index !== -1) progress.splice(index, 1);
+                            else progress.push(p);
+                        }
+                    });
                     progress.sort((a, b) => a - b);
+                } else if (data.page) {
+                    const page = data.page;
+                    const index = progress.indexOf(page);
+                    if (index !== -1) {
+                        progress.splice(index, 1);
+                    } else {
+                        progress.push(page);
+                        progress.sort((a, b) => a - b);
+                    }
                 }
-                
-                fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2), 'utf8');
+
+                fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2));
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ progress }));
+                res.end(JSON.stringify({ success: true, progress }));
             } catch (err) {
                 console.error("POST progress toggle error:", err);
                 res.writeHead(500);
