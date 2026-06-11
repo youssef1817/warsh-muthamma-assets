@@ -3003,6 +3003,18 @@ async function loadProgress() {
 let lastClickedProgressPage = null;
 
 function renderProgressGrid(completedPages) {
+    const total = TOTAL_PAGES || 604;
+    const completedCount = completedPages.length;
+    const percent = Math.round((completedCount / total) * 100);
+    
+    const countEl = document.getElementById('progress-text-count');
+    const percentEl = document.getElementById('progress-text-percent');
+    const fillEl = document.getElementById('progress-bar-fill');
+    
+    if (countEl) countEl.textContent = `${completedCount} / ${total} صفحة`;
+    if (percentEl) percentEl.textContent = `${percent}%`;
+    if (fillEl) fillEl.style.width = `${percent}%`;
+
     progressGrid.innerHTML = '';
     for (let i = 1; i <= TOTAL_PAGES; i++) {
         const isCompleted = completedPages.includes(i);

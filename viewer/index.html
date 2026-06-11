@@ -533,7 +533,19 @@
     <div id="progress-modal-overlay" class="custom-modal-overlay" style="display: none;">
         <div class="custom-modal" style="width: 650px; max-width: 95%;">
             <h3 style="margin-bottom: 8px;">تتبع الإنجاز</h3>
-            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">الصفحات الخضراء تم إنجازها ومزامنتها. اضغط على أي صفحة لتغيير حالتها يدوياً.</p>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 15px;">الصفحات الخضراء تم إنجازها ومزامنتها. اضغط على أي صفحة لتغيير حالتها يدوياً.</p>
+            
+            <!-- Progress Bar -->
+            <div style="margin-bottom: 20px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+                <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 6px; font-size: 0.95rem;">
+                    <span id="progress-text-count" style="color: #ddd;">0 / 604 صفحة</span>
+                    <span id="progress-text-percent" style="font-weight: bold; color: #4CAF50;">0%</span>
+                </div>
+                <div style="width: 100%; height: 12px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);">
+                    <div id="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4CAF50, #81C784); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);"></div>
+                </div>
+            </div>
+
             <div id="progress-grid" class="progress-grid">
                 <!-- Generated dynamically -->
             </div>
