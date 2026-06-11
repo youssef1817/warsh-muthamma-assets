@@ -460,9 +460,9 @@ function renderBoxes() {
                     edges.forEach(edge => {
                         const handle = document.createElement('div');
                         handle.className = `box-resize-handle ${edge}`;
-                        handle.addEventListener('mousedown', (e) => {
+                        handle.addEventListener('pointerdown', (e) => {
                             if (e.button !== 0) return; // Only left click
-                            e.stopPropagation(); // prevent box mousedown
+                            e.stopPropagation(); // prevent box pointerdown
                             selectItem('highlight', index);
                             beginHistoryTransaction('resize highlight');
                             isDragging = true;
@@ -504,7 +504,7 @@ function renderBoxes() {
                     const btnRight = document.createElement('button');
                     btnRight.innerHTML = '⭲';
                     btnRight.title = 'تمديد للحد الأيمن (Ctrl + سهم يمين)';
-                    btnRight.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnRight.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnRight.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('snap right edge to margin');
@@ -518,7 +518,7 @@ function renderBoxes() {
                     const btnFull = document.createElement('button');
                     btnFull.innerHTML = '⭤';
                     btnFull.title = 'تمديد للحدين الأيمن والأيسر (Ctrl + مسافة)';
-                    btnFull.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnFull.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnFull.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('snap both edges to margins');
@@ -533,7 +533,7 @@ function renderBoxes() {
                     const btnLeft = document.createElement('button');
                     btnLeft.innerHTML = '⭰';
                     btnLeft.title = 'تمديد للحد الأيسر (Ctrl + سهم يسار)';
-                    btnLeft.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLeft.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLeft.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('snap left edge to margin');
@@ -547,7 +547,7 @@ function renderBoxes() {
                     const btnMinus = document.createElement('button');
                     btnMinus.innerHTML = '-';
                     btnMinus.title = 'إنقاص رقم الآية (-)';
-                    btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnMinus.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnMinus.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('decrement ayah number');
@@ -560,7 +560,7 @@ function renderBoxes() {
                     const btnPlus = document.createElement('button');
                     btnPlus.innerHTML = '+';
                     btnPlus.title = 'زيادة رقم الآية (+)';
-                    btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnPlus.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnPlus.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('increment ayah number');
@@ -573,7 +573,7 @@ function renderBoxes() {
                     const btnDup = document.createElement('button');
                     btnDup.innerHTML = '⧉';
                     btnDup.title = 'تكرار المربع (Shift+D)';
-                    btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDup.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDup.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('duplicate highlight box');
@@ -589,7 +589,7 @@ function renderBoxes() {
                     btnDel.innerHTML = '🗑';
                     btnDel.title = 'حذف المربع (Delete)';
                     btnDel.style.color = '#ff5252';
-                    btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDel.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDel.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('delete highlight box');
@@ -603,7 +603,7 @@ function renderBoxes() {
                     const btnLineUp = document.createElement('button');
                     btnLineUp.innerHTML = '↑';
                     btnLineUp.title = 'نقل للسطر السابق (لأعلى)';
-                    btnLineUp.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineUp.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLineUp.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('move highlight to previous line');
@@ -616,7 +616,7 @@ function renderBoxes() {
                     const btnLineDown = document.createElement('button');
                     btnLineDown.innerHTML = '↓';
                     btnLineDown.title = 'نقل للسطر التالي (لأسفل)';
-                    btnLineDown.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineDown.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLineDown.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('move highlight to next line');
@@ -638,7 +638,7 @@ function renderBoxes() {
                     div.appendChild(toolbar);
                 }
 
-                div.addEventListener('mousedown', (e) => {
+                div.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0) return; // Only left click
                     e.stopPropagation();
                     selectItem('highlight', index);
@@ -685,7 +685,7 @@ function renderBoxes() {
                     const btnMinus = document.createElement('button');
                     btnMinus.innerHTML = '-';
                     btnMinus.title = 'إنقاص رقم الآية (-)';
-                    btnMinus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnMinus.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnMinus.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('decrement ayah number');
@@ -698,7 +698,7 @@ function renderBoxes() {
                     const btnPlus = document.createElement('button');
                     btnPlus.innerHTML = '+';
                     btnPlus.title = 'زيادة رقم الآية (+)';
-                    btnPlus.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnPlus.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnPlus.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('increment ayah number');
@@ -711,7 +711,7 @@ function renderBoxes() {
                     const btnDup = document.createElement('button');
                     btnDup.innerHTML = '⧉';
                     btnDup.title = 'تكرار الدائرة (Shift+D)';
-                    btnDup.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDup.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDup.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('duplicate marker');
@@ -727,7 +727,7 @@ function renderBoxes() {
                     btnDel.innerHTML = '🗑';
                     btnDel.title = 'حذف الدائرة (Delete)';
                     btnDel.style.color = '#ff5252';
-                    btnDel.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnDel.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnDel.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('delete marker');
@@ -741,7 +741,7 @@ function renderBoxes() {
                     const btnLineUp = document.createElement('button');
                     btnLineUp.innerHTML = '↑';
                     btnLineUp.title = 'نقل للسطر السابق (لأعلى)';
-                    btnLineUp.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineUp.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLineUp.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('move marker to previous line');
@@ -754,7 +754,7 @@ function renderBoxes() {
                     const btnLineDown = document.createElement('button');
                     btnLineDown.innerHTML = '↓';
                     btnLineDown.title = 'نقل للسطر التالي (لأسفل)';
-                    btnLineDown.addEventListener('mousedown', (e) => { e.stopPropagation(); e.preventDefault(); });
+                    btnLineDown.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
                     btnLineDown.addEventListener('click', (e) => {
                         e.stopPropagation();
                         pushUndoSnapshot('move marker to next line');
@@ -773,7 +773,7 @@ function renderBoxes() {
                     div.appendChild(toolbar);
                 }
 
-                div.addEventListener('mousedown', (e) => {
+                div.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0) return;
                     e.stopPropagation();
                     selectItem('marker', index);
@@ -810,7 +810,7 @@ function selectItem(type, index) {
 }
 
 // Drag events on document
-document.addEventListener('mousemove', (e) => {
+document.addEventListener('pointermove', (e) => {
     if (!isDragging || !selectedItem || !currentAyahData) return;
     
     const imgRect = DOM.img.getBoundingClientRect();
@@ -937,7 +937,7 @@ document.addEventListener('mousemove', (e) => {
     openRightPanel(); // refresh inputs
 });
 
-document.addEventListener('mouseup', () => {
+document.addEventListener('pointerup', () => {
     if (isDragging) {
         const wasMarkerPreview = selectedItem && selectedItem.type === 'marker';
         isDragging = false;
@@ -2746,7 +2746,7 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
 
     applySidebarWidths();
 
-    leftResizer.addEventListener('mousedown', (e) => {
+    leftResizer.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         document.body.style.cursor = 'col-resize';
         leftResizer.classList.add('resizing');
@@ -2763,15 +2763,15 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
             document.body.style.cursor = '';
             leftResizer.classList.remove('resizing');
             localStorage.setItem('sidebar_left_width', leftWidth);
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+            document.removeEventListener('pointermove', onMouseMove);
+            document.removeEventListener('pointerup', onMouseUp);
         }
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('pointermove', onMouseMove);
+        document.addEventListener('pointerup', onMouseUp);
     });
 
-    rightResizer.addEventListener('mousedown', (e) => {
+    rightResizer.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         document.body.style.cursor = 'col-resize';
         rightResizer.classList.add('resizing');
@@ -2788,12 +2788,12 @@ document.getElementById('close-help-btn').addEventListener('click', () => {
             document.body.style.cursor = '';
             rightResizer.classList.remove('resizing');
             localStorage.setItem('sidebar_right_width', rightWidth);
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+            document.removeEventListener('pointermove', onMouseMove);
+            document.removeEventListener('pointerup', onMouseUp);
         }
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener('pointermove', onMouseMove);
+        document.addEventListener('pointerup', onMouseUp);
     });
 })();
 

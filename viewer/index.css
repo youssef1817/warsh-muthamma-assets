@@ -783,3 +783,9 @@ body, html {
 .progress-card.completed:hover {
     background: rgba(76, 175, 80, 0.3);
 }
+
+
+/* Add touch-action none for tablet dragging */
+#overlay-container, .highlight-box, .marker-box, .box-resize-handle, .box-toolbar button {
+    touch-action: none;
+}
